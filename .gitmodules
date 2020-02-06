@@ -1,0 +1,6 @@
+[submodule "projects/avdv-point-group"]
+	path = projects/avdv-point-group
+	url = git@github.com:goirijo/avdv-point-group.git
+[submodule "projects/molecule-point-group"]
+	path = projects/molecule-point-group
+	url = git@github.com:seshasaibehara/molecule-point-group.git

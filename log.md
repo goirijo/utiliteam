@@ -1,6 +1,6 @@
 # The Log
 
-This is where we keep track of what we've been talking about during each metting.
+This is where we keep track of what we've been talking about during each meeting.
 It's written in Markdown, which you can learn how to use [here](https://www.markdownguide.org/basic-syntax/).
 We can have a section added each week.
 No ugly posts allowed.
@@ -12,6 +12,7 @@ Projects we come up with can either be developed directly here or included as a 
 We can also share different resources that might be useful for the group.
 
 ----
+## Data structures
 ### 07-Feb-2020, EGP
 
 #### Linked Lists \(presented by Farnaz\)

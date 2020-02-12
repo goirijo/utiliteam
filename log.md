@@ -15,7 +15,7 @@ We can also share different resources that might be useful for the group.
 ## Data structures
 ### 07-Feb-2020, EGP
 
-#### Linked Lists \(presented by Farnaz\)
+#### Linked Lists \(presented by Farnaz\) presentation is here: [Linked_list](slides/Linked_C%2B%2B.pdf)
 A linked list is a type of linear data structure that stores data.
 A linked list contains nodes, which are made of two parts.
 One part contains the data and the second is a pointer that points to the address of the following node.

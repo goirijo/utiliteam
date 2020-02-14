@@ -1,5 +1,3 @@
-#include <stack>
-
 class IntStack
 {
     public:

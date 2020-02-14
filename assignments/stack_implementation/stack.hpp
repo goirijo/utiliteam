@@ -1,5 +1,4 @@
 #include <vector>
-#include <limits>
 
 class IntStack
 {
@@ -27,7 +26,15 @@ class IntStack
         void push(const int& new_value)
         {
             ++top_index;
-            stack_values[top_index]=new_value;
+            if(top_index==stack_values.size())
+            {
+                stack_values.push_back(new_value);
+            }
+
+            else
+            {
+                stack_values[top_index]=new_value;
+            }
             return;
         }
 
@@ -40,6 +47,6 @@ class IntStack
 
     private:
 
-        std::vector<int> stack_values=std::vector<int>(std::numeric_limits<int>::max());
+        std::vector<int> stack_values;
         int top_index=-1;
 };

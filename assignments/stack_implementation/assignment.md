@@ -14,4 +14,4 @@ You can add any number of private functions and data members, but nothing should
 The assignment is complete when your code compiles, runs, and passes every test in a reasonable amount of time (less than 2 minutes).
 
 You can use anything from the standard template library **except** `std::stack`.
-Whoever writes the fastest code gets a candie bar.
+Whoever writes the fastest code gets a candy bar.

@@ -65,6 +65,7 @@ Useful links:
 - <https://www.geeksforgeeks.org/map-vs-unordered_map-c/>
 - <https://en.cppreference.com/w/cpp/container/map> 
 
+<h3>02/11/2020</h3>
 
 #### <h4>Classes \(presented by Colleen\)</h4><br>
 Classes are a type of data structure that contains data members and data functions <br> both of which can be public or private (and also protected)
@@ -77,5 +78,5 @@ Useful links:
 - <http://www.trytoprogram.com/cplusplus-programming/constructors/>
 
 
-####<h4>A breaking down code based exercise \(presented by John\)</h4><br>
+<h4>A breaking down code based exercise \(presented by John\)</h4><br>
 Potential functions for a factor group code were broken into a Methods and Data Structure column only to be broken down more <br>The exercise followed a "big picture" to smaller unit workflow where the goal was to determine all individual functions <br>necessary to find the factor group of a crystal.

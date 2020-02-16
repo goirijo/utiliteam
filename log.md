@@ -67,7 +67,7 @@ Useful links:
 
 <h3>02/11/2020</h3>
 
-#### <h4>Classes \(presented by Colleen\)</h4><br>
+<h4>Classes (presented by Colleen)</h4>
 Classes are a type of data structure that contains data members and data functions <br> both of which can be public or private (and also protected)
 
 After declarations are done, any public data members and data functions may be called with using a dot after the member name <br>A constructor is called when any class is created though there is no requirement write out the empty consructor explicitly <br>One may create either parameterized or unparamterized constructors
@@ -78,5 +78,5 @@ Useful links:
 - <http://www.trytoprogram.com/cplusplus-programming/constructors/>
 
 
-<h4>A breaking down code based exercise \(presented by John\)</h4><br>
+<h4>A breaking down code based exercise (presented by John)</h4>
 Potential functions for a factor group code were broken into a Methods and Data Structure column only to be broken down more <br>The exercise followed a "big picture" to smaller unit workflow where the goal was to determine all individual functions <br>necessary to find the factor group of a crystal.

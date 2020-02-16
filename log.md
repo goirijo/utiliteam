@@ -65,7 +65,11 @@ Useful links:
 - <https://www.geeksforgeeks.org/map-vs-unordered_map-c/>
 - <https://en.cppreference.com/w/cpp/container/map> 
 
-<h3>02/11/2020</h3>
+***
+<h1>Classes</h1>
+***
+
+<h3>11-Feb-2020</h3>
 
 <h4>Classes (presented by Colleen)</h4>
 Classes are a type of data structure that contains data members and data functions <br> both of which can be public or private (and also protected)

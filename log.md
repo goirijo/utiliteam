@@ -67,7 +67,7 @@ Useful links:
 
 ***
 <h1>Classes</h1>
-***
+
 
 <h3>11-Feb-2020</h3>
 

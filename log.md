@@ -66,7 +66,7 @@ Useful links:
 - <https://en.cppreference.com/w/cpp/container/map> 
 
 
-####Classes were discussed by Colleen
+####Classes \(presented by Colleen\)
 Classes are a type of data structure that contains data members and data functions
 both of which can be public or private (and also protected)
 
@@ -80,7 +80,7 @@ Useful links:
 - <http://www.trytoprogram.com/cplusplus-programming/constructors/>
 
 
-####A breaking down code based exercise was started by John
+####A breaking down code based exercise \(presented by John\)
 Potential functions for a factor group code were broken into a Methods and Data Structure column only to be broken down more
 The exercise followed a "big picture" to smaller unit workflow where the goal was to determine all individual functions 
 necessary to find the factor group of a crystal.

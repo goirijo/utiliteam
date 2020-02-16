@@ -67,12 +67,9 @@ Useful links:
 
 
 ####Classes \(presented by Colleen\)
-Classes are a type of data structure that contains data members and data functions
-both of which can be public or private (and also protected)
+Classes are a type of data structure that contains data members and data functions <br> both of which can be public or private (and also protected)
 
-After declarations are done, any public data members and data functions may be called with using a dot after the member name
-A constructor is called when any class is created though there is no requirement write out the empty consructor explicitly
-One may create either parameterized or unparamterized constructors
+After declarations are done, any public data members and data functions may be called with using a dot after the member name <br>A constructor is called when any class is created though there is no requirement write out the empty consructor explicitly <br>One may create either parameterized or unparamterized constructors
 
 Useful links:
 - <http://www.cplusplus.com/doc/tutorial/classes/>
@@ -81,6 +78,4 @@ Useful links:
 
 
 ####A breaking down code based exercise \(presented by John\)
-Potential functions for a factor group code were broken into a Methods and Data Structure column only to be broken down more
-The exercise followed a "big picture" to smaller unit workflow where the goal was to determine all individual functions 
-necessary to find the factor group of a crystal.
+Potential functions for a factor group code were broken into a Methods and Data Structure column only to be broken down more <br>The exercise followed a "big picture" to smaller unit workflow where the goal was to determine all individual functions <br>necessary to find the factor group of a crystal.

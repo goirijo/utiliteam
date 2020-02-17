@@ -14,7 +14,7 @@ class IntStack
         int top() const{my_stack.top();};
 
         /// Adds a new element to the top of the stack
-        void push(const int& new_value){my_stack.push(new_value);};
+        void push(const int& new_value){my_stack.emplace(new_value);};
 
         /// Remove the topmost element of the stack
         void pop(){my_stack.pop();};

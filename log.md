@@ -66,15 +66,17 @@ Useful links:
 - <https://en.cppreference.com/w/cpp/container/map> 
 
 ***
-<h1>Classes</h1>
+<h2>Classes</h2>
 
 
-<h3>11-Feb-2020</h3>
+<h3>11-Feb-2020, MS</h3>
 
 <h4>Classes (presented by Colleen)</h4>
 Classes are a type of data structure that contains data members and data functions <br> both of which can be public or private (and also protected)
 
 After declarations are done, any public data members and data functions may be called with using a dot after the member name <br>A constructor is called when any class is created though there is no requirement write out the empty consructor explicitly <br>One may create either parameterized or unparamterized constructors
+
+For more information please see [Colleen's Code](https://github.com/goirijo/utiliteam/blob/master/slides/200212_casmmeeting_classes.pdf)
 
 Useful links:
 - <http://www.cplusplus.com/doc/tutorial/classes/>

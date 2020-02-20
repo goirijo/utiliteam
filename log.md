@@ -66,7 +66,7 @@ Useful links:
 - <https://en.cppreference.com/w/cpp/container/map> 
 
 -------
-## Classes<
+## Classes
 ### 11-Feb-2020, MS
 
 #### [Classes](slides/200212_casmmeeting_classes.pdf) \(presented by Colleen\) 
@@ -85,3 +85,16 @@ Useful links:
 #### A breaking down code based exercise (presented by John)
 Potential functions for a factor group code were broken into a Methods and Data Structure column only to be broken down more.
 The exercise followed a "big picture" to smaller unit workflow where the goal was to determine all individual functions necessary to find the factor group of a crystal.
+
+-------
+## Values and References
+### 20-Feb, <NAME>
+
+#### [Lvalues and Rvalues](slides/lvaluervalue.pdf) \(presented by Sanjeev\)
+Lvalues are objects whose resources cannot be reused (a permanent label, should be treated as a *name*).
+Rvalues are objects whose resources can be reused (a temporary object, should be treated as *contents*).
+Lvalue references are attached to the named object (box/name and contents)
+Rvalue references are attached to details (just the contents, may be stolen and reboxed/named)
+
+Useful links:
+- <https://www.fluentcpp.com/2018/02/06/understanding-lvalues-rvalues-and-their-references/>

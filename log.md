@@ -1,6 +1,6 @@
 # The Log
 
-This is where we keep track of what we've been talking about during each metting.
+This is where we keep track of what we've been talking about during each meeting.
 It's written in Markdown, which you can learn how to use [here](https://www.markdownguide.org/basic-syntax/).
 We can have a section added each week.
 No ugly posts allowed.
@@ -12,9 +12,10 @@ Projects we come up with can either be developed directly here or included as a 
 We can also share different resources that might be useful for the group.
 
 ----
+## Data structures
 ### 07-Feb-2020, EGP
 
-#### Linked Lists \(presented by Farnaz\)
+#### [Linked_lists](slides/Linked_C%2B%2B.pdf) \(presented by Farnaz\) 
 A linked list is a type of linear data structure that stores data.
 A linked list contains nodes, which are made of two parts.
 One part contains the data and the second is a pointer that points to the address of the following node.

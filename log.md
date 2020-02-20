@@ -64,3 +64,24 @@ Useful links:
 - <http://www.cplusplus.com/reference/map/map/>
 - <https://www.geeksforgeeks.org/map-vs-unordered_map-c/>
 - <https://en.cppreference.com/w/cpp/container/map> 
+
+-------
+## Classes<
+### 11-Feb-2020, MS
+
+#### [Classes](slides/200212_casmmeeting_classes.pdf) \(presented by Colleen\) 
+Classes are a type of data structure that contains data members and data functions, both of which can be public or private (and also protected).
+After declarations are done, any public data members and data functions may be called with using a dot after the member name.
+A constructor is called when any class is created though there is no requirement write out the empty consructor explicitly.
+One may create either parameterized or unparamterized constructors
+
+
+Useful links:
+- <http://www.cplusplus.com/doc/tutorial/classes/>
+- <https://www.tutorialspoint.com/cplusplus/cpp_constructor_destructor.htm>
+- <http://www.trytoprogram.com/cplusplus-programming/constructors/>
+
+
+#### A breaking down code based exercise (presented by John)
+Potential functions for a factor group code were broken into a Methods and Data Structure column only to be broken down more.
+The exercise followed a "big picture" to smaller unit workflow where the goal was to determine all individual functions necessary to find the factor group of a crystal.

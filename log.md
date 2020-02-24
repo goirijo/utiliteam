@@ -88,13 +88,25 @@ The exercise followed a "big picture" to smaller unit workflow where the goal wa
 
 -------
 ## Values and References
-### 20-Feb, <NAME>
+### 20-Feb-2020, SHA
 
 #### [Lvalues and Rvalues](slides/lvaluervalue.pdf) \(presented by Sanjeev\)
 Lvalues are objects whose resources cannot be reused (a permanent label, should be treated as a *name*).
 Rvalues are objects whose resources can be reused (a temporary object, should be treated as *contents*).
-Lvalue references are attached to the named object (box/name and contents)
-Rvalue references are attached to details (just the contents, may be stolen and reboxed/named)
+
+Lvalue references are attached to the named object (box/name and contents):
+- Can be passed to a function in a potentially non-const way. Look for '&'.
+- Can be passed to a function in a const way. Look for 'const' and '&'.
+
+Rvalue references are attached to details (just the contents, may be stolen and reboxed/named):
+- Can be passed to a function in a potentially non-const way. Look for '&&'.
+- Once the object is passed the user loses access to the object.
+
+Rules:
+- Cannot bind R value reference to L value or L value reference.
+- Cannot bind non-const L value reference to R value or R value reference.
 
 Useful links:
 - <https://www.fluentcpp.com/2018/02/06/understanding-lvalues-rvalues-and-their-references/>
+- <https://en.cppreference.com/w/cpp/language/reference>
+

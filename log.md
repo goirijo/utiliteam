@@ -88,7 +88,7 @@ The exercise followed a "big picture" to smaller unit workflow where the goal wa
 
 -------
 ## Values and References
-### 20-Feb, <NAME>
+### 20-Feb-2020, SHA
 
 #### [Lvalues and Rvalues](slides/lvaluervalue.pdf) \(presented by Sanjeev\)
 Lvalues are objects whose resources cannot be reused (a permanent label, should be treated as a *name*).

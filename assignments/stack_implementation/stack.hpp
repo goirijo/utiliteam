@@ -7,8 +7,7 @@ class IntStack
         /// Returns true if there are no elements on the stack
         bool empty() const
         {
-            std::vector<int> myStack = m_stack_list;
-            if (myStack.size() == 0) 
+            if (m_stack_list.size() == 0) 
             {
                 return true;
             }
@@ -21,32 +20,28 @@ class IntStack
         /// Returns the number of elements on the stack
         int size() const
         {
-            std::vector<int> myStack = m_stack_list;
-            int size = myStack.size();
+            int size = m_stack_list.size();
             return size;
         }
 
         /// Return the top element of the stack, i.e. the last element that was pushed
         int top() const
         {
-            std::vector<int> myStack = m_stack_list;
-            int top_value = myStack.back();
+            int top_value = m_stack_list.back();
             return top_value;
         }
 
         /// Adds a new element to the top of the stack
         void push(const int& new_value) 
         {
-            std::vector<int> myStack = m_stack_list;
-            myStack.push_back(new_value);
+            m_stack_list.push_back(new_value);
             return;
         }
 
         /// Remove the topmost element of the stack
         void pop()
         {
-            std::vector<int> myStack = m_stack_list;
-            myStack.pop_back();
+            m_stack_list.pop_back();
             return;
         }
 

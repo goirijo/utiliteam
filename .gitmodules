@@ -4,3 +4,6 @@
 [submodule "projects/molecule-point-group"]
 	path = projects/molecule-point-group
 	url = git@github.com:seshasaibehara/molecule-point-group.git
+[submodule "submodules/eigen-git-mirror"]
+	path = submodules/eigen-git-mirror
+	url = https://github.com/eigenteam/eigen-git-mirror

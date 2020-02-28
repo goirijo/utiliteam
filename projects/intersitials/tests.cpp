@@ -6,26 +6,43 @@ class Lattice
 //Defines Cartesian position in a crystal
 class Coordinate
 {
+	
 	public:
+	Coordinate(vector<double> coords):
+	{
+		my_coords(coords);
+	}
 	vector<double> get_coordinates()
 	{
-		return coords;
+		return my_coords;
 	}
+	double get_x{
+		return my_coords.at(0);
+	}
+	double get_y{
+		return my_coords.at(1);
+	}
+	double get_z{
+		return my_coords.at(2):
+	}
+	
 	private:
-	double x;
-	double y;
-	double z;
+	vector double my_coords;  //does this have to be public if it's used for the constructor?
 };
 
 //Defines position and type of atom in a crystal
 class Site
 {
 	public:
+	//Should I use a constructor? I assume so...
 	std::map<int, vector<double>> get_site()
 	{
 		Coordinate coord;
 		vector<double> my_coord=coord.get_coordinates()
-		return index, my_coord;   //This is definitely not how you should do this
+		std::map<int, vector<double>> init_site;
+		init_site.first()=n; //not sure what to put here
+		init_site.second()=my_coord;
+		return init_site;   
 	}
 	private:
 

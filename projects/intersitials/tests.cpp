@@ -7,7 +7,10 @@ class Lattice
 class Coordinate
 {
 	public:
-	
+	vector<double> get_coordinates()
+	{
+		return coords;
+	}
 	private:
 	double x;
 	double y;
@@ -17,6 +20,15 @@ class Coordinate
 //Defines position and type of atom in a crystal
 class Site
 {
+	public:
+	std::map<int, vector<double>> get_site()
+	{
+		Coordinate coord;
+		vector<double> my_coord=coord.get_coordinates()
+		return index, my_coord;   //This is definitely not how you should do this
+	}
+	private:
+
 };
 
 Site bring_within(const Site& site_outside_of_unit, const Lattice& unit_cell)

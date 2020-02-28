@@ -6,6 +6,12 @@ class Lattice
 //Defines Cartesian position in a crystal
 class Coordinate
 {
+	public:
+	
+	private:
+	double x;
+	double y;
+	double z;
 };
 
 //Defines position and type of atom in a crystal

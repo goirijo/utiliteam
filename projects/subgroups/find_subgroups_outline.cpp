@@ -3,41 +3,70 @@
 #include <cmath>
 #include <cstdlib>
 
+bool EXPECT_TRUE()
+{
+}
+
+class SymOp
+{
+    //Constructs the identity element
+    static SymOp identity()
+    {
+    }
+};
+
+class SymGroup
+{
+}
+
+SymOp operator*(const SymOp& lhs, const SymOp& rhs)
+{
+}
+
+struct SymOpCompare_f
+{
+    bool operator()(const SymOp& other) const
+    {
+    }
+};
+
+struct SymGroupCompare_f
+{
+    bool operator()(const SymGroup& other) const
+    {
+    }
+};
+
+int main()
+{
+    //Test for SymOp construction
+    Eigen::Matrix3d init_mat;
+    SymOp op0(init_mat);
+    EXPECT_TRUE(init_mat==op0.matrix());
+    //Test for SymOp identity construction
+    //
+    //Test for SymOp multiplication
+    //
+    //Test for SymOp comaprison
+    //
+    /////////////////////////////////////
+    //
+    //Test for SymGroup construction
+    //
+    //Test for SymGroup comparison
+}
+
+//////////////////////////////////////
+/*
+
 //Returns true if group is closed.
-bool check_for_closure(std::vector<Eigen::Matrix3d> group) 
+bool check_for_closure(std::vector<SymOp> group) 
 {
-
+    //take every possible product,
+    //if it's not in the group, then it's not closed
+    //->need comparison
 }
 
-//Returns true if Identity is an element of the group.
-bool check_for_identity(std::vector<Eigen::Matrix3d> group) 
-{
-
-}
-
-//Returns product of two group elements.
-Eigen::Matrix3d multiply_group_elements(Eigen::Matrix3d element1, Eigen::Matrix3d element2) 
-{
-
-}
-
-//Returns true if given element is a member of the given group.
-bool is_element_in_group(Eigen::Matrix3d element, std::vector<Eigen::Matrix3d> group) 
-{
-
-}
-
-//Returns true if the two given groups are equal size and contain the same elements.
-bool compare_groups(std::vector<Eigen::Matrix3d> group1, std::vector<Eigen::Matrix3d> group2) 
-{
-
-}
-
-//Returns true if given group is a member of the given list of subgroups.
-bool is_group_in_list_of_subgroups(std::vector<std::vector<Eigen::Matrix3d>> list_of_subgroups, std::vector<Eigen::Matrix3d> group) 
-{
-
-}
 
 //Returns combined group with no duplicate.
 std::vector<Eigen::Matrix3d> combine_groups(std::vector<Eigen::Matrix3d> group1, std::vector<Eigen::Matrix3d> group2) 
@@ -94,4 +123,4 @@ int main()
     
     return 0;
 }
-
+*/

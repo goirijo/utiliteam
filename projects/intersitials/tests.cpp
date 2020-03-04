@@ -2,7 +2,8 @@
 #include <vector> 
 #include <iterator> 
 #include <map> 
-
+#include <string>
+#include "../../../avdv-point-group/eigen-git-mirror/Eigen/Dense"
 //Defines three lattice vectors of a crystal
 class Lattice
 {
@@ -13,37 +14,33 @@ class Coordinate
 {
 	
 	public:
-	Coordinate(std::vector<double> coord) 
+	Coordinate(Eigen::Vector3f coord) 
 	{
 	//	std::vector<double> my_coord(coord);
 	       my_coord=coord;
 	}
 	
-//	std::vector<double> build_coord(double val)
-//	{
-//		my_coord.push_back(val);
-//	};
 
-	std::vector<double> get_coordinate()
+	Eigen::Vector3f get_coordinate()
 	{
 		return my_coord;
 	}
 	
 	double get_x()
 	{
-		return my_coord.at(0);
+		return my_coord(0);
 	}
 	double get_y()
 	{
-		return my_coord.at(1);
+		return my_coord(1);
 	}
 	double get_z()
 	{
-		return my_coord.at(2);
+		return my_coord(2);
 	}
 
 	private:
-	std::vector<double> my_coord;  //does this have to be public if it's used for the constructor?
+	Eigen::Vector3f my_coord;  //does this have to be public if it's used for the constructor?
 };
 
 
@@ -51,28 +48,35 @@ class Coordinate
 class Site
 {
 	public:
-	//Should I use a constructor? I assume so...
-	//std::map<int, std::vector<double>> get_site(Coordinate coord, std::map<int, std::vector<double>>::iterator it)
-	//Site(int init_i, Coordinate& init_coord(std::vector<double>))
-	//{
-	//	my_coord=init_coord;
-	//	i=init_i;
-	//}
-	std::map<int, std::vector<double>> get_site(int i, Coordinate my_coord)
+	Site(std::string atom_name, Coordinate& init_coord):
+		my_coord(init_coord),
+		atom(atom_name)
+	{}
+	std::string get_atom()
 	{
-		
-		std::vector<double> coord=my_coord.get_coordinate();
-		std::map<int, std::vector<double>> init_site;
-		//iit->first; //not sure what to put here
-		//it->second;
-		init_site.insert(std::make_pair(i, coord));
-		return init_site;   
+		return atom;
 	}
 
-	//std::pair insert(int index, 
+	Eigen::Vector3f get_coordinate()
+	{
+		return my_coord.get_coordinate();
+	}
+
+
+	//std::map<int, std::vector<double>> get_site(int i, Coordinate my_coord)
+	//{
+		
+	//	std::vector<double> coord=my_coord.get_coordinate();
+	//	std::map<int, std::vector<double>> init_site;
+		//iit->first; //not sure what to put here
+		//it->second;
+	//	init_site.insert(std::make_pair(i, coord));
+	//	return init_site;   
+	//}
+
 	private:
-	int i;
-	Coordinate my_coord(std::vector<double>);
+	std::string atom;
+	Coordinate my_coord;
 
 };
 /*
@@ -100,19 +104,33 @@ Structure read_poscar(const std::string& poscar_path)
 class Cluster
 {
     	public:
-	std::map<int, std::vector<Site>> get_cluster(int i, std::vector<Site> my_sites)
- 	{
-	       std::map<int, std::vector<Site>> my_cluster;
+	Cluster(std::vector<Site> sites):
+		my_sites(sites)
+	{}
+
+	int cluster_size()
+	{
+		return my_sites.size();
+	}
+
+	Site get_site(int i)
+	{
+		return my_sites.at(i);
+	}
+
+
+	//std::map<int, std::vector<Site>> get_cluster(int i, std::vector<Site> my_sites)
+ 	//{
+	  //     std::map<int, std::vector<Site>> my_cluster;
 	       //std::map<int, std::vector<Site>>::itterator it=my_cluster.begin();
 	       //for (int i=0; i<my_sites.size(); i++)
 	       //{
-	       my_cluster.insert(std::pair<int, std::vector<Site>>(i, my_sites));
+	    //   my_cluster.insert(std::pair<int, std::vector<Site>>(i, my_sites));
 	       //}
-	return my_cluster;
-	}
+	//return my_cluster;
+	//}
 
     private:
-	int i;
 	std::vector<Site> my_sites;
 };
 /*
@@ -145,20 +163,44 @@ std::vector<SymOp> make_factor_group(const Structure& struc)
 int main()
 {
     //Coordinate test
-	std::vector<double> myvec;
+        std::cout<<"1st Coordinate is: ";
+	Eigen::Vector3f myvec;
         for (int i = 0; i < 3; i++)
-             myvec.push_back(0);
-        Coordinate mycoords(myvec);
-	std::vector<double> coords=mycoords.get_coordinate();
-	for(int i=0; i < coords.size(); i++)
-          std::cout << coords.at(i) << ' ';
-	std::cout<<'\n';
+             myvec(i)=0;
+        Coordinate mycoord_1(myvec);
+	Eigen::Vector3f coord_1=mycoord_1.get_coordinate();
+	std::cout<<coord_1.transpose();
+	std::cout<<'\n'<<'\n';
 
      //Site Test
-   	Site mysites;
-  	std::map<int, std::vector<double>> first_site=mysites.get_site(0, mycoords);
+        std::cout<<"Sites are: ";
+   	Site mysite("Nb", mycoord_1);
+	auto site_coord_1=mysite.get_coordinate();
+	std::cout<<mysite.get_atom()<<' ';
+	std::cout<<mysite.get_coordinate().transpose();
+	std::cout<<'\n';
+
+
+	 std::vector<Site> sites;
+	 sites.push_back(mysite);
+	 Eigen::Vector3f vec_2;
+         vec_2(0)=0;
+	 vec_2(1)=0.5;
+	 vec_2(2)=0.5;
+	 Coordinate my_coord2(vec_2);
+	 Site my_site2("O", my_coord2);	 
+	 std::cout<< my_site2.get_atom()<<' ';
+	 std::cout<<my_site2.get_coordinate().transpose()<<'\n'<<'\n';
+	 
+         //Cluster Test
+         std::cout<<"Length of cluster is: ";
+	 sites.push_back(my_site2);
+	 Cluster mycluster(sites);
+	 std::cout<<mycluster.cluster_size()<<'\n'<<'\n';
+
+  	//std::map<int, std::vector<double>> first_site=mysites.get_site(0, mycoords);
 	//std::map<int, std::vector<double>>::iterator it = first_site.begin();
-   	std::cout<<first_site[0];
+   	//std::cout<<first_site[0];
    	//for (std::map<int, std::vector<double>>::iterator it = first_site.begin(); it != first_site.end(); ++it)
    	//{
 	 // std::cout << (*it).first << " " << (*it).second << '\n';
@@ -188,3 +230,4 @@ int main()
 	
     //Test for Cluster
 }
+

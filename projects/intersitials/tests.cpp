@@ -95,15 +95,27 @@ class Structure
 Structure read_poscar(const std::string& poscar_path)
 {
 }
-
+*/
 //Defines a collection of Sites in a crystal
 class Cluster
 {
-    public:
+    	public:
+	std::map<int, std::vector<Site>> get_cluster(int i, std::vector<Site> my_sites)
+ 	{
+	       std::map<int, std::vector<Site>> my_cluster;
+	       //std::map<int, std::vector<Site>>::itterator it=my_cluster.begin();
+	       //for (int i=0; i<my_sites.size(); i++)
+	       //{
+	       my_cluster.insert(std::pair<int, std::vector<Site>>(i, my_sites));
+	       //}
+	return my_cluster;
+	}
 
     private:
-}
-
+	int i;
+	std::vector<Site> my_sites;
+};
+/*
 struct SiteCompare_f
 {
     bool operator()(const Site& other)
@@ -135,31 +147,44 @@ int main()
     //Coordinate test
 	std::vector<double> myvec;
         for (int i = 0; i < 3; i++)
-             myvec.push_back(i*0.2);
+             myvec.push_back(0);
         Coordinate mycoords(myvec);
 	std::vector<double> coords=mycoords.get_coordinate();
 	for(int i=0; i < coords.size(); i++)
           std::cout << coords.at(i) << ' ';
 	std::cout<<'\n';
 
-   //Site Test
-   Site mysites;
-   std::map<int, std::vector<double>> first_site=mysites.get_site(0, mycoords);
-   std::map<int, std::vector<double>>::iterator it = first_site.begin();
-   //std::cout<<first_site[0];
-   //for (std::map<int, std::vector<double>>::iterator it = first_site.begin(); it != first_site.end(); ++it)
-   //{
-	   //std::cout<<"Hi";
-	  // std::cout << (*it).first << " " << (*it).second << '\n';
-   //}
+     //Site Test
+   	Site mysites;
+  	std::map<int, std::vector<double>> first_site=mysites.get_site(0, mycoords);
+	//std::map<int, std::vector<double>>::iterator it = first_site.begin();
+   	std::cout<<first_site[0];
+   	//for (std::map<int, std::vector<double>>::iterator it = first_site.begin(); it != first_site.end(); ++it)
+   	//{
+	 // std::cout << (*it).first << " " << (*it).second << '\n';
+   	//}
     //Test for Lattice
-    //Test for Coordinate
-    //Test for Site
+    
+    
+
+    
+    
+    
     //Test bring_within
+    
+
+    
+    
+    
     //Test for Structure
+    
+
     //Test read Structure
     //
     //Test make_factor_group
-    //
+   
+
+
+	
     //Test for Cluster
 }

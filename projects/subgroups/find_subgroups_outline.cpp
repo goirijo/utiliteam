@@ -2,58 +2,174 @@
 #include <vector>
 #include <cmath>
 #include <cstdlib>
+#include "../eigen-git-mirror/Eigen/Dense"
 
-bool EXPECT_TRUE()
-{
-}
+#define PREC 1e-6
 
 class SymOp
 {
-    //Constructs the identity element
-    static SymOp identity()
-    {
-    }
+    public:
+        Eigen::Matrix3d cart_matrix;
+
+        SymOp (Eigen::Matrix3d input_matrix):
+            cart_matrix (input_matrix) {}
 };
 
 class SymGroup
 {
-}
+    public:
+        std::vector<SymOp> group;
+
+        SymGroup (std::vector<SymOp> input_group):
+            group (input_group) {}
+};
 
 SymOp operator*(const SymOp& lhs, const SymOp& rhs)
 {
+    Eigen::Matrix3d product = lhs.cart_matrix * rhs.cart_matrix;
+    SymOp symop_product(product);
+    return symop_product;
 }
 
 struct SymOpCompare_f
 {
-    bool operator()(const SymOp& other) const
+    SymOpCompare_f(SymOp input1):
+       element1 (input1) {} 
+    bool operator()(const SymOp& element2) const
     {
+        return element1.cart_matrix.isApprox(element2.cart_matrix, PREC);
     }
+
+    private:
+        SymOp element1;
 };
 
 struct SymGroupCompare_f
 {
-    bool operator()(const SymGroup& other) const
+    SymGroupCompare_f(SymGroup input1):
+        group1 (input1) {}
+    
+    bool operator()(const SymGroup& group2) const
     {
+        if (group1.group.size() != group2.group.size()) 
+        {
+            return false;
+        }
+        else 
+        {
+            for (SymOp symop : group1.group) 
+            {
+                SymOpCompare_f compare_elements(symop);
+                if (std::find_if (group2.group.begin(), group2.group.end(), compare_elements) == group2.group.end()) 
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
+    
+    private:
+        SymGroup group1;
 };
+
+void EXPECT_EQ_MATRICES(Eigen::Matrix3d matrix1, Eigen::Matrix3d matrix2, std::string test_name) 
+{
+    if (matrix1 == matrix2) 
+    {
+        std::cout << "PASS" <<std::endl;
+    }
+
+    else 
+    {
+        std::cout << "FAILED" << test_name << std::endl;
+    }
+
+    return;
+    
+}
+
+void EXPECT_EQ_VECTORS(std::vector<SymOp> vector1, std::vector<SymOp> vector2, std::string test_name) 
+{
+    SymGroupCompare_f compare(vector1);
+    if (compare(vector2)) 
+    {
+        std::cout<< "PASS" << std::endl;
+    }
+
+    else 
+    {
+        std::cout << "FAILED" << test_name << std::endl;
+    }
+
+    return;
+}
+void EXPECT_TRUE(bool is_true, std::string test_name) 
+{
+    if (is_true) 
+    {
+        std::cout << "PASS" << std::endl;
+    }
+
+    else 
+    {
+        std::cout << "FAILED" << test_name << std::endl;
+    }
+
+    return;
+}
 
 int main()
 {
     //Test for SymOp construction
-    Eigen::Matrix3d init_mat;
-    SymOp op0(init_mat);
-    EXPECT_TRUE(init_mat==op0.matrix());
-    //Test for SymOp identity construction
-    //
+    Eigen::Matrix3d init_mat1 = Eigen::Matrix3d::Identity();
+    SymOp op1(init_mat1);
+    EXPECT_EQ_MATRICES(init_mat1, op1.cart_matrix, "SymOp construction");
+    
     //Test for SymOp multiplication
-    //
+    Eigen::Matrix3d init_mat2;
+    init_mat2 << 0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0;
+    Eigen::Matrix3d init_mat3 = init_mat1 * -1;
+    SymOp op2(init_mat2);
+    SymOp op3(init_mat3);
+    Eigen::Matrix3d mat_product = init_mat2 * init_mat3;
+    SymOp op_product = op2 * op3;
+    EXPECT_EQ_MATRICES(mat_product, op_product.cart_matrix, "multiplication operator");
+    
     //Test for SymOp comaprison
-    //
+    SymOpCompare_f compare_symops(op1);
+
+    EXPECT_TRUE(compare_symops(op1), "compare op1 w/ op1");
+    EXPECT_TRUE(!compare_symops(op2), "compare op1 w/ op2");
+    
     /////////////////////////////////////
-    //
+    
     //Test for SymGroup construction
-    //
+    std::vector<SymOp> init_vector1;
+    init_vector1.push_back(op1);
+    init_vector1.push_back(op2);
+    init_vector1.push_back(op3);
+
+    SymGroup group1(init_vector1);
+    EXPECT_EQ_VECTORS(init_vector1, group1.group, "SymGroup construction");
+    
     //Test for SymGroup comparison
+    Eigen::Matrix3d init_mat4 = init_mat2 * -1;
+    Eigen::Matrix3d init_mat5 = init_mat1 * 2;
+    SymOp op4(init_mat4);
+    SymOp op5(init_mat5);
+    std::vector<SymOp> init_vector2;
+    init_vector2.push_back(op4);
+    init_vector2.push_back(op5);
+
+    SymGroup group2(init_vector2);
+    SymGroupCompare_f compare_groups(group1);
+
+    EXPECT_TRUE(compare_groups(group1), "compare group1 w/ group1");
+    EXPECT_TRUE(!compare_groups(group2), "compare group1 w/ group2");
+
+    return 0;
 }
 
 //////////////////////////////////////

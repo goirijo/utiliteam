@@ -1,3 +1,8 @@
+#include <iostream> 
+#include <vector> 
+#include <iterator> 
+#include <map> 
+
 //Defines three lattice vectors of a crystal
 class Lattice
 {
@@ -8,46 +13,69 @@ class Coordinate
 {
 	
 	public:
-	Coordinate(vector<double> coords):
+	Coordinate(std::vector<double> coord) 
 	{
-		my_coords(coords);
-	}
-	vector<double> get_coordinates()
-	{
-		return my_coords;
-	}
-	double get_x{
-		return my_coords.at(0);
-	}
-	double get_y{
-		return my_coords.at(1);
-	}
-	double get_z{
-		return my_coords.at(2):
+	//	std::vector<double> my_coord(coord);
+	       my_coord=coord;
 	}
 	
+//	std::vector<double> build_coord(double val)
+//	{
+//		my_coord.push_back(val);
+//	};
+
+	std::vector<double> get_coordinate()
+	{
+		return my_coord;
+	}
+	
+	double get_x()
+	{
+		return my_coord.at(0);
+	}
+	double get_y()
+	{
+		return my_coord.at(1);
+	}
+	double get_z()
+	{
+		return my_coord.at(2);
+	}
+
 	private:
-	vector double my_coords;  //does this have to be public if it's used for the constructor?
+	std::vector<double> my_coord;  //does this have to be public if it's used for the constructor?
 };
+
 
 //Defines position and type of atom in a crystal
 class Site
 {
 	public:
 	//Should I use a constructor? I assume so...
-	std::map<int, vector<double>> get_site()
+	//std::map<int, std::vector<double>> get_site(Coordinate coord, std::map<int, std::vector<double>>::iterator it)
+	//Site(int init_i, Coordinate& init_coord(std::vector<double>))
+	//{
+	//	my_coord=init_coord;
+	//	i=init_i;
+	//}
+	std::map<int, std::vector<double>> get_site(int i, Coordinate my_coord)
 	{
-		Coordinate coord;
-		vector<double> my_coord=coord.get_coordinates()
-		std::map<int, vector<double>> init_site;
-		init_site.first()=n; //not sure what to put here
-		init_site.second()=my_coord;
+		
+		std::vector<double> coord=my_coord.get_coordinate();
+		std::map<int, std::vector<double>> init_site;
+		//iit->first; //not sure what to put here
+		//it->second;
+		init_site.insert(std::make_pair(i, coord));
 		return init_site;   
 	}
+
+	//std::pair insert(int index, 
 	private:
+	int i;
+	Coordinate my_coord(std::vector<double>);
 
 };
-
+/*
 Site bring_within(const Site& site_outside_of_unit, const Lattice& unit_cell)
 {
 }
@@ -101,9 +129,29 @@ Cluster operator*(const Cluster& site, const SymOp& transformation)
 std::vector<SymOp> make_factor_group(const Structure& struc)
 {
 }
-
+*/
 int main()
 {
+    //Coordinate test
+	std::vector<double> myvec;
+        for (int i = 0; i < 3; i++)
+             myvec.push_back(i*0.2);
+        Coordinate mycoords(myvec);
+	std::vector<double> coords=mycoords.get_coordinate();
+	for(int i=0; i < coords.size(); i++)
+          std::cout << coords.at(i) << ' ';
+	std::cout<<'\n';
+
+   //Site Test
+   Site mysites;
+   std::map<int, std::vector<double>> first_site=mysites.get_site(0, mycoords);
+   std::map<int, std::vector<double>>::iterator it = first_site.begin();
+   //std::cout<<first_site[0];
+   //for (std::map<int, std::vector<double>>::iterator it = first_site.begin(); it != first_site.end(); ++it)
+   //{
+	   //std::cout<<"Hi";
+	  // std::cout << (*it).first << " " << (*it).second << '\n';
+   //}
     //Test for Lattice
     //Test for Coordinate
     //Test for Site

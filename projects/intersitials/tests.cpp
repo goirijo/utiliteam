@@ -162,8 +162,8 @@ std::vector<SymOp> make_factor_group(const Structure& struc)
 */
 int main()
 {
-    //Coordinate test
-        std::cout<<"1st Coordinate is: ";
+        //Coordinate test
+        std::cout<<"1st Basis Coordinate is: ";
 	Eigen::Vector3f myvec;
         for (int i = 0; i < 3; i++)
              myvec(i)=0;
@@ -172,31 +172,29 @@ int main()
 	std::cout<<coord_1.transpose();
 	std::cout<<'\n'<<'\n';
 
-     //Site Test
+        //Site Test
         std::cout<<"Sites are: ";
    	Site mysite("Nb", mycoord_1);
 	auto site_coord_1=mysite.get_coordinate();
 	std::cout<<mysite.get_atom()<<' ';
 	std::cout<<mysite.get_coordinate().transpose();
 	std::cout<<'\n';
-
-
-	 std::vector<Site> sites;
-	 sites.push_back(mysite);
-	 Eigen::Vector3f vec_2;
-         vec_2(0)=0;
-	 vec_2(1)=0.5;
-	 vec_2(2)=0.5;
-	 Coordinate my_coord2(vec_2);
-	 Site my_site2("O", my_coord2);	 
-	 std::cout<< my_site2.get_atom()<<' ';
-	 std::cout<<my_site2.get_coordinate().transpose()<<'\n'<<'\n';
-	 
-         //Cluster Test
-         std::cout<<"Length of cluster is: ";
-	 sites.push_back(my_site2);
-	 Cluster mycluster(sites);
-	 std::cout<<mycluster.cluster_size()<<'\n'<<'\n';
+        std::vector<Site> sites;
+        sites.push_back(mysite);
+        Eigen::Vector3f vec_2;
+        vec_2(0)=0;
+        vec_2(1)=0.5;
+        vec_2(2)=0.5;
+        Coordinate my_coord2(vec_2);
+        Site my_site2("O", my_coord2);	 
+        std::cout<< my_site2.get_atom()<<' ';
+        std::cout<<my_site2.get_coordinate().transpose()<<'\n'<<'\n';
+        
+        //Cluster Test
+        std::cout<<"Length of cluster is: ";
+        sites.push_back(my_site2);
+        Cluster mycluster(sites);
+        std::cout<<mycluster.cluster_size()<<'\n'<<'\n';
 
   	//std::map<int, std::vector<double>> first_site=mysites.get_site(0, mycoords);
 	//std::map<int, std::vector<double>>::iterator it = first_site.begin();

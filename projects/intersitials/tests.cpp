@@ -1,111 +1,79 @@
-#include <iostream> 
-#include <vector> 
-#include <iterator> 
-#include <map> 
-#include <string>
-#include <math.h>
-#include <stdlib.h>
-#include <numeric>
+#include "../../submodules/eigen-git-mirror/Eigen/Core"
 #include <fstream>
-#include "../../../avdv-point-group/eigen-git-mirror/Eigen/Dense"
+#include <iostream>
+#include <iterator>
+#include <map>
+#include <math.h>
+#include <numeric>
+#include <sstream>
+#include <stdlib.h>
+#include <string>
+#include <vector>
 
-//Defines three lattice vectors of a crystal
+// Defines three lattice vectors of a crystal
 class Lattice
 {
-	private:
-		Eigen::Matrix3d LAT;
+private:
+    Eigen::Matrix3d LAT;
 
-    public:
-    //different intilization instructors for different situations
-        Lattice(){}
+public:
+    // different intilization instructors for different situations
+    Lattice(Eigen::Matrix3d& M) { LAT = M; }
 
-        Lattice(Eigen::Matrix3d &M)
-        {
-        	LAT=M;
-        }
-
-        Lattice(const Eigen::Vector3d &V1, const Eigen::Vector3d &V2, const Eigen::Vector3d &V3)
-        {
-        	LAT.col(0)=V1;
-        	LAT.col(1)=V2;
-        	LAT.col(2)=V3;
-        }
-        //property
-        Eigen::Vector3d Lattice_vector (int i)
-        {
-        	return LAT.col(i);
-        }
+    Lattice(const Eigen::Vector3d& V1, const Eigen::Vector3d& V2, const Eigen::Vector3d& V3)
+    {
+        LAT.col(0) = V1;
+        LAT.col(1) = V2;
+        LAT.col(2) = V3;
+    }
+    // property
+    Eigen::Vector3d Lattice_vector(int i) { return LAT.col(i); }
 };
 
-//Defines Cartesian position in a crystal
+// Defines Cartesian position in a crystal
 class Coordinate
 {
-	
-	public:
-	Coordinate(Eigen::Vector3d coord) 
-	{
-	//	std::vector<double> my_coord(coord);
-	       my_coord=coord;
-	}
-	
 
-	Eigen::Vector3d get_coordinate()
-	{
-		return my_coord;
-	}
-	
-	double get_x()
-	{
-		return my_coord(0);
-	}
-	double get_y()
-	{
-		return my_coord(1);
-	}
-	double get_z()
-	{
-		return my_coord(2);
-	}
+public:
+    Coordinate(Eigen::Vector3d coord)
+    {
+        //	std::vector<double> my_coord(coord);
+        my_coord = coord;
+    }
 
-	private:
-	Eigen::Vector3d my_coord;  //does this have to be public if it's used for the constructor?
+    Eigen::Vector3d get_coordinate() { return my_coord; }
+
+    double get_x() { return my_coord(0); }
+    double get_y() { return my_coord(1); }
+    double get_z() { return my_coord(2); }
+
+private:
+    Eigen::Vector3d my_coord; // does this have to be public if it's used for the constructor?
 };
 
-
-//Defines position and type of atom in a crystal
+// Defines position and type of atom in a crystal
 class Site
 {
-	public:
-	Site(std::string atom_name, Coordinate& init_coord):
-		my_coord(init_coord),
-		atom(atom_name)
-	{}
-	std::string get_atom()
-	{
-		return atom;
-	}
+public:
+    Site(std::string atom_name, Coordinate& init_coord) : my_coord(init_coord), atom(atom_name) {}
+    std::string get_atom() { return atom; }
 
-	Eigen::Vector3d get_coordinate()
-	{
-		return my_coord.get_coordinate();
-	}
+    Eigen::Vector3d get_coordinate() { return my_coord.get_coordinate(); }
 
+    // std::map<int, std::vector<double>> get_site(int i, Coordinate my_coord)
+    //{
 
-	//std::map<int, std::vector<double>> get_site(int i, Coordinate my_coord)
-	//{
-		
-	//	std::vector<double> coord=my_coord.get_coordinate();
-	//	std::map<int, std::vector<double>> init_site;
-		//iit->first; //not sure what to put here
-		//it->second;
-	//	init_site.insert(std::make_pair(i, coord));
-	//	return init_site;   
-	//}
+    //	std::vector<double> coord=my_coord.get_coordinate();
+    //	std::map<int, std::vector<double>> init_site;
+    // iit->first; //not sure what to put here
+    // it->second;
+    //	init_site.insert(std::make_pair(i, coord));
+    //	return init_site;
+    //}
 
-	private:
-	std::string atom;
-	Coordinate my_coord;
-
+private:
+    std::string atom;
+    Coordinate my_coord;
 };
 /*
 Site bring_within(const Site& site_outside_of_unit, const Lattice& unit_cell)
@@ -118,103 +86,85 @@ class SymOp
 {
 };
 */
-//Defines Lattice and basis (collection of Site)
-//in a crystal
+// Defines Lattice and basis (collection of Site)
+// in a crystal
 class Structure
 {
 };
 
 Structure read_poscar(const std::string& poscar_path)
 {
-    std::ifstream file(poscar_path);
-    std::string str;
-    std::string::size_type sz1;     // alias of size_t
-    std::string::size_type sz2;     // alias of size_t
-    std::vector<std::string> names;
-    std::vector<int> counts;
-    std::vector<std::vector<double>> cord;
+    std::ifstream poscar_stream(poscar_path);
+    std::string title;
+    std::getline(poscar_stream,title);
 
-    int t=0;
-	Eigen::Matrix3d lat;
-	while (std::getline(file, str)) {
-	    if (t==0)
-	    	std::cout << "reading POSCAR file for "<< str << "\n";
-	    else if(t==2||t==3||t==4)
-	    	{
-		//stof : extract float from string, but single number
-		//but we can pot pointer at its end
-	    	lat(t-2,0)=stof(str,&sz1);
-	    	lat(t-2,1)=stof(str.substr(sz1),&sz2);
-	    	lat(t-2,2)=stof(str.substr(sz1+sz2));
-	    	}
-	    else if(t==5)
-	    	{
-		//read spaced word from string
-	    		std::istringstream iss (str);
+    //freebie
+    double scaling;
+    poscar_stream>>scaling;
 
-	    	    while(iss >> str)
-	    	    {
-	    	        names.push_back(str);
-	    	    }
-	    	}
-	    else if(t==6)
-	    	{
-	    		std::istringstream iss (str);
+    //Fill int matrix by running through 9 "words"
+    //of the strem. You pipe each word into the correct
+    //matrix element with a double for loop
+    Eigen::Matrix3d lat_row_matrix;
+    //do the lattice filling
 
-	    	    while(iss >> str)
-	    	    {
-		    //stoi change string to int
-	    	        counts.push_back(stoi(str));
-	    	    }
-	    	}
+    //freebie
+    std::string species_line;
+    std::getline(poscar_stream,species_line);
 
-	    else if(t>=8&&t<accumulate(counts.begin(),counts.end(),0)+8)
-	    	{
-	        std::vector<double> cord_Temp;
+    //https://www.fluentcpp.com/2017/04/21/how-to-split-a-string-in-c/
+    //The species line is now a single string with all the species names
+    //check out the link to learn how to split it into a vector<string>
+    //of each individual element
+    //
+    //do the species filling
 
-	    	cord_Temp.push_back(stof(str,&sz1));
-	    	cord_Temp.push_back(stof(str.substr(sz1),&sz2));
-	    	cord_Temp.push_back(stof(str.substr(sz1+sz2)));
-	    	cord.push_back(cord_Temp);
-	    	}
-	    t=t+1;
-}
-//now we just need to fill structure to be returned
+    //repeat for number of species
+    //
+    
+    //freebie
+    std::string coord_type;
+    std::getline(poscar_stream, coord_type);
+
+    //The rest of the stream is just the coordinates now
+    //(assume no selective dynamics). Fill in one coordinate
+    //per line. Instead of std::getline, use poscar_stream.eof()
+    //Each line corresponds to 3 "words" (x,y and z)
+    std::vector<Eigen::Vector3d> raw_coordinate_values;
+    while(!poscar_stream.eof())
+    {
+    }
+
+    //make the lattice
+    //make the sites
+    //make the structure
+    //return the structure
+
 };
 
-
-//Defines a collection of Sites in a crystal
+// Defines a collection of Sites in a crystal
 class Cluster
 {
-    	public:
-	Cluster(std::vector<Site> sites):
-		my_sites(sites)
-	{}
+public:
+    Cluster(std::vector<Site> sites) : my_sites(sites) {}
 
-	int cluster_size()
-	{
-		return my_sites.size();
-	}
+    int cluster_size() { return my_sites.size(); }
 
-	Site get_site(int i)
-	{
-		return my_sites.at(i);
-	}
+    Site get_site(int i) { return my_sites.at(i); }
 
+    // std::map<int, std::vector<Site>> get_cluster(int i, std::vector<Site> my_sites)
+    //{
+    //     std::map<int, std::vector<Site>> my_cluster;
+    // std::map<int, std::vector<Site>>::itterator it=my_cluster.begin();
+    // for (int i=0; i<my_sites.size(); i++)
+    //{
+    //   my_cluster.insert(std::pair<int, std::vector<Site>>(i, my_sites));
+    //}
+    // return my_cluster;
+    //}
 
-	//std::map<int, std::vector<Site>> get_cluster(int i, std::vector<Site> my_sites)
- 	//{
-	  //     std::map<int, std::vector<Site>> my_cluster;
-	       //std::map<int, std::vector<Site>>::itterator it=my_cluster.begin();
-	       //for (int i=0; i<my_sites.size(); i++)
-	       //{
-	    //   my_cluster.insert(std::pair<int, std::vector<Site>>(i, my_sites));
-	       //}
-	//return my_cluster;
-	//}
-
-    private:
-	std::vector<Site> my_sites;
+private:
+    std::vector<Site> my_sites;
 };
 /*
 struct SiteCompare_f
@@ -245,92 +195,65 @@ std::vector<SymOp> make_factor_group(const Structure& struc)
 */
 int main()
 {
-        //Lattice test
-	//here it will initialize with randum numbers
-	Lattice M1;
+    // Lattice test
+    // here it will initialize with randum numbers
+    std::cout << "The a vector of my made up lattice is: ";
+    std::cout << '\n';
+    Eigen::Matrix3d O = Eigen::Matrix3d::Ones(3, 3);
 
-	std::cout<<"This is a vector for a random lattice: ";
-	std::cout<<M1.Lattice_vector(1).transpose()<<std::endl;
-	std::cout<<"The a vector of my made up lattice is: ";
-	std::cout<<'\n';
-	Eigen::Matrix3d O=Eigen::Matrix3d::Ones(3,3);
+    Lattice M2(O);
+    std::cout << M2.Lattice_vector(1).transpose() << std::endl;
+    std::cout << '\n' << '\n';
 
-	Lattice M2(O);
-	std::cout<<M2.Lattice_vector(1).transpose()<<std::endl;
-	std::cout<<'\n'<<'\n';
+    // Coordinate test
+    std::cout << "1st Basis Coordinate is: ";
+    Eigen::Vector3d myvec = Eigen::Vector3d::Zero();
+    Coordinate mycoord_1(myvec);
+    Eigen::Vector3d coord_1 = mycoord_1.get_coordinate();
+    std::cout << coord_1.transpose();
+    std::cout << '\n' << '\n';
 
+    // Site Test
+    std::cout << "Sites are: ";
+    Site mysite("Nb", mycoord_1);
+    std::cout << mysite.get_atom() << ' ';
+    std::cout << mysite.get_coordinate().transpose();
+    std::cout << '\n';
 
-	//Coordinate test
-        std::cout<<"1st Basis Coordinate is: ";
-	Eigen::Vector3d myvec;
-        for (int i = 0; i < 3; i++)
-             myvec(i)=0;
-        Coordinate mycoord_1(myvec);
-	Eigen::Vector3d coord_1=mycoord_1.get_coordinate();
-	std::cout<<coord_1.transpose();
-	std::cout<<'\n'<<'\n';
+    std::vector<Site> sites;
+    sites.push_back(mysite);
+    Eigen::Vector3d vec_2(0,0.5,0.5);
+    Coordinate my_coord2(vec_2);
+    Site my_site2("O", my_coord2);
+    std::cout << my_site2.get_atom() << ' ';
+    std::cout << my_site2.get_coordinate().transpose() << '\n' << '\n';
 
+    // Cluster Test
+    std::cout << "Length of cluster is: ";
+    sites.push_back(my_site2);
+    Cluster mycluster(sites);
+    std::cout << mycluster.cluster_size() << '\n' << '\n';
 
-        //Site Test
-        std::cout<<"Sites are: ";
-   	Site mysite("Nb", mycoord_1);
-	auto site_coord_1=mysite.get_coordinate();
-	std::cout<<mysite.get_atom()<<' ';
-	std::cout<<mysite.get_coordinate().transpose();
-	std::cout<<'\n';
-        std::vector<Site> sites;
-        sites.push_back(mysite);
-        Eigen::Vector3d vec_2;
-        vec_2(0)=0;
-        vec_2(1)=0.5;
-        vec_2(2)=0.5;
-        Coordinate my_coord2(vec_2);
-        Site my_site2("O", my_coord2);	 
-        std::cout<< my_site2.get_atom()<<' ';
-        std::cout<<my_site2.get_coordinate().transpose()<<'\n'<<'\n';
-        
+    // testing of read_poscar
+    read_poscar("POSCAR");
 
-        //Cluster Test
-        std::cout<<"Length of cluster is: ";
-        sites.push_back(my_site2);
-        Cluster mycluster(sites);
-        std::cout<<mycluster.cluster_size()<<'\n'<<'\n';
-         
+    // std::map<int, std::vector<double>> first_site=mysites.get_site(0, mycoords);
+    // std::map<int, std::vector<double>>::iterator it = first_site.begin();
+    // std::cout<<first_site[0];
+    // for (std::map<int, std::vector<double>>::iterator it = first_site.begin(); it != first_site.end(); ++it)
+    //{
+    // std::cout << (*it).first << " " << (*it).second << '\n';
+    //}
+    // Test for Lattice
 
+    // Test bring_within
 
-	//testing of read_poscar
-	read_poscar("POSCAR");
+    // Test for Structure
 
-  	//std::map<int, std::vector<double>> first_site=mysites.get_site(0, mycoords);
-	//std::map<int, std::vector<double>>::iterator it = first_site.begin();
-   	//std::cout<<first_site[0];
-   	//for (std::map<int, std::vector<double>>::iterator it = first_site.begin(); it != first_site.end(); ++it)
-   	//{
-	 // std::cout << (*it).first << " " << (*it).second << '\n';
-   	//}
-    //Test for Lattice
-    
-    
-
-    
-    
-    
-    //Test bring_within
-    
-
-    
-    
-    
-    //Test for Structure
-    
-
-    //Test read Structure
+    // Test read Structure
     //
-    //Test make_factor_group
-   
+    // Test make_factor_group
 
-
-	
-    //Test for Cluster
+    // Test for Cluster
 }
 

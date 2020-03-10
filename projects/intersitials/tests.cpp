@@ -76,10 +76,11 @@ class Coordinate
 class Site
 {
 	public:
-	Site(std::string atom_name, Coordinate& init_coord):
+	Site(std::string atom_name, Coordinate init_coord):
 		my_coord(init_coord),
 		atom(atom_name)
 	{}
+
 	std::string get_atom()
 	{
 		return atom;
@@ -89,18 +90,6 @@ class Site
 	{
 		return my_coord.get_coordinate();
 	}
-
-
-	//std::map<int, std::vector<double>> get_site(int i, Coordinate my_coord)
-	//{
-		
-	//	std::vector<double> coord=my_coord.get_coordinate();
-	//	std::map<int, std::vector<double>> init_site;
-		//iit->first; //not sure what to put here
-		//it->second;
-	//	init_site.insert(std::make_pair(i, coord));
-	//	return init_site;   
-	//}
 
 	private:
 	std::string atom;
@@ -122,65 +111,112 @@ class SymOp
 //in a crystal
 class Structure
 {
+//	public:
+//	Structure(Lattice lat, std::vector<Site> sites):
+//		my_lattice(lat), my_sites(sites)
+//	{}
+//	int get_Structure_size()
+//	{
+//		return my_sites.size();
+//	}
+	//std::vector<std::string> get_atom_names()
+	//{
+//		std::vector<std::string> my_atoms;
+//		for (int i=0; i<my_sites.size();i++)
+//			//my_atoms.push_back(my_sites.at(i).get_atom());
+//			std::cout<<"hi!";
+//		//return my_atoms;
+//	}
+
+//	private:
+//	Lattice my_lattice;
+//	std::vector<Site> my_sites;
 };
 
 Structure read_poscar(const std::string& poscar_path)
 {
-    std::ifstream file(poscar_path);
-    std::string str;
-    std::string::size_type sz1;     // alias of size_t
-    std::string::size_type sz2;     // alias of size_t
-    std::vector<std::string> names;
-    std::vector<int> counts;
-    std::vector<std::vector<double>> cord;
+    std::ifstream poscar_stream(poscar_path);
+    std::string title;
+    std::getline(poscar_stream,title);
 
-    int t=0;
-	Eigen::Matrix3d lat;
-	while (std::getline(file, str)) {
-	    if (t==0)
-	    	std::cout << "reading POSCAR file for "<< str << "\n";
-	    else if(t==2||t==3||t==4)
-	    	{
-		//stof : extract float from string, but single number
-		//but we can pot pointer at its end
-	    	lat(t-2,0)=stof(str,&sz1);
-	    	lat(t-2,1)=stof(str.substr(sz1),&sz2);
-	    	lat(t-2,2)=stof(str.substr(sz1+sz2));
-	    	}
-	    else if(t==5)
-	    	{
-		//read spaced word from string
-	    		std::istringstream iss (str);
+    
+    double scaling;
+    poscar_stream>>scaling;
 
-	    	    while(iss >> str)
-	    	    {
-	    	        names.push_back(str);
-	    	    }
-	    	}
-	    else if(t==6)
-	    	{
-	    		std::istringstream iss (str);
+    Eigen::Matrix3d lat_row_matrix;
+    for (int i=0; i<3; i++)
+    {
+	    for (int j=0; j<3; j++)
+	    {
+		    poscar_stream>>lat_row_matrix(i,j);
+	    }
+    }
 
-	    	    while(iss >> str)
-	    	    {
-		    //stoi change string to int
-	    	        counts.push_back(stoi(str));
-	    	    }
-	    	}
+    std::string species_line;
+    std::vector<std::string> species;   
+    while(std::getline(poscar_stream,species_line, ' ')) //Not sure if I need the delimiter
+    {
+	    species.push_back(species_line);
+    }
 
-	    else if(t>=8&&t<accumulate(counts.begin(),counts.end(),0)+8)
-	    	{
-	        std::vector<double> cord_Temp;
+    
+    //Getting the exact multiplicities needs to be done so I can use that to make the site at the 
+    //bottom of this function (i.e. "make sites")
+    Eigen::VectorXd species_mult;
+    
+    
 
-	    	cord_Temp.push_back(stof(str,&sz1));
-	    	cord_Temp.push_back(stof(str.substr(sz1),&sz2));
-	    	cord_Temp.push_back(stof(str.substr(sz1+sz2)));
-	    	cord.push_back(cord_Temp);
-	    	}
-	    t=t+1;
-}
+    //turns out we actually need this. 
+    //int specie_mult_line; 
+    //std::vector<int> multiplicities;   
+    //while(std::getline(poscar_stream,specie_mult_line, ' '))
+    //{
+    //	multiplicities.push_back(specie_mult_line);
+    //}
+
+
+    std::string coord_type;
+    std::getline(poscar_stream, coord_type);
+    
+    Eigen::Vector3d coord;
+    std::vector<Eigen::Vector3d> raw_coordinate_vals;
+    while(!poscar_stream.eof())
+    {
+	
+	
+       for (int i=0; i<3; i++)
+        {
+		poscar_stream>>coord(i);	
+	}
+	
+	raw_coordinate_vals.push_back(coord);
+    }
+
+    //make lattice
+    Lattice lattice(lat_row_matrix); 
+    
+    //make sites
+    std::string atom_name;
+    std::vector<Site> all_sites;
+    for (Eigen::Vector3d coord_vals: raw_coordinate_vals)
+    {
+       for (int j=0; j<multiplicities.size(); j++)
+	{
+		for (int i=0; i<multiplicities.at(j); i++)    
+		{
+			atom_name=species.at(j);
+			Site indiv_site(atom_name, coord_vals);
+	       		all_sites.push_back(indiv_site);
+		}
+	}
+    }
+    //make structure
+    
+    //return structure
 //now we just need to fill structure to be returned
 };
+
+
 
 
 //Defines a collection of Sites in a crystal
@@ -221,6 +257,7 @@ struct SiteCompare_f
 {
     bool operator()(const Site& other)
     {
+
     }
 };
 
@@ -231,8 +268,12 @@ struct ClusterCompare_f
     }
 };
 
+
+
+
 Site operator*(const Site& site, const SymOp& transformation)
 {
+	//site * symmetry operation
 }
 
 Cluster operator*(const Cluster& site, const SymOp& transformation)
@@ -243,6 +284,46 @@ std::vector<SymOp> make_factor_group(const Structure& struc)
 {
 }
 */
+
+void EXPECT_T(bool true_statement, std::string test_type)
+{
+	if (true_statement)
+	{
+		std::cout<< "PASS"<<std::endl;
+	}
+	else 
+	{
+		std::cout<<"FAILED: "<<test_type<<std::endl;
+	}
+}
+
+
+void EXPECT_CONSISTENT_COORDS(Eigen::Vector3d cluster_coord, Eigen::Vector3d site_coord)
+{
+	if (cluster_coord==site_coord)  //need PREC
+	{
+		std::cout<<"PASS"<<std::endl;
+	}
+	else
+	{
+		std::cout<<"FAILED: Sizes are inconsistent"<< std::endl;
+	}
+	return;
+}
+
+
+void EXPECT_SIZE_GREATER_THAN_ZERO(int cluster_size)
+{
+	if (cluster_size> 0)
+	{
+		std::cout<<"PASS"<<std::endl;
+	}
+	else
+	{
+		std::cout<<"FAILED: Cluster size of zero"<<std::endl;
+	}
+}
+	
 int main()
 {
         //Lattice test
@@ -301,36 +382,15 @@ int main()
 	//testing of read_poscar
 	read_poscar("POSCAR");
 
-  	//std::map<int, std::vector<double>> first_site=mysites.get_site(0, mycoords);
-	//std::map<int, std::vector<double>>::iterator it = first_site.begin();
-   	//std::cout<<first_site[0];
-   	//for (std::map<int, std::vector<double>>::iterator it = first_site.begin(); it != first_site.end(); ++it)
-   	//{
-	 // std::cout << (*it).first << " " << (*it).second << '\n';
-   	//}
-    //Test for Lattice
-    
-    
 
-    
-    
+        
     
     //Test bring_within
     
-
-    
-    
-    
     //Test for Structure
-    
-
-    //Test read Structure
-    //
     //Test make_factor_group
    
 
 
-	
-    //Test for Cluster
 }
 

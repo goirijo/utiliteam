@@ -1,1 +1,1 @@
-g++ ./symmetry.cxx ./find_subgroups_outline.cpp -o run
+g++ ./symmetry.cxx ./main.cpp -o run

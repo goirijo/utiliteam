@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include <numeric>
 #include <fstream>
-#include "../../../avdv-point-group/eigen-git-mirror/Eigen/Dense"
-
+/////#include "../../../avdv-point-group/eigen-git-mirror/Eigen/Dense"
+#include "../../submodules/eigen-git-mirror/Eigen/Core"
 //Defines three lattice vectors of a crystal
 class Lattice
 {
@@ -336,7 +336,7 @@ Cluster operator*(const Cluster& cluster, const SymOp& transformation)
 	//return cluster*transformation;
 }
 
-std::vector<SymOp> make_factor_group(const Structure& struc)
+std::vector<SymOp> make_factor_group(const Structure& struc, const std::vector<Symop>& symops)
 {
    //Need to reformat how I am making my factor group first...
    //

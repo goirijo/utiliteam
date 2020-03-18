@@ -36,11 +36,15 @@ class Lattice
         	return LAT.col(i);
         }
 
-	Eigen::Matrix3d get_lattice_matrix()
+	Eigen::Matrix3d col_vector_matrix()
 	{
 		return LAT;
 	}
 	
+	Eigen::Matrix3d row_vector_matrix()
+	{
+		return LAT.transpose();
+	}
 };
 
 //Defines Cartesian position in a crystal
@@ -48,14 +52,14 @@ class Coordinate
 {
 	
 	public:
-	Coordinate(Eigen::Vector3d coord) 
+	Coordinate(const Eigen::Vector3d coord) 
 	{
 	//	std::vector<double> my_coord(coord);
 	       my_coord=coord;
 	}
 	
 
-	Eigen::Vector3d& get_coordinate()
+	Eigen::Vector3d& get_coordinate() const
 	{
 		return my_coord;
 	}
@@ -82,17 +86,17 @@ class Coordinate
 class Site
 {
 	public:
-	Site(std::string atom_name, Coordinate init_coord):
+	Site(const std::string atom_name, const Coordinate init_coord):
 		my_coord(init_coord),
 		atom(atom_name)
 	{}
 
-	std::string& get_atom()
+	std::string& get_atom() const 
 	{
 		return atom;
 	}
 
-	Eigen::Vector3d& get_coordinate()
+	Eigen::Vector3d& get_coordinate() const 
 	{
 		return my_coord.get_coordinate();
 	}
@@ -102,11 +106,24 @@ class Site
 	Coordinate my_coord;
 
 };
+
 /*
 Site bring_within(const Site& site_outside_of_unit, const Lattice& unit_cell)
 {
+    Coordinate coord_outside_cell=site_outside_of_unit.get_coordinate;
+    //bring to front in x direction 
+    double x_coord=mod(coord_outside_cell.get_x(), unit_cell.row_vector_matrix().at(0)); //wrong syntax but how would I do this in general?
+    //bring to front in y direction
+    double y_coord=coord_outside_cell.get_y();  
+    //bring to front in z direction
+    double z_coord=coord_outside_cell.get_z();
+
+    //I'm not sure it'd work like this..
+    return Site(site_outside_of_unit.get_atom(), FinalCoord);
 }
 */
+
+
 //Defines Cartesian matrix and translation vector
 //of symmetry operation
 class SymOp
@@ -138,39 +155,11 @@ class Structure
 	Structure(Lattice& lat, std::vector<Site>& sites):
 		my_lattice(lat), my_sites(sites)
 	{}
-	int get_Sites_size()
-	{
-		return my_sites.size();
-	}
-	std::vector<std::string> get_atom_names()
-	{
-		std::vector<std::string> my_atoms;
-		for (int i=0; i<my_sites.size(); i++)
-		{
-			 my_atoms.push_back(my_sites.at(i).get_atom());
-			//std::cout<<"hi!";
-		}
-			return my_atoms;
-	}
-	std::vector<Eigen::Vector3d> get_coordinates()
-	{
-		std::vector<Eigen::Vector3d> my_coords;
-		for (int i=0; i<my_sites.size(); i++)
-		{
-			 my_coords.push_back(my_sites.at(i).get_coordinate());
-			//std::cout<<"hi!";
-		}
-			return my_coords;
-	}
 	Lattice get_lattice()
 	{
 		return my_lattice;
 	}
 
-	Eigen::Matrix3d get_lattice_matrix()
-	{
-		return my_lattice.get_lattice_matrix();
-	}
 	std::vector<Site> get_sites()
 	{
 		return my_sites;
@@ -234,10 +223,9 @@ Structure read_poscar(const std::string& poscar_path)
     	}
 
     //making the structure
-    Structure structure1(latt,Sites);
     //for instance printing first row
     //std::cout<<raw_coordinate_values[0][0]<<"\t"<<raw_coordinate_values[0][1]<<"\t"<<raw_coordinate_values[0][2]<<std::endl;
-    return structure1;
+    return Structure(latt, Sites);
 
 };
 
@@ -252,27 +240,16 @@ class Cluster
 		my_sites(sites)
 	{}
 
-	int cluster_size()
+	int cluster_size() const
 	{
 		return my_sites.size();
 	}
 
-	Site get_site(int i)
+	Site get_site(int i) const
 	{
 		return my_sites.at(i);
 	}
 
-
-	//std::map<int, std::vector<Site>> get_cluster(int i, std::vector<Site> my_sites)
- 	//{
-	  //     std::map<int, std::vector<Site>> my_cluster;
-	       //std::map<int, std::vector<Site>>::itterator it=my_cluster.begin();
-	       //for (int i=0; i<my_sites.size(); i++)
-	       //{
-	    //   my_cluster.insert(std::pair<int, std::vector<Site>>(i, my_sites));
-	       //}
-	//return my_cluster;
-	//}
 
     private:
 	std::vector<Site> my_sites;
@@ -280,17 +257,54 @@ class Cluster
 
 struct SiteCompare_f
 {
-    bool operator()(const Site& other)
+	public:
+     SiteCompare_f(Site site, double prec):
+	    my_site(site), my_precision(prec)
+	{}
+    bool operator()(const Site& other) 
     {
-
+	//I'm not sure if I'm understanding what this structure is for but here goes nothing
+	if (my_site.get_coordinate().isApprox(other.get_coordinate(), my_precision))
+	{
+		if (my_site.get_atom()==other.get_atom())
+		{		
+		return true;
+		}
+	}
+	else
+		return false;
+		
     }
+    private:
+    //string atom;
+    //Coordinate my coord;
+    Site my_site;
+    double my_precision;
 };
 
 struct ClusterCompare_f
 {
-    bool operator()(const Cluster& other)
+    ClusterCompare_f(Cluster cluster, double prec):
+	    my_cluster(cluster), my_precision(prec)
+	{}
+    bool operator()(const Cluster& other) 
     {
-    }
+	for (int i=0; i<my_cluster.cluster_size(); i++)
+	{
+		if (my_cluster.get_site(i).get_coordinate().isApprox(other.get_site(i).get_coordinate(), my_precision))
+	 	{ 
+			if (my_cluster.get_site(i).get_atom()==other.get_site(i).get_atom())
+			{		
+				return true;
+			}
+		}
+	        else 
+			return false;
+	}
+     } 
+	private:
+    Cluster my_cluster;
+    double my_precision;
 };
 
 
@@ -299,12 +313,22 @@ struct ClusterCompare_f
 Site operator*(const Site& site, const SymOp& transformation)
 {
 	//site * symmetry operation
+//	return site.get_coordinate()*transformation;
+
 	return site*transformation;
 }
 
-Cluster operator*(const Cluster& site, const SymOp& transformation)
+Cluster operator*(const Cluster& cluster, const SymOp& transformation)
 {
+	//std::vector<Site> transformedsites;
+	//for (int i=0; i<cluster.cluster_size(); i++)
+	//{
+	//	transformedsites.push_back(cluster.get_site(i)*transformation);
+
+	//}
+	//return Cluster(transformedsites);
 	//Is this for doing symops for all sites in a cluster?
+	return cluster*transformation;
 }
 
 std::vector<SymOp> make_factor_group(const Structure& struc)
@@ -325,171 +349,58 @@ void EXPECT_T(bool true_statement, std::string test_type)
 	}
 }
 
-
-
-void EXPECT_CONSISTENT_MATRIX(Eigen::Matrix3d matrix1, Eigen::Matrix3d matrix2)
-{
-	
-	if (matrix1==matrix2)  //Do I need PREC?
-	{
-		std::cout<<"PASS"<<std::endl;
-	}
-	else
-	{
-		std::cout<<"FAILED: Sizes are inconsistent"<< std::endl;
-	}
-	return;
-}
-
-//void EXPECT_CONSISTENT
-void EXPECT_CONSISTENT_STRING(std::string& string1, std::string& string2)
-{
-	
-	if (string1==string2)  //Do I need PREC?
-	{
-		std::cout<<"PASS"<<std::endl;
-	}
-	else
-	{
-		std::cout<<"FAILED: Sizes are inconsistent"<< std::endl;
-	}
-	return;
-}
-
-
-void EXPECT_CONSISTENT_VECTOR(Eigen::Vector3d& vector1, Eigen::Vector3d& vector2)
-{
-	int i=0;
-	for (int j=0; j<3;j++)
-	{
-		if (vector1(i)==vector2(i))  //Do I need PREC?
-		{
-			i++;
-		}
-	}
-	if (i==3)
-	{
-		std::cout<<"PASS"<<std::endl;
-	}
-	else
-	{
-		std::cout<<"FAILED: Sizes are inconsistent"<< std::endl;
-	}
-	return;
-}
-
-
-void EXPECT_SIZE_GREATER_THAN_ZERO(int object_size)
-{
-	if (object_size> 0)
-	{
-		std::cout<<"PASS"<<std::endl;
-	}
-	else
-	{
-		std::cout<<"FAILED: Object size of zero"<<std::endl;
-	}
-}
 	
 int main()
 {
+
+    //Test Coordinate class
+    //
+    //Test Coordinate comparator
+    //
+    //Test Site class
+    //
+    //Test Site Comparator
+
         //First Read POSCAR and get Structure
 	Structure my_structure=read_poscar("POSCAR");
 	
 	//get_sites from structure
 	std::vector<Site> my_sites=my_structure.get_sites();
-	//make sure size is greater than zero
-	EXPECT_SIZE_GREATER_THAN_ZERO(my_structure.get_Sites_size());
-	EXPECT_SIZE_GREATER_THAN_ZERO(my_structure.get_atom_names().size());
-	EXPECT_CONSISTENT_STRING(my_sites.at(0).get_atom(), my_structure.get_atom_names().at(0)); 
+    EXPECT_T(my_sites.size()==5, "Wrong number of sites in structure");
+    EXPECT_T(my_sites[0].get_atom()=="Fe", "Expected Fe for first atom");
+    EXPECT_T(my_sites.back().get_atom()=="Se", "Expected Se for last atom");
+
 	//get_lattice from structure
 	Lattice my_lattice=my_structure.get_lattice();
-	//make sure size is greater than zero
-	//Compare Structure lattice and lattice lattice
-	EXPECT_CONSISTENT_MATRIX(my_lattice.get_lattice_matrix(), my_structure.get_lattice_matrix()); 
-	
-	//Compare size of Structure member function get sites size and make sure is greater than zero
-	
-	
-	//Lattice test
-	//Check if we have right hand matrix?
- 	
+    Eigen::Matrix3d raw_poscar_lattice;
+    raw_poscar_lattice<<
+     3.8511262576863907,   0.0000000000000000 ,  0.0000000000000000,
+    -1.9255631288431954,   3.3351731755587712 ,  0.0000000000000000,
+     0.0000000000000000,   0.0000000000000000 ,  6.1326753166606398;
+
+    //Stop using isApprox, build Coordinates/Sites manually,then use comparators
+    EXPECT_T(my_lattice.row_vector_matrix().isApprox(raw_poscar_lattice, 1e-5), "Lattice matrix does not match POSCAR");
+    EXPECT_T(my_lattice.Lattice_vector(0).isApprox(Eigen::Vector3d(raw_poscar_lattice.row(0)), 1e-5), "Lattice vector does not match");
 
 	//Coordinate test
 	//Is site coordinate the same as Coordinate coordinate?
-	EXPECT_CONSISTENT_VECTOR(my_sites.at(0).get_coordinate(), my_structure.get_coordinates().at(0));	
-	//Print Data Members
-	std::cout<<"Here are the respective lattice, atom names and coordinates for this structure";	
-	std::cout<<std::endl<<my_lattice.get_lattice_matrix()<<std::endl;
-	for (int i=0; i<my_structure.get_atom_names().size(); i++)
-	{
-		std::cout<<my_structure.get_atom_names().at(i)<<' ';
-		std::cout<<my_structure.get_coordinates().at(i).transpose()<< std::endl;
-	}
-//	//here it will initialize with randum numbers
-//	Lattice M1;
-//	
-//	std::cout<<"This is a vector for a random lattice: ";
-//	std::cout<<M1.Lattice_vector(1).transpose()<<std::endl;
-//	std::cout<<"The a vector of my made up lattice is: ";
-//	std::cout<<'\n';
-//	Eigen::Matrix3d O=Eigen::Matrix3d::Ones(3,3);
-//
-//	Lattice M2(O);
-//	std::cout<<M2.Lattice_vector(1).transpose()<<std::endl;
-//	std::cout<<'\n'<<'\n';
-//
-//
-//	//Coordinate test
-//        std::cout<<"1st Basis Coordinate is: ";
-//	Eigen::Vector3d myvec;
-//        for (int i = 0; i < 3; i++)
-//             myvec(i)=0;
-//        Coordinate mycoord_1(myvec);
-//	Eigen::Vector3d coord_1=mycoord_1.get_coordinate();
-//	std::cout<<coord_1.transpose();
-//	std::cout<<'\n'<<'\n';
-//
-//
-//        //Site Test
-//        std::cout<<"Sites are: ";
-//   	Site mysite("Nb", mycoord_1);
-//	auto site_coord_1=mysite.get_coordinate();
-//	std::cout<<mysite.get_atom()<<' ';
-//	std::cout<<mysite.get_coordinate().transpose();
-//	std::cout<<'\n';
-//        std::vector<Site> sites;
-//        sites.push_back(mysite);
-//        Eigen::Vector3d vec_2;
-//        vec_2(0)=0;
-//        vec_2(1)=0.5;
-//        vec_2(2)=0.5;
-//        Coordinate my_coord2(vec_2);
-//        Site my_site2("O", my_coord2);	 
-//        std::cout<< my_site2.get_atom()<<' ';
-//        std::cout<<my_site2.get_coordinate().transpose()<<'\n'<<'\n';
-//        
-//
-//        //Cluster Test
-//        std::cout<<"Length of cluster is: ";
-//        sites.push_back(my_site2);
-//        Cluster mycluster(sites);
-//        std::cout<<mycluster.cluster_size()<<'\n'<<'\n';
-         
+    Eigen::MatrixXd raw_coordinate_rows(5,3);
+    raw_coordinate_rows<<
+0.3333330000000032, 0.6666669999999968 ,0.6257012643865139,
+0.0000000000000000, 0.0000000000000000 ,0.3495550691578657,
+0.6666669999999968, 0.3333330000000032 ,0.0268432865670718,
+0.0000000000000000, 0.0000000000000000 ,0.7508303712375408,
+0.3333330000000032, 0.6666669999999968 ,0.2470700086510149;
 
+    for(int i=0; i<my_sites.size();++i)
+    {
+        EXPECT_T(Eigen::Vector3d(raw_coordinate_rows.row(i)).isApprox(my_sites.at(i).get_coordinate()), "Coordinate mismatch for "+std::to_string(i)+"th site");
+    }
 
-	//testing of read_poscar
-	//read_poscar("POSCAR");
-
-
-        
+    ////////////////////////////////////
     
-    //Test bring_within
-    
-    //Test for Structure
+    //Test SymOp
+    //
     //Test make_factor_group
-   
-
-
+    return 0;
 }
-

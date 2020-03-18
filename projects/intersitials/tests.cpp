@@ -52,16 +52,16 @@ class Coordinate
 {
 	
 	public:
-	Coordinate(const Eigen::Vector3d coord) 
+	Coordinate(Eigen::Vector3d coord) 
 	{
 	//	std::vector<double> my_coord(coord);
 	       my_coord=coord;
 	}
 	
 
-	Eigen::Vector3d& get_coordinate() const
+	Eigen::Vector3d get_coordinate() const
 	{
-		return my_coord;
+		return this->my_coord;
 	}
 	
 	double get_x()
@@ -86,19 +86,19 @@ class Coordinate
 class Site
 {
 	public:
-	Site(const std::string atom_name, const Coordinate init_coord):
+	Site(std::string atom_name, Coordinate init_coord):
 		my_coord(init_coord),
 		atom(atom_name)
 	{}
 
-	std::string& get_atom() const 
+	std::string get_atom() const
 	{
-		return atom;
+		return this->atom;
 	}
 
-	Eigen::Vector3d& get_coordinate() const 
+	Eigen::Vector3d get_coordinate() const 
 	{
-		return my_coord.get_coordinate();
+		return this->my_coord.get_coordinate();
 	}
 
 	private:
@@ -137,9 +137,9 @@ class SymOp
 	{
 		return my_trans;
 	}
-	Eigen::Matrix3d get_Cart_Matrix()
+	Eigen::Matrix3d get_Cart_Matrix() const
 	{
-		return my_matrix;
+		return this->my_matrix;
 	}
 	private:
 	double my_trans;
@@ -261,7 +261,7 @@ struct SiteCompare_f
      SiteCompare_f(Site site, double prec):
 	    my_site(site), my_precision(prec)
 	{}
-    bool operator()(const Site& other) 
+    bool operator()(const Site other) const
     {
 	//I'm not sure if I'm understanding what this structure is for but here goes nothing
 	if (my_site.get_coordinate().isApprox(other.get_coordinate(), my_precision))
@@ -287,8 +287,12 @@ struct ClusterCompare_f
     ClusterCompare_f(Cluster cluster, double prec):
 	    my_cluster(cluster), my_precision(prec)
 	{}
-    bool operator()(const Cluster& other) 
+    bool operator()(const Cluster& other) const
     {
+	if (my_cluster.cluster_size()!=other.cluster_size())
+	{
+		return false;
+	}
 	for (int i=0; i<my_cluster.cluster_size(); i++)
 	{
 		if (my_cluster.get_site(i).get_coordinate().isApprox(other.get_site(i).get_coordinate(), my_precision))
@@ -313,27 +317,29 @@ struct ClusterCompare_f
 Site operator*(const Site& site, const SymOp& transformation)
 {
 	//site * symmetry operation
-//	return site.get_coordinate()*transformation;
-
-	return site*transformation;
+	Eigen::Vector3d transformed=(transformation.get_Cart_Matrix())*(site.get_coordinate());
+	Coordinate transformedcoord(transformed);
+	return Site(site.get_atom(), transformedcoord);
+//	return site*transformation;
 }
 
 Cluster operator*(const Cluster& cluster, const SymOp& transformation)
 {
-	//std::vector<Site> transformedsites;
-	//for (int i=0; i<cluster.cluster_size(); i++)
-	//{
-	//	transformedsites.push_back(cluster.get_site(i)*transformation);
+	std::vector<Site> transformedsites;
+	for (int i=0; i<cluster.cluster_size(); i++)
+	{
+		transformedsites.push_back(Site(cluster.get_site(i).get_atom(), Coordinate((transformation.get_Cart_Matrix())*(cluster.get_site(i).get_coordinate()))));
 
-	//}
-	//return Cluster(transformedsites);
+	}
+	return Cluster(transformedsites);
 	//Is this for doing symops for all sites in a cluster?
-	return cluster*transformation;
+	//return cluster*transformation;
 }
 
 std::vector<SymOp> make_factor_group(const Structure& struc)
 {
-
+   //Need to reformat how I am making my factor group first...
+   //
 }
 
 
@@ -369,7 +375,9 @@ int main()
     EXPECT_T(my_sites.size()==5, "Wrong number of sites in structure");
     EXPECT_T(my_sites[0].get_atom()=="Fe", "Expected Fe for first atom");
     EXPECT_T(my_sites.back().get_atom()=="Se", "Expected Se for last atom");
-
+    SiteCompare_f test_site(my_sites[0], 1e-5);
+    EXPECT_T(test_site(my_sites[0]), "Site doesn't recognize itself"); 
+    EXPECT_T(!test_site(my_sites[1]), "Site incorrectly believes it is equal to another site");
 	//get_lattice from structure
 	Lattice my_lattice=my_structure.get_lattice();
     Eigen::Matrix3d raw_poscar_lattice;
@@ -379,8 +387,8 @@ int main()
      0.0000000000000000,   0.0000000000000000 ,  6.1326753166606398;
 
     //Stop using isApprox, build Coordinates/Sites manually,then use comparators
-    EXPECT_T(my_lattice.row_vector_matrix().isApprox(raw_poscar_lattice, 1e-5), "Lattice matrix does not match POSCAR");
-    EXPECT_T(my_lattice.Lattice_vector(0).isApprox(Eigen::Vector3d(raw_poscar_lattice.row(0)), 1e-5), "Lattice vector does not match");
+    EXPECT_T(my_lattice.col_vector_matrix().isApprox(raw_poscar_lattice, 1e-5), "Lattice matrix does not match POSCAR");
+    EXPECT_T(my_lattice.Lattice_vector(0).isApprox(Eigen::Vector3d(raw_poscar_lattice.col(0)), 1e-5), "Lattice vector does not match");
 
 	//Coordinate test
 	//Is site coordinate the same as Coordinate coordinate?
@@ -397,6 +405,22 @@ int main()
         EXPECT_T(Eigen::Vector3d(raw_coordinate_rows.row(i)).isApprox(my_sites.at(i).get_coordinate()), "Coordinate mismatch for "+std::to_string(i)+"th site");
     }
 
+    
+    // Make test cluster
+    std::vector<Site> cluster_sites;
+    for (int i=0; i<3; i++)
+    {
+	    cluster_sites.push_back(my_sites[i]);
+    }
+    Cluster test_cluster(cluster_sites);
+
+    cluster_sites.push_back(my_sites[3]);
+    Cluster other_test_cluster(cluster_sites);
+    //test test cluster
+    EXPECT_T(test_cluster.cluster_size()==3, "Wrong Cluster Size");
+    ClusterCompare_f first_cluster(test_cluster, 1e-5); 
+    EXPECT_T(first_cluster(test_cluster), "Cluster Doesn't even recognize itself");
+    EXPECT_T(!first_cluster(other_test_cluster), "Cluster incorrectly believes it is another site");
     ////////////////////////////////////
     
     //Test SymOp

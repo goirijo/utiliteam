@@ -16,10 +16,7 @@ class SymOp
 public:
     Eigen::Matrix3d cart_matrix;
 
-    SymOp(Eigen::Matrix3d input_matrix) : cart_matrix(input_matrix) {
-    
-        //if not unitary, throw exception/assert and say so.
-    }
+    SymOp(Eigen::Matrix3d input_matrix);
 };
 
 SymOp operator*(const SymOp& lhs, const SymOp& rhs);
@@ -59,5 +56,7 @@ struct SymGroupCompare_f
 private:
     SymGroup group1;
 };
+
+Eigen::Matrix3d make_z_rotation_matrix(double degrees); 
 
 #endif

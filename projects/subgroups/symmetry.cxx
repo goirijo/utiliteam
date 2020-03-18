@@ -1,5 +1,19 @@
 #include "./symmetry.hpp"
 #define PREC 1e-6
+SymOp::SymOp(Eigen::Matrix3d input_matrix) : cart_matrix(input_matrix) 
+{
+    Eigen::Matrix3d product = input_matrix.transpose() * input_matrix;
+    if (product.isIdentity(PREC) == false)
+    {
+        throw std::runtime_error("Your matrix isn't unitary.");
+    }
+    
+    double det = input_matrix.determinant();
+    if ((1-abs(det)) > PREC) 
+    {
+        throw std::runtime_error("Your matrix has a non-unit determinant.");
+    }
+}
 
 SymOp operator*(const SymOp& lhs, const SymOp& rhs)
 {
@@ -110,4 +124,9 @@ bool SymGroupCompare_f::operator()(const SymGroup& group2) const
     }
 }
 
+Eigen::Matrix3d make_z_rotation_matrix(double degrees) 
+{
+    Eigen::AngleAxisd rotation_generator(degrees * M_PI / 180.0, Eigen::Vector3d(0, 0, 1));
+    return rotation_generator.matrix();
+}
 

@@ -53,8 +53,6 @@ void SymGroup::close_group(std::vector<SymOp>* operations_ptr)
 
 bool SymGroup::insert(SymOp& new_operation)
 {
-    // if element not already there
-    // return false
     SymOpCompare_f compare(new_operation, PREC);
     if(find_if(this->group.begin(), this->group.end(), compare)==this->group.end())
     {
@@ -68,8 +66,6 @@ bool SymGroup::insert(SymOp& new_operation)
 
 SymGroup::SymGroup(std::vector<SymOp> generating_elements)
 {
-    //what if you gave it duplicate elements?
-    //
     for(SymOp element:generating_elements)
     {
         this->insert(element);
@@ -114,54 +110,4 @@ bool SymGroupCompare_f::operator()(const SymGroup& group2) const
     }
 }
 
-void EXPECT_EQ_MATRICES(Eigen::Matrix3d matrix1, Eigen::Matrix3d matrix2, std::string test_name)
-{
-    if (matrix1 == matrix2)
-    {
-        std::cout << "PASSED " << test_name << std::endl;
-    }
-
-    else
-    {
-        std::cout << "FAILED " << test_name << std::endl;
-    }
-
-    return;
-}
-
-void EXPECT_EQ_VECTORS(std::vector<SymOp> vector1, std::vector<SymOp> vector2, std::string test_name)
-{
-    SymGroupCompare_f compare(vector1);
-    if (compare(vector2))
-    {
-        std::cout << "PASSED " << test_name << std::endl;
-    }
-
-    else
-    {
-        std::cout << "FAILED " << test_name << std::endl;
-    }
-
-    return;
-}
-void EXPECT_TRUE(bool is_true, std::string test_name)
-{
-    if (is_true)
-    {
-        std::cout << "PASSED " << test_name << std::endl;
-    }
-
-    else
-    {
-        std::cout << "FAILED " << test_name << std::endl;
-    }
-
-    return;
-}
-
-Eigen::Matrix3d make_z_rotation_matrix(double degrees)
-{
-    Eigen::AngleAxisd rotation_generator(degrees * M_PI / 180.0, Eigen::Vector3d(0, 0, 1));
-    return rotation_generator.matrix();
-}
 

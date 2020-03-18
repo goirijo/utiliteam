@@ -16,7 +16,10 @@ class SymOp
 public:
     Eigen::Matrix3d cart_matrix;
 
-    SymOp(Eigen::Matrix3d input_matrix) : cart_matrix(input_matrix) {}
+    SymOp(Eigen::Matrix3d input_matrix) : cart_matrix(input_matrix) {
+    
+        //if not unitary, throw exception/assert and say so.
+    }
 };
 
 SymOp operator*(const SymOp& lhs, const SymOp& rhs);
@@ -56,10 +59,5 @@ struct SymGroupCompare_f
 private:
     SymGroup group1;
 };
-
-void EXPECT_EQ_MATRICES(Eigen::Matrix3d matrix1, Eigen::Matrix3d matrix2, std::string test_name);
-void EXPECT_EQ_VECTORS(std::vector<SymOp> vector1, std::vector<SymOp> vector2, std::string test_name);
-void EXPECT_TRUE(bool is_true, std::string test_name);
-Eigen::Matrix3d make_z_rotation_matrix(double degrees);
 
 #endif

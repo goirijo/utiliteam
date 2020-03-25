@@ -28,7 +28,7 @@ struct SymOpCompare_f
     bool operator()(const SymOp& element2) const;
 
 private:
-    SymOp element1;
+    const SymOp element1;
     double tol;
 };
 
@@ -39,7 +39,7 @@ public:
 
     SymGroup(std::vector<SymOp> generating_elements);
     bool insert(SymOp& new_operation);
-    const std::vector<SymOp> operations() const { return this->group; }
+    const std::vector<SymOp>& operations() const { return this->group; }
 
 private:
     std::vector<SymOp> group;
@@ -49,12 +49,13 @@ SymGroup operator*(SymGroup lhs, const SymGroup& rhs);
 
 struct SymGroupCompare_f
 {
-    SymGroupCompare_f(SymGroup input1);
+    SymGroupCompare_f(SymGroup input1, double tol);
 
     bool operator()(const SymGroup& group2) const;
 
 private:
-    SymGroup group1;
+    const SymGroup group1;
+    double tol;
 };
 
 Eigen::Matrix3d make_z_rotation_matrix(double degrees); 

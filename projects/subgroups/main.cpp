@@ -1,4 +1,5 @@
 #include "./symmetry.hpp"
+#include <algorithm>
 
 #define PREC 1e-6
 
@@ -17,11 +18,10 @@ int main(/*int argc, char *argv[]*/)
     rot_90_y_mirror_vector.push_back(y_mirror);
 
     SymGroup rot_90_y_mirror_group(rot_90_y_mirror_vector);
-
     std::vector<SymGroup> list_of_subgroups;
     
     //Initializing a subgroup with each  element of the total group.
-    for (SymOp operation : rot_90_y_mirror_group.operations()) 
+    for (const SymOp& operation : rot_90_y_mirror_group.operations()) 
     {
         SymGroup pot_subgroup(std::vector<SymOp> {operation});
         if (pot_subgroup.operations().size() == rot_90_y_mirror_group.operations().size()) 
@@ -29,9 +29,9 @@ int main(/*int argc, char *argv[]*/)
             continue;
         }
 
-        SymGroupCompare_f compare_symgroups(pot_subgroup);
+        SymGroupCompare_f compare_symgroups(pot_subgroup, PREC);
 
-        if (find_if(list_of_subgroups.begin(), list_of_subgroups.end(), compare_symgroups) == list_of_subgroups.end()) 
+        if (std::find_if(list_of_subgroups.begin(), list_of_subgroups.end(), compare_symgroups) == list_of_subgroups.end()) 
         {
             list_of_subgroups.push_back(pot_subgroup);
         }
@@ -54,7 +54,7 @@ int main(/*int argc, char *argv[]*/)
                     continue;
                 }
 
-                SymGroupCompare_f compare_larger_symgroups(pot_larger_subgroup);
+                SymGroupCompare_f compare_larger_symgroups(pot_larger_subgroup, 1e-5);
 
                 if (find_if(list_of_subgroups.begin(), list_of_subgroups.end(), compare_larger_symgroups) == list_of_subgroups.end()) 
                 {

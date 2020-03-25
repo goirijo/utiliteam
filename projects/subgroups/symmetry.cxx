@@ -1,15 +1,22 @@
 #include "./symmetry.hpp"
 #define PREC 1e-6
-SymOp::SymOp(Eigen::Matrix3d input_matrix) : cart_matrix(input_matrix) 
+
+template <typename MatrixType>
+bool is_unitary(const MatrixType& input_matrix, double tol)
 {
-    Eigen::Matrix3d product = input_matrix.transpose() * input_matrix;
-    if (product.isIdentity(PREC) == false)
+    MatrixType product = input_matrix.transpose() * input_matrix;
+    return product.isIdentity(tol);
+}
+
+SymOp::SymOp(Eigen::Matrix3d input_matrix) : cart_matrix(input_matrix)
+{
+    if (!is_unitary(input_matrix, PREC))
     {
         throw std::runtime_error("Your matrix isn't unitary.");
     }
-    
+
     double det = input_matrix.determinant();
-    if ((1-abs(det)) > PREC) 
+    if ((1 - abs(det)) > PREC)
     {
         throw std::runtime_error("Your matrix has a non-unit determinant.");
     }
@@ -22,8 +29,12 @@ SymOp operator*(const SymOp& lhs, const SymOp& rhs)
     return symop_product;
 }
 
-SymOpCompare_f::SymOpCompare_f(SymOp input1, double tol) : element1(input1), tol(tol) {}
-bool SymOpCompare_f::operator()(const SymOp& element2) const { return element1.cart_matrix.isApprox(element2.cart_matrix, tol); }
+SymOpCompare_f::SymOpCompare_f(SymOp input1, double tol) : element1(input1), tol(tol) {
+}
+
+bool SymOpCompare_f::operator()(const SymOp& element2) const { 
+    
+        return element1.cart_matrix.isApprox(element2.cart_matrix, tol); }
 
 void SymGroup::close_group(std::vector<SymOp>* operations_ptr)
 {
@@ -55,7 +66,7 @@ void SymGroup::close_group(std::vector<SymOp>* operations_ptr)
                 }
             }
         }
-        
+
         if (push_count > push_limit)
         {
             throw std::runtime_error("Your group couldn't be closed with " + std::to_string(push_limit) + " operations");
@@ -68,7 +79,7 @@ void SymGroup::close_group(std::vector<SymOp>* operations_ptr)
 bool SymGroup::insert(SymOp& new_operation)
 {
     SymOpCompare_f compare(new_operation, PREC);
-    if(find_if(this->group.begin(), this->group.end(), compare)==this->group.end())
+    if (find_if(this->group.begin(), this->group.end(), compare) == this->group.end())
     {
         this->group.push_back(new_operation);
         close_group(&this->group);
@@ -80,7 +91,7 @@ bool SymGroup::insert(SymOp& new_operation)
 
 SymGroup::SymGroup(std::vector<SymOp> generating_elements)
 {
-    for(SymOp element:generating_elements)
+    for (SymOp element : generating_elements)
     {
         this->insert(element);
     }
@@ -88,20 +99,19 @@ SymGroup::SymGroup(std::vector<SymOp> generating_elements)
 
 SymGroup operator*(SymGroup lhs, const SymGroup& rhs)
 {
-    //combines all operations of the two groups and closes the result
-    //TODO
-    //combines groups in total group.
-    
-    for (auto op: rhs.operations())
+    // combines all operations of the two groups and closes the result
+    // TODO
+    // combines groups in total group.
+
+    for (auto op : rhs.operations())
     {
-//        SymOpCompare_f compare(op, PREC);
+        //        SymOpCompare_f compare(op, PREC);
         lhs.insert(op);
     }
     return lhs;
 }
 
-
-SymGroupCompare_f::SymGroupCompare_f(SymGroup input1) : group1(input1) {}
+SymGroupCompare_f::SymGroupCompare_f(SymGroup input1, double tol) : group1(input1), tol(tol) {}
 
 bool SymGroupCompare_f::operator()(const SymGroup& group2) const
 {
@@ -111,9 +121,9 @@ bool SymGroupCompare_f::operator()(const SymGroup& group2) const
     }
     else
     {
-        for (SymOp symop : group1.operations())
+        for (const SymOp& symop : group1.operations())
         {
-            SymOpCompare_f compare_elements(symop, PREC);
+            SymOpCompare_f compare_elements(symop, tol);
             if (std::find_if(group2.operations().begin(), group2.operations().end(), compare_elements) == group2.operations().end())
             {
                 return false;
@@ -124,7 +134,7 @@ bool SymGroupCompare_f::operator()(const SymGroup& group2) const
     }
 }
 
-Eigen::Matrix3d make_z_rotation_matrix(double degrees) 
+Eigen::Matrix3d make_z_rotation_matrix(double degrees)
 {
     Eigen::AngleAxisd rotation_generator(degrees * M_PI / 180.0, Eigen::Vector3d(0, 0, 1));
     return rotation_generator.matrix();

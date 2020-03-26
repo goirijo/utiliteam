@@ -1,21 +1,12 @@
-#include "eigen-git-mirror/Eigen/Dense"
-#include <vector>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <ostream>
-#include "find_factor_group.cpp"
-#include "find_labels.cpp"
-
+#include "interstitials.hpp"
 //Initial Class set up 
 //Calculate the grid from which we will calculate potential Lprime values. Need 3 by 3 integers 
 
 
-#define PREC 1e-6
 
 std::vector<Eigen::Vector3d> calculate_gridpoints(Eigen::Matrix3d lattice, int radius)	 //Might take in a structure instead and get a lattice from it
 {
+	//Eigen::Matrix3d lattice=my_lattice.col_vector_matrix();
 	std::vector<Eigen::Vector3d> gridpoints; //left in int since I put radius in int
 	Eigen::Vector3d pn;
 	for (int m=-radius; m<(radius+1); m++) 

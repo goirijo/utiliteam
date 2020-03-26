@@ -1,67 +1,4 @@
-#include "eigen-git-mirror/Eigen/Dense"
-#include <vector>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <ostream>
-
-
-#define PREC 1e-6
-
-
-bool MatrixComparison(Eigen::Matrix3d Matrix1, Eigen::Matrix3d Matrix2)
-{
-	return Matrix1.isApprox(Matrix2);
-}
-
-
-bool VectorComparison(Eigen::Vector3d Vector1, Eigen::Vector3d Vector2)
-{
-	return Vector1.isApprox(Vector2);
-}
-
-struct compare_mat{
-	compare_mat(Eigen::Matrix3d Matrix1) : Matrix1(Matrix1) {}
-	bool operator()(Eigen::Matrix3d Matrix2) const {
-		return MatrixComparison(Matrix1, Matrix2);
-	}
-
-	private:
-	Eigen::Matrix3d Matrix1;
-};
-
-struct compare_vect{
-	compare_vect(Eigen::Vector3d Vector1) : Vector1(Vector1) {}
-	bool operator()(Eigen::Vector3d Vector2) const {
-		return VectorComparison(Vector1, Vector2);
-	}
-
-	private:
-	Eigen::Vector3d Vector1;
-};
-
-class factor_group{
-	public: 
-
-		Eigen::Matrix3d SymOp;
-		Eigen::Vector3d translation;
-		factor_group(Eigen::Matrix3d s, Eigen::Vector3d tau){
-			translation=tau;
-			SymOp=s;
-		}
-
-		auto get_translation()
-		{
-			return translation;
-		}
-
-		auto get_SymOp()
-		{
-			return SymOp;
-		}
-};
-
+#include "3Dpointgroup.cpp"
 std::vector<Eigen::Vector3d> transform_basis(factor_group factorgroup, std::vector<Eigen::Vector3d> basis)
 {
 	std::vector<Eigen::Vector3d> test_basis;
@@ -89,26 +26,27 @@ bool basis_maps_onto_itself(std::vector<Eigen::Vector3d> original_basis, std::ve
 
 
 //find factor group using constructor
-std::vector<factor_group> find_factor_group(std::vector<Eigen::Matrix3d> ValidSymOps, Eigen::Matrix3d Lattice)
+//std::vector<factor_group> find_factor_group(std::vector<Eigen::Matrix3d> ValidSymOps, Eigen::Matrix3d Lattice)
+std::vector<factor_group> find_factor_group(std::vector<SymOp> ValidSymOps, Structure my_struc)
 { 
 	std::vector<Eigen::Vector3d> Basis;
-	Eigen::Vector3d Basis1;
-	Basis1(0)=0.0000;
-	Basis1(1)=0.0000000;
-	Basis1(2)=0.000000;
-	Eigen::Vector3d Basis2;
-        Basis2(0)=0.25;
-	Basis2(1)=0.25;
-	Basis2(2)=0.25;
- 	Basis.push_back(Basis1);
-	Basis.push_back(Basis2);
-	std::vector<factor_group> tally;
-	Eigen::Matrix3d test_symop;
-	Eigen::Vector3d test_tau;
-	factor_group factor_symop(test_symop, test_tau); 
-	for (auto symop: ValidSymOps)
+	std::vector<Eigen::Matrix3d> ValidCartMatricies;
+	Eigen::Matrix3d Lattice= my_struc.get_lattice().col_vector_matrix();
+	for (int j=0; j<my_struc.get_sites().size(); j++)
 	{
-				factor_symop.SymOp=symop;
+		Basis.push_back(my_struc.get_sites().at(j).get_coordinate());
+	}
+	for (int i=0; i<ValidSymOps.size(); i++)
+	{
+		ValidCartMatricies.push_back(ValidSymOps.at(i).get_Cart_Matrix());
+	}
+	std::vector<factor_group> tally;
+	Eigen::Matrix3d test_cart_matrix;
+	Eigen::Vector3d test_tau;
+	factor_group factor_symop(test_cart_matrix, test_tau); 
+	for (auto cart_matrix: ValidCartMatricies)
+	{
+		factor_symop.SymOp=cart_matrix;
 		factor_symop.translation<<0,0,0; 
 		auto test_basis=transform_basis(factor_symop, Basis);
 		if (basis_maps_onto_itself(Basis, test_basis))	

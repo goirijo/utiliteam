@@ -140,3 +140,56 @@ Eigen::Matrix3d make_z_rotation_matrix(double degrees)
     return rotation_generator.matrix();
 }
 
+std::vector<SymGroup> find_subgroups(SymGroup input_group)
+{
+    std::vector<SymGroup> list_of_subgroups;
+    
+    //Initializing a subgroup with each  element of the total group.
+    for (const SymOp& operation : input_group.operations()) 
+    {
+        SymGroup pot_subgroup(std::vector<SymOp> {operation});
+        if (pot_subgroup.operations().size() == input_group.operations().size()) 
+        {
+            continue;
+        }
+
+        SymGroupCompare_f compare_symgroups(pot_subgroup, PREC);
+
+        if (std::find_if(list_of_subgroups.begin(), list_of_subgroups.end(), compare_symgroups) == list_of_subgroups.end()) 
+        {
+            list_of_subgroups.push_back(pot_subgroup);
+        }
+    }
+
+    //Combining smaller subgroups into larger subgroups
+    bool is_finished = false;
+    while(!is_finished) 
+    {
+        is_finished = true;
+        int last_size = list_of_subgroups.size();
+        for (int a = 0; a < last_size; a++) 
+        {
+            for (int j = 0; j < last_size; j++) 
+            {
+                SymGroup pot_larger_subgroup = list_of_subgroups[a] * list_of_subgroups[j];
+
+                if (pot_larger_subgroup.operations().size() == input_group.operations().size()) 
+                {
+                    continue;
+                }
+
+                SymGroupCompare_f compare_larger_symgroups(pot_larger_subgroup, 1e-5);
+
+                if (find_if(list_of_subgroups.begin(), list_of_subgroups.end(), compare_larger_symgroups) == list_of_subgroups.end()) 
+                {
+                    list_of_subgroups.push_back(pot_larger_subgroup);
+                    is_finished = false;
+                }
+            
+            }   
+        }
+    }
+    return list_of_subgroups;
+
+}
+

@@ -60,4 +60,6 @@ private:
 
 Eigen::Matrix3d make_z_rotation_matrix(double degrees); 
 
+std::vector<SymGroup> find_subgroups(SymGroup input_group);
+
 #endif

@@ -1,4 +1,5 @@
 #include "3Dpointgroup.cpp"
+
 std::vector<Eigen::Vector3d> transform_basis(factor_group factorgroup, std::vector<Eigen::Vector3d> basis)
 {
 	std::vector<Eigen::Vector3d> test_basis;

@@ -224,6 +224,8 @@ struct compare_vect{
 	Eigen::Vector3d Vector1;
 };
 
+//TODO: Rename class and members. It's not a factor group
+//it's just a single operation
 class factor_group{
 	public: 
 
@@ -244,6 +246,3 @@ class factor_group{
 			return SymOp;
 		}		
 };
-
-
-

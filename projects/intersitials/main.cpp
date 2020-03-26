@@ -30,22 +30,6 @@ void move_the_atom_inside_the_crystal(Eigen::Vector3d* fract_coords_ptr, Eigen::
     return;
 }
 
-/*
-Site bring_within(const Site& site_outside_of_unit, const Lattice& unit_cell)
-{
-    Coordinate coord_outside_cell=site_outside_of_unit.get_coordinate;
-    //bring to front in x direction
-    double x_coord=mod(coord_outside_cell.get_x(), unit_cell.row_vector_matrix().at(0)); //wrong syntax but how would I do this in general?
-    //bring to front in y direction
-    double y_coord=coord_outside_cell.get_y();
-    //bring to front in z direction
-    double z_coord=coord_outside_cell.get_z();
-
-    //I'm not sure it'd work like this..
-    return Site(site_outside_of_unit.get_atom(), FinalCoord);
-}
-*/
-
 // Defines Cartesian matrix and translation vector
 // of symmetry operation
 Structure read_poscar(const std::string& poscar_path)

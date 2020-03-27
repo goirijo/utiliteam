@@ -8,7 +8,6 @@
 #include <vector>
 #include <iterator>
 #include <string>
-#include "label_table.cpp"
 #include "symmetry.hpp"
 
 #define PREC 1e-6
@@ -19,7 +18,7 @@ bool is_valid(const Eigen::Matrix3d S);
 
 auto create_grid_pts(const Eigen::Matrix3d L);
 auto calc_L_primes(const std::vector< std::vector<double>> grid);
-auto calc_point_group(const Eigen::Matrix3d L);
+SymGroup calc_point_group(const Eigen::Matrix3d L);
 
 //contruct functor for find if statement in is_closed
 struct mat_is_same{

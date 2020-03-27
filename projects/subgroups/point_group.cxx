@@ -5,7 +5,6 @@
 #include <vector>
 #include <iterator>
 #include <string>
-#include "label_table.cpp"
 #include "symmetry.hpp"
 
 #define PREC 1e-6
@@ -75,7 +74,7 @@ auto calc_L_primes(const std::vector< std::vector<double>> grid)
 	return L_prime;
 }
 
-auto calc_point_group(const Eigen::Matrix3d L)
+SymGroup calc_point_group(const Eigen::Matrix3d L)
 {  
 //calculate all valid SymOps for the input Lattice
 //returns vector of SymOp matrices

@@ -1,4 +1,4 @@
-#include "interstitials.hpp"
+#include "xtal_classes.hpp"
 // Initial Class set up
 // Calculate the grid from which we will calculate potential Lprime values. Need 3 by 3 integers
 
@@ -25,8 +25,10 @@ std::vector<Eigen::Vector3d> calculate_gridpoints(Eigen::Matrix3d lattice,
 // change complete
 
 // calculate a list of potentials Lprimes
-std::vector<Eigen::Matrix3d> Calculate_Lprimes(Eigen::Matrix3d lattice, int radius) // Again may need to go with Structure
+std::vector<Eigen::Matrix3d> Calculate_Lprimes(Lattice my_lattice) // Again may need to go with 
 {
+    Eigen::Matrix3d lattice=my_lattice.col_vector_matrix();
+    int radius=1;
     std::vector<Eigen::Matrix3d> Lprimes;
     auto PS = calculate_gridpoints(lattice, radius);
     Eigen::Matrix3d MakeMatrix;
@@ -55,17 +57,24 @@ bool is_symop_valid(Eigen::Matrix3d SymMatrix)
         return true;
 }
 // This function calculates the symmetry operations that are valid for a given lattice
-std::vector<Eigen::Matrix3d> Calculate_point_group(Eigen::Matrix3d lattice, int radius) // Is the type symops?
+std::vector<SymOp> Calculate_point_group(Lattice my_lattice) // Is the type symops?
 {
-    std::vector<Eigen::Matrix3d> validsymops;
-    auto Lprimes = Calculate_Lprimes(lattice, radius);
+    Eigen::Matrix3d lattice=my_lattice.col_vector_matrix();
+    int radius=1;
+    Eigen::Matrix3d dummy_matrix;
+    Eigen::Vector3d dummy_tau;
+    SymOp test_symop(dummy_matrix, dummy_tau);
+    std::vector<SymOp> validsymops;
+    auto Lprimes = Calculate_Lprimes(lattice);
     Eigen::Matrix3d SymmetryOp;
     for (auto Lp : Lprimes)
     {
         SymmetryOp = lattice * Lp;
         if (is_symop_valid(SymmetryOp))
         {
-            validsymops.push_back(SymmetryOp);
+            test_symop.my_matrix=SymmetryOp;
+	    test_symop.my_trans<<0,0,0; //would I need to push this back as well?
+	    validsymops.push_back(test_symop);
         }
     }
     return validsymops;

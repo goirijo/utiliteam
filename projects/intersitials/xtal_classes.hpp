@@ -77,14 +77,14 @@ private:
 class SymOp
 {
 public:
-    SymOp(Eigen::MatrixXd Cart_Matrix, double translation) : my_matrix(Cart_Matrix), my_trans(translation) {}
+    Eigen::Vector3d my_trans;
+    Eigen::Matrix3d my_matrix; // should I generalize this to different Matrix sizes in general?
+    SymOp(Eigen::MatrixXd Cart_Matrix, Eigen::Vector3d translation) : my_matrix(Cart_Matrix), my_trans(translation) {}
 
-    double get_translation() { return my_trans; }
+    Eigen::Vector3d get_translation() { return my_trans; }
     Eigen::Matrix3d get_Cart_Matrix() const { return this->my_matrix; }
 
 private:
-    double my_trans;
-    Eigen::Matrix3d my_matrix; // should I generalize this to different Matrix sizes in general?
 };
 
 // Defines Lattice and basis (collection of Site)
@@ -226,23 +226,23 @@ struct compare_vect{
 
 //TODO: Rename class and members. It's not a factor group
 //it's just a single operation
-class factor_group{
-	public: 
-
-		Eigen::Matrix3d SymOp;
-		Eigen::Vector3d translation;
-		factor_group(Eigen::Matrix3d s, Eigen::Vector3d tau){
-			translation=tau;
-			SymOp=s;
-		}
-
-		auto get_translation()
-		{
-			return translation;
-		}
-
-		auto get_SymOp()
-		{
-			return SymOp;
-		}		
-};
+//class factor_group{
+//	public: 
+//
+//		Eigen::Matrix3d SymOp;
+//		Eigen::Vector3d translation;
+//		factor_group(Eigen::Matrix3d s, Eigen::Vector3d tau){
+//			translation=tau;
+//			SymOp=s;
+//		}
+//
+//		auto get_translation()
+//		{
+//			return translation;
+//		}
+//
+//		auto get_SymOp()
+//		{
+//			return SymOp;
+//		}		
+//};

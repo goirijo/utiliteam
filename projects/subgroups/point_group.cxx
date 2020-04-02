@@ -11,18 +11,6 @@
 
 using namespace std;
 
-bool is_valid(const Eigen::Matrix3d S)
-{//check if SymOp is Unitary by checking if transpose==inverse and det is +/-1
-//    Eigen::MatrixXd I = Eigen::MatrixXd::Identity(3,3);
-    Eigen::Matrix3d sst=S.transpose()*S;
-
-    if (sst.isIdentity(PREC)==false){ return false;}
-    auto det=S.determinant();
-    if((1-abs(det))<PREC){
-	    return true;}
-    else {return false;}
-}
-
 auto create_grid_pts(const Eigen::Matrix3d L)
 {
 //generate a grid of coordinates of points with radius n.
@@ -84,42 +72,14 @@ SymGroup calc_point_group(const Eigen::Matrix3d L)
 	auto L_primes = calc_L_primes(pts);
 	for(Eigen::Matrix3d LP:L_primes){
 		Eigen::Matrix3d temp;
-		temp=LP*L.inverse();
-		if(is_valid(temp)){
-            SymOp new_op(temp);
-			pt_group_list.push_back(temp);
-		}
+		try {SymOp temp(LP*L.inverse());}
+        catch (std::runtime_error&)
+        {goto ENDLOOP;}
+        pt_group_list.push_back(temp);
+        ENDLOOP:{continue;}
 	}
     SymGroup pt_group(pt_group_list);
 	return pt_group;
 }
 
-//contruct functor for find if statement in is_closed
-struct mat_is_same{
-	mat_is_same( Eigen::Matrix3d mat_a) : mat_a(mat_a) {}
-	bool operator()( Eigen::Matrix3d mat_b){
-    if( mat_a.isApprox(mat_b, PREC) ){return true;}
-	else return false;
-	}
-private:
-	Eigen::Matrix3d mat_a;
-//	double delt;
-};
-
-bool is_closed(std::vector<Eigen::Matrix3d> group)
-{
-//check is for all elements multiplied by all other elements, the product is in group
-	int n=group.size();
-	Eigen::Matrix3d prod;
-	for(int i=0; i<n; i++){
-		for (int j=0;j<n; j++){
-			prod=group[i]*group[j];
-			mat_is_same mat_compare(prod);
-			if(std::find_if(group.begin(), group.end(), mat_compare)==group.end()){
-				return false;
-			}
-		}
-	}
-	return true;	
-}
 

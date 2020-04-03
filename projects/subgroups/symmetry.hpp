@@ -32,6 +32,10 @@ private:
     double tol;
 };
 
+//TODO: Time for templates
+//Template parameters:
+//SymOp -> SymOpType
+//SymOpCompare_f -> SymOpCompareType_f
 class SymGroup
 {
 public:
@@ -57,8 +61,6 @@ private:
     const SymGroup group1;
     double tol;
 };
-
-Eigen::Matrix3d make_z_rotation_matrix(double degrees); 
 
 std::vector<SymGroup> find_subgroups(SymGroup input_group);
 

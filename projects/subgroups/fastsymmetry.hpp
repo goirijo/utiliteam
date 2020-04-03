@@ -1,30 +1,21 @@
+#ifndef FASTSYMMETRY_HH
+#define FASTSYMMETRY_HH
+
 #include <memory>
 #include <vector>
+#include "./symmetry.hpp"
 
-class SymGroup;
-class SymOp;
+
+typedef std::vector<std::vector<int>> MultTable;
 
 class AbstractSymOp
 {
 public:
-    typedef std::vector<std::vector<int>> MultTable;
-    AbstractSymOp(int id, std::shared_ptr<MultTable> multiplication_table_ptr) : id(id), multiplication_table_ptr(multiplication_table_ptr)
-    {
-    }
+    AbstractSymOp(int id, std::shared_ptr<MultTable> multiplication_table_ptr);
+    int get_id() const;
+    const std::shared_ptr<MultTable>& mult_table_ptr() const;
 
-AbstractSymOp operator*(const AbstractSymOp& rhs)
-{
-    if(this->multiplication_table_ptr!=rhs.multiplication_table_ptr)
-    {
-        //TODO: Bad things
-    }
-
-    int lhs_id=this->id;
-    int rhs_id=rhs.id;
-
-    int product_id=(*multiplication_table_ptr)[lhs_id][rhs_id];
-    return AbstractSymOp(product_id,multiplication_table_ptr);
-}
+    AbstractSymOp operator*(const AbstractSymOp& rhs);
 
 private:
     /// ID of this particular symmetry operation, represented as integer
@@ -39,19 +30,17 @@ private:
 struct AbstractSymOpCompare_f
 {
     AbstractSymOpCompare_f(AbstractSymOp input1);
-    bool operator()(const AbstractSymOp& element2) const
-    {
-        /* return (input1_id==element2.id() && table_ptr==...); */
-    }
+    bool operator()(const AbstractSymOp& element2) const;
 
 private:
-
     int input1_id;
-    const AbstractSymOp::MultTable* table_ptr;
+    const std::shared_ptr<MultTable> table_ptr;
 };
 
-//TODO:
-std::vector<std::vector<int>> make_multiplication_table(const std::vector<SymOp>& group);   //or take SymGroup
+// TODO:
+std::vector<std::vector<int>> make_multiplication_table(const std::vector<SymOp>& group, double tol);
 
-//TODO:
-std::vector<AbstractSymOp> trasform_representation(const std::vector<SymOp>& cartesian_operations);
+// TODO:
+std::vector<AbstractSymOp> transform_representation(const SymGroup& cartesian_group, double tol);
+
+#endif

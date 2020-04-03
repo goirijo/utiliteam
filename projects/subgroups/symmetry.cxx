@@ -1,12 +1,6 @@
 #include "./symmetry.hpp"
+#include "./math.hpp"
 #define PREC 1e-6
-
-template <typename MatrixType>
-bool is_unitary(const MatrixType& input_matrix, double tol)
-{
-    MatrixType product = input_matrix.transpose() * input_matrix;
-    return product.isIdentity(tol);
-}
 
 SymOp::SymOp(Eigen::Matrix3d input_matrix) : cart_matrix(input_matrix)
 {
@@ -132,12 +126,6 @@ bool SymGroupCompare_f::operator()(const SymGroup& group2) const
 
         return true;
     }
-}
-
-Eigen::Matrix3d make_z_rotation_matrix(double degrees)
-{
-    Eigen::AngleAxisd rotation_generator(degrees * M_PI / 180.0, Eigen::Vector3d(0, 0, 1));
-    return rotation_generator.matrix();
 }
 
 std::vector<SymGroup> find_subgroups(SymGroup input_group)

@@ -46,9 +46,9 @@ std::vector<Site> Structure::get_sites() const { return this->m_sites; }
 Cluster::Cluster(const std::vector<Site> &sites) : m_sites(sites) {}
 int Cluster::cluster_size() const { return this->m_sites.size(); }
 Site Cluster::get_site(int i) const { return this->m_sites.at(i); }
-Cluster Cluster::add_site(const Site &site_to_add) {
-  m_sites.push_back(site_to_add);
-  return this->m_sites;
+Cluster& Cluster::add_site(const Site &site_to_add) {
+  this->m_sites.push_back(site_to_add);
+  return *this;
 }
 const std::vector<Site> &Cluster::sites() const { return this->m_sites; }
 

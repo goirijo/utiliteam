@@ -37,10 +37,9 @@ private:
     const std::shared_ptr<MultTable> table_ptr;
 };
 
-// TODO:
 std::vector<std::vector<int>> make_multiplication_table(const std::vector<SymOp>& group, double tol);
 
-// TODO:
-std::vector<AbstractSymOp> transform_representation(const SymGroup& cartesian_group, double tol);
+
+SymGroup<AbstractSymOp, AbstractSymOpCompare_f> transform_representation(const SymGroup<SymOp, SymOpCompare_f>& cartesian_group, double tol);
 
 #endif

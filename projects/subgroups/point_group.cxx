@@ -67,7 +67,7 @@ auto calc_L_primes(const std::vector<std::vector<double>> grid)
     return L_prime;
 }
 
-SymGroup calc_point_group(const Eigen::Matrix3d L)
+SymGroup<SymOp, SymOpCompare_f> calc_point_group(const Eigen::Matrix3d L, double tol)
 {
     // calculate all valid SymOps for the input Lattice
     // returns vector of SymOp matrices
@@ -79,14 +79,14 @@ SymGroup calc_point_group(const Eigen::Matrix3d L)
     {
         Eigen::Matrix3d cart_mat=LP * L.inverse();
         // TODO: Pass tolerance, don't hard code
-        if (!is_unitary(cart_mat, 1e-6))
+        if (!is_unitary(cart_mat, tol))
         {
             continue;
         }
 
         pt_group_list.emplace_back(cart_mat);
     }
-    SymGroup pt_group(pt_group_list);
+    SymGroup<SymOp, SymOpCompare_f> pt_group(pt_group_list);
     return pt_group;
 }
 

@@ -9,7 +9,6 @@ AbstractSymOp AbstractSymOp::operator*(const AbstractSymOp& rhs)
 {
     if(this->multiplication_table_ptr!=rhs.mult_table_ptr())
     {
-        //TODO: Bad things
         throw std::runtime_error("Your multiplication tables are different!!");
     }
 
@@ -27,7 +26,6 @@ bool AbstractSymOpCompare_f::operator()(const AbstractSymOp& element2) const
     return (input1_id == element2.get_id() && table_ptr == element2.mult_table_ptr());
 }
 
-//TODO:
 std::vector<std::vector<int>> make_multiplication_table(const std::vector<SymOp>& group, double tol) 
 {
     MultTable multiplication_table;
@@ -48,15 +46,15 @@ std::vector<std::vector<int>> make_multiplication_table(const std::vector<SymOp>
 }  
 
 //TODO: This will eventually change to return a SymGroup
-std::vector<AbstractSymOp> transform_representation(const SymGroup& cartesian_group, double tol) 
+SymGroup<AbstractSymOp, AbstractSymOpCompare_f> transform_representation(const SymGroup<SymOp, SymOpCompare_f>& cartesian_group, double tol) 
 {
     MultTable multiplication_table = make_multiplication_table(cartesian_group.operations(), tol);
-    std::vector<AbstractSymOp> pot_abstract_group;
+    SymGroup<AbstractSymOp, AbstractSymOpCompare_f> pot_abstract_group(std::vector<AbstractSymOp>);
     std::shared_ptr<MultTable> table_ptr = std::make_shared<MultTable>(multiplication_table);
     for (int i = 0; i < cartesian_group.operations().size(); i++) 
     {
         AbstractSymOp abstract_symop(i, table_ptr);
-        pot_abstract_group.push_back(abstract_symop);
+        pot_abstract_group.insert(abstract_symop);
     }
     
     return pot_abstract_group;

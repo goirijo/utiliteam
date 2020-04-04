@@ -18,7 +18,7 @@ bool is_valid(const Eigen::Matrix3d S);
 
 auto create_grid_pts(const Eigen::Matrix3d L);
 auto calc_L_primes(const std::vector< std::vector<double>> grid);
-SymGroup calc_point_group(const Eigen::Matrix3d L);
+SymGroup<SymOp, SymOpCompare_f> calc_point_group(const Eigen::Matrix3d L, double tol);
 
 //contruct functor for find if statement in is_closed
 struct mat_is_same{

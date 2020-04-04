@@ -30,12 +30,13 @@ bool SymOpCompare_f::operator()(const SymOp& element2) const {
     
         return element1.cart_matrix.isApprox(element2.cart_matrix, tol); }
 
-void SymGroup::close_group(std::vector<SymOp>* operations_ptr)
+template <typename SymOpType, typename SymOpCompareType_f>
+void SymGroup<SymOpType, SymOpCompareType_f>::close_group(std::vector<SymOpType>* operations_ptr)
 {
     int push_limit = 200;
     int push_count = 0;
 
-    auto& operations = *operations_ptr;
+    SymOpType& operations = *operations_ptr;
     // take first element, mulptiply with everything
     // if the product isn't there, then add it to group
     // continue to next element
@@ -50,8 +51,8 @@ void SymGroup::close_group(std::vector<SymOp>* operations_ptr)
         {
             for (int j = 0; j < last_size; ++j)
             {
-                SymOp candidate_operation = operations[i] * operations[j];
-                SymOpCompare_f has_candidate(candidate_operation, PREC);
+                SymOpType candidate_operation = operations[i] * operations[j];
+                SymOpCompareType_f has_candidate(candidate_operation, PREC);
                 if (std::find_if(operations.begin(), operations.end(), has_candidate) == operations.end())
                 {
                     operations.push_back(candidate_operation);
@@ -67,12 +68,12 @@ void SymGroup::close_group(std::vector<SymOp>* operations_ptr)
         }
     }
 
-    return;
 }
 
-bool SymGroup::insert(SymOp& new_operation)
+template <typename SymOpType, typename SymOpCompareType_f>
+bool SymGroup<SymOpType, SymOpCompareType_f>::insert(SymOpType& new_operation)
 {
-    SymOpCompare_f compare(new_operation, PREC);
+    SymOpCompareType_f compare(new_operation, PREC);
     if (find_if(this->group.begin(), this->group.end(), compare) == this->group.end())
     {
         this->group.push_back(new_operation);
@@ -83,31 +84,33 @@ bool SymGroup::insert(SymOp& new_operation)
     return false;
 }
 
-SymGroup::SymGroup(std::vector<SymOp> generating_elements)
+template <typename SymOpType, typename SymOpCompareType_f>
+SymGroup<SymOpType, SymOpCompareType_f>::SymGroup(std::vector<SymOpType> generating_elements)
 {
-    for (SymOp element : generating_elements)
+    for (SymOpType element : generating_elements)
     {
         this->insert(element);
     }
 }
 
-SymGroup operator*(SymGroup lhs, const SymGroup& rhs)
+template <typename SymOpType, typename SymOpCompareType_f>
+SymGroup<SymOpType, SymOpCompareType_f> operator*(SymGroup<SymOpType, SymOpCompareType_f> lhs, const SymGroup<SymOpType, SymOpCompareType_f>& rhs)
 {
     // combines all operations of the two groups and closes the result
-    // TODO
     // combines groups in total group.
 
     for (auto op : rhs.operations())
     {
-        //        SymOpCompare_f compare(op, PREC);
         lhs.insert(op);
     }
     return lhs;
 }
 
-SymGroupCompare_f::SymGroupCompare_f(SymGroup input1, double tol) : group1(input1), tol(tol) {}
+template <typename SymOpType, typename SymOpCompareType_f>
+SymGroupCompare_f<SymOpType, SymOpCompareType_f>::SymGroupCompare_f(SymGroup<SymOpType, SymOpCompareType_f> input1, double tol) : group1(input1), tol(tol) {}
 
-bool SymGroupCompare_f::operator()(const SymGroup& group2) const
+template <typename SymOpType,typename SymOpCompareType_f>
+bool SymGroupCompare_f<SymOpType, SymOpCompareType_f>::operator()(const SymGroup<SymOpType, SymOpCompareType_f>& group2) const
 {
     if (group1.operations().size() != group2.operations().size())
     {
@@ -115,9 +118,9 @@ bool SymGroupCompare_f::operator()(const SymGroup& group2) const
     }
     else
     {
-        for (const SymOp& symop : group1.operations())
+        for (const SymOpType& symop : group1.operations())
         {
-            SymOpCompare_f compare_elements(symop, tol);
+            SymOpCompareType_f compare_elements(symop, tol);
             if (std::find_if(group2.operations().begin(), group2.operations().end(), compare_elements) == group2.operations().end())
             {
                 return false;
@@ -128,20 +131,21 @@ bool SymGroupCompare_f::operator()(const SymGroup& group2) const
     }
 }
 
-std::vector<SymGroup> find_subgroups(SymGroup input_group)
+template <typename SymOpType, typename SymOpCompareType_f>
+std::vector<SymGroup<SymOpType, SymOpCompareType_f>> find_subgroups(SymGroup<SymOpType, SymOpCompareType_f> input_group)
 {
-    std::vector<SymGroup> list_of_subgroups;
+    std::vector<SymGroup<SymOpType, SymOpCompareType_f>> list_of_subgroups;
     
     //Initializing a subgroup with each  element of the total group.
     for (const SymOp& operation : input_group.operations()) 
     {
-        SymGroup pot_subgroup(std::vector<SymOp> {operation});
+        SymGroup<SymOpType, SymOpCompareType_f> pot_subgroup(std::vector<SymOp> {operation});
         if (pot_subgroup.operations().size() == input_group.operations().size()) 
         {
             continue;
         }
 
-        SymGroupCompare_f compare_symgroups(pot_subgroup, PREC);
+        SymOpCompareType_f compare_symgroups(pot_subgroup, PREC);
 
         if (std::find_if(list_of_subgroups.begin(), list_of_subgroups.end(), compare_symgroups) == list_of_subgroups.end()) 
         {
@@ -159,14 +163,14 @@ std::vector<SymGroup> find_subgroups(SymGroup input_group)
         {
             for (int j = 0; j < last_size; j++) 
             {
-                SymGroup pot_larger_subgroup = list_of_subgroups[a] * list_of_subgroups[j];
+                SymGroup<SymOpType, SymOpCompareType_f> pot_larger_subgroup = list_of_subgroups[a] * list_of_subgroups[j];
 
                 if (pot_larger_subgroup.operations().size() == input_group.operations().size()) 
                 {
                     continue;
                 }
 
-                SymGroupCompare_f compare_larger_symgroups(pot_larger_subgroup, 1e-5);
+                SymGroupCompare_f<SymOpType, SymOpCompareType_f> compare_larger_symgroups(pot_larger_subgroup, 1e-5);
 
                 if (find_if(list_of_subgroups.begin(), list_of_subgroups.end(), compare_larger_symgroups) == list_of_subgroups.end()) 
                 {

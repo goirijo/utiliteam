@@ -14,7 +14,7 @@
 #include "crystal.hpp"
 
 auto read_lattice(std::string filename);
-Crystal_Structure read_poscar(std::string filename);
-void print_sub_groups(SymGroup input_group, std::vector<SymGroup> list_of_subgroups);
+CrystalStructure read_poscar(std::string filename);
+void print_sub_groups(SymGroup<SymOp, SymOpCompare_f> input_group, std::vector<SymGroup<SymOp, SymOpCompare_f>> list_of_subgroups);
 
 #endif

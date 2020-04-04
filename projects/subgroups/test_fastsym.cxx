@@ -24,8 +24,8 @@ int main(int argc, char *argv[])
     }
 
     //TODO: Use consistent style for naming classes (Youve been using CamelCase so far)
-    Crystal_Structure structure=read_poscar(argv[1]);
-    SymGroup pt_group = calc_point_group(structure.lattice);
+    CrystalStructure structure=read_poscar(argv[1]);
+    SymGroup<SymOp, SymOpCompare_f> pt_group = calc_point_group(structure.lattice, PREC);
     const auto& pt_group_operations=pt_group.operations();
     MultTable multiplication_table = make_multiplication_table(pt_group_operations, PREC);
     int group_sz=pt_group.operations().size();

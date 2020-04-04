@@ -32,36 +32,37 @@ private:
     double tol;
 };
 
-//TODO: Time for templates
-//Template parameters:
-//SymOp -> SymOpType
-//SymOpCompare_f -> SymOpCompareType_f
+//QUESTION!! Do we need to write a default constructor??
+template <typename SymOpType, typename SymOpCompareType_f>
 class SymGroup
 {
 public:
-    static void close_group(std::vector<SymOp>* operations_ptr);
-
-    SymGroup(std::vector<SymOp> generating_elements);
-    bool insert(SymOp& new_operation);
-    const std::vector<SymOp>& operations() const { return this->group; }
+ 
+    SymGroup(std::vector<SymOpType> generating_elements);
+    static void close_group(std::vector<SymOpType>* operations_ptr);
+    bool insert(SymOpType& new_operation);
+    const std::vector<SymOpType>& operations() const { return this->group; }
 
 private:
-    std::vector<SymOp> group;
+    std::vector<SymOpType> group;
 };
 
-SymGroup operator*(SymGroup lhs, const SymGroup& rhs);
+template <typename SymOpType,typename SymOpCompareType_f>
+SymGroup<SymOpType, SymOpCompareType_f> operator*(SymGroup<SymOpType, SymOpCompareType_f> lhs, const SymGroup<SymOpType, SymOpCompareType_f>& rhs);
 
+template <typename SymOpType,typename SymOpCompareType_f>
 struct SymGroupCompare_f
 {
-    SymGroupCompare_f(SymGroup input1, double tol);
+    SymGroupCompare_f(SymGroup<SymOpType,SymOpCompareType_f> input1, double tol);
 
-    bool operator()(const SymGroup& group2) const;
+    bool operator()(const SymGroup<SymOpType,SymOpCompareType_f>& group2) const;
 
 private:
-    const SymGroup group1;
+    const SymGroup<SymOpType,SymOpCompareType_f> group1;
     double tol;
 };
 
-std::vector<SymGroup> find_subgroups(SymGroup input_group);
+template <typename SymOpType, typename SymOpCompareType_f>
+std::vector<SymGroup<SymOpType, SymOpCompareType_f>> find_subgroups(SymGroup<SymOpType, SymOpCompareType_f> input_group);
 
 #endif

@@ -101,12 +101,12 @@ Cluster operator*(const SymOp &transformation, const Cluster &cluster) {
 
 // Matrix compare functor
 bool MatrixCompare_f::operator()(const Eigen::Matrix3d &other) const {
-  return m_matrix.isApprox(other);
+  return this->m_matrix.isApprox(other);
 }
 
 // Vector compare functor
 bool VectorCompare_f::operator()(const Eigen::Vector3d &other) const {
-  return m_vector.isApprox(other);
+  return this->m_vector.isApprox(other);
 }
 
 // TODO: Rename class and members. It's not a factor group

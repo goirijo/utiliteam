@@ -4,8 +4,6 @@
 #include <iterator>
 #include <sstream>
 
-// Defines Cartesian matrix and translation vector
-// of symmetry operation
 Structure read_poscar(const std::string &poscar_path) {
   std::ifstream file;
   file.open(poscar_path, std::ios::in);

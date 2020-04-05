@@ -13,6 +13,9 @@ Eigen::Matrix3d Lattice::col_vector_matrix() const { return this->m_lat; }
 Eigen::Matrix3d Lattice::row_vector_matrix() const {
   return this->m_lat.transpose();
 }
+Eigen::Vector3d Lattice::lattice_vector(int i) const {
+  return this->m_lat.col(i);
+}
 
 // Coordinate defintions
 Coordinate::Coordinate(const Eigen::Vector3d &coord) : m_coord(coord) {}
@@ -20,7 +23,16 @@ Eigen::Vector3d Coordinate::get_coordinate() const { return this->m_coord; }
 double Coordinate::get_x() const { return this->m_coord(0); }
 double Coordinate::get_y() const { return this->m_coord(1); }
 double Coordinate::get_z() const { return this->m_coord(2); }
-
+void Coordinate::bring_within(const Lattice &lattice) {
+  Eigen::Vector3d frac_coords;
+  frac_coords = lattice.col_vector_matrix().inverse() * this->m_coord;
+  for (int i = 0; i < 3; ++i) {
+    if (frac_coords(i) < 0 || frac_coords(i) >= 1) {
+      frac_coords(i) = frac_coords(i) - floor(frac_coords(i));
+    }
+  }
+  this->m_coord = lattice.col_vector_matrix() * frac_coords;
+}
 // Defines position and type of atom in a crystal
 Site::Site(const std::string atom_name, const Coordinate &init_coord)
     : m_coord(init_coord), m_atom(atom_name) {}
@@ -46,7 +58,7 @@ std::vector<Site> Structure::get_sites() const { return this->m_sites; }
 Cluster::Cluster(const std::vector<Site> &sites) : m_sites(sites) {}
 int Cluster::cluster_size() const { return this->m_sites.size(); }
 Site Cluster::get_site(int i) const { return this->m_sites.at(i); }
-Cluster& Cluster::add_site(const Site &site_to_add) {
+Cluster &Cluster::add_site(const Site &site_to_add) {
   this->m_sites.push_back(site_to_add);
   return *this;
 }

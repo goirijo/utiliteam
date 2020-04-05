@@ -2,6 +2,7 @@
 #define XTAL_CLASSES_H
 
 #include "../../submodules/eigen-git-mirror/Eigen/Core"
+#include "../../submodules/eigen-git-mirror/Eigen/Dense"
 #include <string>
 #include <vector>
 

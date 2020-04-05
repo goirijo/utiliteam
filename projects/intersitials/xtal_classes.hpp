@@ -2,7 +2,6 @@
 #define XTAL_CLASSES_H
 
 #include "../../submodules/eigen-git-mirror/Eigen/Core"
-#include "../../submodules/eigen-git-mirror/Eigen/Dense"
 #include <string>
 #include <vector>
 
@@ -13,6 +12,7 @@ public:
           const Eigen::Vector3d &a3);
   Eigen::Matrix3d col_vector_matrix() const;
   Eigen::Matrix3d row_vector_matrix() const;
+  Eigen::Vector3d lattice_vector(int i) const;
 
 private:
   Eigen::Matrix3d m_lat;
@@ -25,6 +25,7 @@ public:
   double get_x() const;
   double get_y() const;
   double get_z() const;
+  void bring_within(const Lattice &lattice);
 
 private:
   Eigen::Vector3d m_coord;
@@ -68,7 +69,7 @@ public:
   Cluster(const std::vector<Site> &sites);
   int cluster_size() const;
   Site get_site(const int i) const;
-  Cluster add_site(const Site &site_to_add);
+  Cluster &add_site(const Site &site_to_add);
   const std::vector<Site> &sites() const;
 
 private:

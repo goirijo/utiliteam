@@ -1,3 +1,4 @@
+#include "xtal_classes.hpp"
 //Tools we already have:
 //Structrue class
 //Lattice class
@@ -33,10 +34,10 @@ std::vector<Site> make_asymmetric_unit(const std::vector<Site>& complete_structu
 	for (auto factor_group_operation: factor_group)
 	{
 	    transformedsite.get_coordinate()=basis.get_coordinate()*factor_group_operation;
-	    transformedsite.get_atom=basis.get_atom(); //is this alright or do I need to make atom and coorindate public in the site class and do that
+	    transformedsite.get_atom()=basis.get_atom(); //is this alright or do I need to make atom and coorindate public in the site class and do that
 	    SiteCompare_f test_site(transformed_site, 1E-5); 
 	    //compare_mat compare(transformedbasis);
-	    //if (find_if(asymmetric_unit.begin(), asymmetric_unit.end(), compare)==asymmtric_unit.end() && find(asymmetric_unit.begin(), asymmetric_unit.end(), transformed_basis)==asymmetric_unit.end())
+	    //if (find_if(asymmetric_unit.begin(), asymmetric_unit.end(), compare)==asymmetric_unit.end() && find(asymmetric_unit.begin(), asymmetric_unit.end(), transformed_basis)==asymmetric_unit.end())
     	    if(!SiteCompare_f)
             {
 	    	     asymmetric_unit.push_back(transformedsite);
@@ -51,3 +52,8 @@ std::vector<Site> make_asymmetric_unit(const std::vector<Site>& complete_structu
     //Apply symmetry to each site (except identity)
     //If you create a site that's already in the asymmetric unit, you failed
 }
+
+//Arithmetic center of mass -Muna
+
+
+//

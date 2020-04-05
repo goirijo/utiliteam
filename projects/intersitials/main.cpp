@@ -1,5 +1,5 @@
-#include "find_factor_group.cpp"
-
+#include "symmetry_operations.hpp"
+#include "xtal_classes.hpp"
 
 Eigen::Vector3d cart2fract(Eigen::Vector3d cart_coords, Eigen::Matrix3d lattice){
     Eigen::Vector3d fract_coords;

@@ -40,24 +40,24 @@ Structure read_poscar(const std::string &poscar_path) {
   // Number of species line
   std::getline(file, line);
   std::vector<int> NumSpecies;
-  std::istringstream iss2(line);
+  std::istringstream ss3(line);
   int spec;
-  while (iss2 >> spec) {
+  while (ss3 >> spec) {
     NumSpecies.push_back(spec);
   }
 
   // Coord-type line
   std::getline(file, line);
   std::string coord_type;
-  std::istringstream iss3(line);
-  iss3 >> coord_type;
+  std::istringstream ss4(line);
+  ss4 >> coord_type;
 
   // Raw coordinates
   Eigen::Vector3d coord;
   std::vector<Eigen::Vector3d> raw_coordinate_values;
   while (std::getline(file, line)) {
-    std::istringstream ss3(line);
-    ss3 >> coord(0) >> coord(1) >> coord(2);
+    std::istringstream ss5(line);
+    ss5 >> coord(0) >> coord(1) >> coord(2);
     raw_coordinate_values.push_back(coord);
   }
 

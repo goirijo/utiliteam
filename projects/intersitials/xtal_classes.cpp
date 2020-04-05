@@ -1,5 +1,4 @@
 #include "xtal_classes.hpp"
-
 // Lattice definitions
 Lattice::Lattice(const Eigen::Matrix3d &lattice_matrix)
     : m_lat(lattice_matrix) {}

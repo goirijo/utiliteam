@@ -11,8 +11,7 @@
 
 // bool VectorComparison(Eigen::Vector3d& Vector1, Eigen::Vector3d& Vector2);
 
-std::vector<Eigen::Vector3d> calculate_gridpoints(Lattice my_lattice,
-                                                  int radius);
+std::vector<Eigen::Vector3d> calculate_gridpoints(Lattice my_lattice, int radius);
 
 std::vector<Eigen::Matrix3d> Calculate_Lprimes(Lattice my_lattice);
 
@@ -22,11 +21,9 @@ std::vector<SymOp> Calculate_point_group(Lattice my_lattice);
 
 bool group_is_closed(std::vector<Eigen::Matrix3d> SymMatrix);
 
-std::vector<Site> transform_basis(const SymOp &symop,
-                                  const std::vector<Site> &basis);
+std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& basis);
 
-bool basis_maps_onto_itself(const std::vector<Site> &original_basis,
-                            const std::vector<Site> &transformed_basis);
+bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::vector<Site>& transformed_basis);
 
 std::vector<SymOp> find_factor_group(Structure my_struc);
 

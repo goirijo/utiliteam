@@ -5,7 +5,7 @@ std::vector<Eigen::Vector3d>
 calculate_gridpoints(const Lattice& my_lattice,
                      int radius) // Might take in a structure instead and get a lattice from it
 {
-    Eigen::Matrix3d lattice = my_lattice.col_vector_matrix();
+    Eigen::Matrix3d lattice = my_lattice.row_vector_matrix();
     std::vector<Eigen::Vector3d> gridpoints; // left in int since I put radius in int
     Eigen::Vector3d pn;
 
@@ -28,10 +28,10 @@ calculate_gridpoints(const Lattice& my_lattice,
 // calculate a list of potentials Lprimes
 std::vector<Eigen::Matrix3d> Calculate_Lprimes(const Lattice& my_lattice)
 {
-    Eigen::Matrix3d lattice = my_lattice.col_vector_matrix();
+    Eigen::Matrix3d lattice = my_lattice.row_vector_matrix();
     int radius = 1;
     std::vector<Eigen::Matrix3d> Lprimes;
-    const auto PS = calculate_gridpoints(lattice, radius);
+    auto PS = calculate_gridpoints(lattice, radius);
     Eigen::Matrix3d MakeMatrix;
     for (const auto& p1 : PS)
     {
@@ -54,7 +54,7 @@ std::vector<Eigen::Matrix3d> Calculate_Lprimes(const Lattice& my_lattice)
 bool is_symop_valid(const Eigen::Matrix3d& SymMatrix)
 {
     auto Matrixcheck = SymMatrix.transpose() * SymMatrix;
-    if (!Matrixcheck.isIdentity(.0005))
+    if (!Matrixcheck.isIdentity(.005))
     {
         return false;
     }
@@ -64,14 +64,14 @@ bool is_symop_valid(const Eigen::Matrix3d& SymMatrix)
 // lattice
 std::vector<SymOp> Calculate_point_group(const Lattice& my_lattice) // Is the type symops?
 {
-    Eigen::Matrix3d lattice = my_lattice.col_vector_matrix();
+    Eigen::Matrix3d lattice = my_lattice.row_vector_matrix();
     int radius = 1;
     std::vector<SymOp> validsymops;
     Eigen::Vector3d trans;
     trans << 0, 0, 0;
     auto Lprimes = Calculate_Lprimes(lattice);
     Eigen::Matrix3d SymmetryOp;
-    for (auto Lp : Lprimes)
+    for (const auto& Lp : Lprimes)
     {
         SymmetryOp = lattice * Lp;
         if (is_symop_valid(SymmetryOp))
@@ -103,16 +103,6 @@ bool group_is_closed(const std::vector<Eigen::Matrix3d>& SymMatrix) //
     }
     return false;
 }
-
-std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& basis)
-{
-	std::vector<Site> test_basis;
-	
-	for (const auto& basis_index:basis)
-	{
-		test_basis.push_back(symop.get_cart_matrix()*basis_index(basis_index.get_atom(), basis_index.get_coordinate()+symop.get_translation());
-	}
-	return test_basis;
 
 std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& basis)
 {
@@ -156,11 +146,12 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
     std::vector<Site> Basis;
     std::vector<Eigen::Matrix3d> ValidCartMatricies;
     std::vector<SymOp> ValidSymOps = Calculate_point_group(my_struc.get_lattice());
-    
+   
     std::cout<<"Test";
 
     Eigen::Matrix3d Lattice = my_struc.get_lattice().col_vector_matrix();
-
+    std::cout<<Lattice;
+    
     for (int j = 0; j < my_struc.get_sites().size(); j++)
     {
         Basis.push_back(my_struc.get_sites()[j]);

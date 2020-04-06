@@ -2,7 +2,7 @@
 #include <iostream>
 
 std::vector<Eigen::Vector3d>
-calculate_gridpoints(Lattice my_lattice,
+calculate_gridpoints(const Lattice& my_lattice,
                      int radius) // Might take in a structure instead and get a lattice from it
 {
     Eigen::Matrix3d lattice = my_lattice.col_vector_matrix();
@@ -26,18 +26,18 @@ calculate_gridpoints(Lattice my_lattice,
 // change complete
 
 // calculate a list of potentials Lprimes
-std::vector<Eigen::Matrix3d> Calculate_Lprimes(Lattice my_lattice)
+std::vector<Eigen::Matrix3d> Calculate_Lprimes(const Lattice& my_lattice)
 {
     Eigen::Matrix3d lattice = my_lattice.col_vector_matrix();
     int radius = 1;
     std::vector<Eigen::Matrix3d> Lprimes;
-    auto PS = calculate_gridpoints(lattice, radius);
+    const auto PS = calculate_gridpoints(lattice, radius);
     Eigen::Matrix3d MakeMatrix;
-    for (auto p1 : PS)
+    for (const auto& p1 : PS)
     {
-        for (auto p2 : PS)
+        for (const auto& p2 : PS)
         {
-            for (auto p3 : PS)
+            for (const auto& p3 : PS)
             {
                 MakeMatrix << p1(0), p2(0), p3(0), p1(1), p2(1), p3(1), p1(2), p2(2),
                     p3(2); // I may have these flipped. If Im supposed to have [p1][p2]
@@ -51,7 +51,7 @@ std::vector<Eigen::Matrix3d> Calculate_Lprimes(Lattice my_lattice)
 
 // Determine whether or not the calculated Symmetry operation is valid through
 // comparison of S^T*S=I
-bool is_symop_valid(Eigen::Matrix3d SymMatrix)
+bool is_symop_valid(const Eigen::Matrix3d& SymMatrix)
 {
     auto Matrixcheck = SymMatrix.transpose() * SymMatrix;
     if (!Matrixcheck.isIdentity(.0005))
@@ -62,7 +62,7 @@ bool is_symop_valid(Eigen::Matrix3d SymMatrix)
 }
 // This function calculates the symmetry operations that are valid for a given
 // lattice
-std::vector<SymOp> Calculate_point_group(Lattice my_lattice) // Is the type symops?
+std::vector<SymOp> Calculate_point_group(const Lattice& my_lattice) // Is the type symops?
 {
     Eigen::Matrix3d lattice = my_lattice.col_vector_matrix();
     int radius = 1;
@@ -87,12 +87,12 @@ std::vector<SymOp> Calculate_point_group(Lattice my_lattice) // Is the type symo
 //    calcs
 
 //
-bool group_is_closed(std::vector<Eigen::Matrix3d> SymMatrix) //
+bool group_is_closed(const std::vector<Eigen::Matrix3d>& SymMatrix) //
 {
     Eigen::Matrix3d GroupMultiplication;
-    for (auto S1 : SymMatrix)
+    for (const auto& S1 : SymMatrix)
     {
-        for (auto S2 : SymMatrix)
+        for (const auto& S2 : SymMatrix)
         {
             GroupMultiplication = S1 * S2;
             MatrixCompare_f compare_matrix(GroupMultiplication);
@@ -104,17 +104,16 @@ bool group_is_closed(std::vector<Eigen::Matrix3d> SymMatrix) //
     return false;
 }
 
-<<<<<<< HEAD
-std::vector<Site> transform_basis(SymOp symop, std::vector<Site> basis)
+std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& basis)
 {
 	std::vector<Site> test_basis;
 	
-	for (auto basis_index:basis)
+	for (const auto& basis_index:basis)
 	{
-		test_basis.push_back(symop.get_cart_matrix()*basis_index(basis.get_atom(), basis.get_coordinate()+symop.get_translation());
+		test_basis.push_back(symop.get_cart_matrix()*basis_index(basis_index.get_atom(), basis_index.get_coordinate()+symop.get_translation());
 	}
 	return test_basis;
-=======
+
 std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& basis)
 {
     std::vector<Site> test_basis;
@@ -125,7 +124,6 @@ std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& b
         test_basis.push_back(Site(basis_index.get_atom(), transformed_coordinate));
     }
     return test_basis;
->>>>>>> site_factorgroup
 }
 
 bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::vector<Site>& transformed_basis)

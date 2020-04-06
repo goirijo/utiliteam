@@ -21,15 +21,12 @@ std::vector<SymOp> Calculate_point_group(const Lattice& my_lattice);
 
 bool group_is_closed(const std::vector<Eigen::Matrix3d>& SymMatrix);
 
-<<<<<<< HEAD
 std::vector<Eigen::Vector3d> transform_basis(const SymOp& symop, const std::vector<Eigen::Vector3d>& basis);
 
 bool basis_maps_onto_itself(const std::vector<Eigen::Vector3d>& original_basis, std::vector<Eigen::Vector3d> transformed_basis);
 
 std::vector<SymOp> find_factor_group(const std::vector<SymOp>& ValidSymOps, const Structure& my_struc);
-=======
 std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& basis);
->>>>>>> site_factorgroup
 
 bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::vector<Site>& transformed_basis);
 

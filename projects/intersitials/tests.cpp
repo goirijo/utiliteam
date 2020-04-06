@@ -1,4 +1,5 @@
 #include "xtal_classes.hpp"
+#include "symmetry_operations.hpp"
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -160,5 +161,8 @@ int main() {
   // Test SymOp
   //
   // Test make_factor_group
+  find_factor_group(my_structure);
+
   return 0;
+
 }

@@ -54,6 +54,7 @@ std::vector<Site> make_asymmetric_unit(const std::vector<Site>& complete_structu
 }
 
 //Arithmetic center of mass -Muna
-
+//TODO: Find sites within a radius. 
+// args: Coordinate, radius, Structure
 
 //

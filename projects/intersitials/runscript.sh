@@ -1,2 +1,2 @@
-g++ xtal_classes.cpp tests.cpp -o run
+g++ xtal_classes.cpp symmetry_operations.cpp tests.cpp -o run
 exit 0

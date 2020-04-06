@@ -120,24 +120,3 @@ bool VectorCompare_f::operator()(const Eigen::Vector3d &other) const {
   return this->m_vector.isApprox(other);
 }
 
-// TODO: Rename class and members. It's not a factor group
-// it's just a single operation
-// class factor_group{
-//	public:
-//
-//		Eigen::Matrix3d SymOp;
-//		Eigen::Vector3d translation;
-//		factor_group(Eigen::Matrix3d s, Eigen::Vector3d tau){
-//			translation=tau;
-//			SymOp=s;
-//		}
-//
-//		auto get_translation()
-//		{
-//			return translation;
-//		}
-//
-//		auto get_SymOp()
-//		{
-//			return SymOp;
-//		}

@@ -146,6 +146,9 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
     std::vector<Site> Basis;
     std::vector<Eigen::Matrix3d> ValidCartMatricies;
     std::vector<SymOp> ValidSymOps = Calculate_point_group(my_struc.get_lattice());
+    
+    std::cout<<"Test";
+
     Eigen::Matrix3d Lattice = my_struc.get_lattice().col_vector_matrix();
 
     for (int j = 0; j < my_struc.get_sites().size(); j++)
@@ -155,6 +158,11 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
     for (int i = 0; i < ValidSymOps.size(); i++)
     {
         ValidCartMatricies.push_back(ValidSymOps.at(i).get_cart_matrix());
+    }
+    std::cout<<ValidCartMatricies.size();
+    for (int i = 0; i < ValidSymOps.size(); i++)
+    {
+	  //  std::cout<<ValidCartMatricies.at[i];
     }
     std::vector<SymOp> tally;
     Eigen::Matrix3d test_cart_matrix;

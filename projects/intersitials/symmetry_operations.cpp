@@ -118,12 +118,13 @@ bool group_is_closed(std::vector<Eigen::Matrix3d> SymMatrix) //
     }
 }
 
-std::vector<Eigen::Vector3d> transform_basis(SymOp symop, std::vector<Eigen::Vector3d> basis)
+std::vector<Site> transform_basis(SymOp symop, std::vector<Site> basis)
 {
-	std::vector<Eigen::Vector3d> test_basis;
+	std::vector<Site> test_basis;
+	
 	for (auto basis_index:basis)
 	{
-		test_basis.push_back(symop.get_cart_matrix()*basis_index+symop.get_translation());
+		test_basis.push_back(symop.get_cart_matrix()*basis_index(basis.get_atom(), basis.get_coordinate()+symop.get_translation());
 	}
 	return test_basis;
 }

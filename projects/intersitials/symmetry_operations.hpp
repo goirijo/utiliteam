@@ -12,21 +12,21 @@
 
 //bool VectorComparison(Eigen::Vector3d& Vector1, Eigen::Vector3d& Vector2);
 
-std::vector<Eigen::Vector3d> calculate_gridpoints(Lattice my_lattice, int radius);
+std::vector<Eigen::Vector3d> calculate_gridpoints(const Lattice& my_lattice, const int radius);
 
-std::vector<Eigen::Matrix3d> Calculate_Lprimes(Lattice my_lattice);
+std::vector<Eigen::Matrix3d> Calculate_Lprimes(const Lattice& my_lattice);
 
-bool is_symop_valid(Eigen::Matrix3d SymMatrix);
+bool is_symop_valid(const Eigen::Matrix3d& SymMatrix);
 
-std::vector<SymOp> Calculate_point_group(Lattice my_lattice);
+std::vector<SymOp> Calculate_point_group(const Lattice& my_lattice);
 
-bool group_is_closed(std::vector<Eigen::Matrix3d> SymMatrix);
+bool group_is_closed(const std::vector<Eigen::Matrix3d>& SymMatrix);
 
-std::vector<Eigen::Vector3d> transform_basis(SymOp symop, std::vector<Eigen::Vector3d> basis);
+std::vector<Eigen::Vector3d> transform_basis(const SymOp& symop, const std::vector<Eigen::Vector3d>& basis);
 
-bool basis_maps_onto_itself(std::vector<Eigen::Vector3d> original_basis, std::vector<Eigen::Vector3d> transformed_basis);
+bool basis_maps_onto_itself(const std::vector<Eigen::Vector3d>& original_basis, std::vector<Eigen::Vector3d> transformed_basis);
 
-std::vector<SymOp> find_factor_group(std::vector<SymOp> ValidSymOps, Structure my_struc);
+std::vector<SymOp> find_factor_group(const std::vector<SymOp>& ValidSymOps, const Structure& my_struc);
 
 #endif 
 

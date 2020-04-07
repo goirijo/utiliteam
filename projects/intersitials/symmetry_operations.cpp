@@ -121,7 +121,7 @@ bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::
      for (const auto& basis: transformed_basis)
      {
    	  SiteCompare_f test_basis(basis, 1E-3); 
-     	  if (find_if(original_basis.begin(), original_basis.end(), test_basis)==original_basis.end()) 
+     	  if (std::find_if(original_basis.begin(), original_basis.end(), test_basis)==original_basis.end()) 
 	  {
 		  return false;
           }
@@ -170,12 +170,14 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
     std::vector<SymOp> tally;
     Eigen::Matrix3d test_cart_matrix;
     Eigen::Vector3d test_tau;
-    
+    test_tau<<0,0,0;    
     SymOp symop(test_cart_matrix, test_tau);
     for (const auto& cart_matrix : ValidCartMatricies)
     {
-	symop.m_cart_matrix=cart_matrix;    
-        symop.m_translation << 0, 0, 0;
+
+        SymOp symop(cart_matrix, test_tau);
+//	symop.m_cart_matrix=cart_matrix;    
+  //      symop.m_translation << 0, 0, 0;
 	    //Eigen::Vector3d new_test_tau;
 		  // new_test_tau <<0,0,0;
        // symop(cart_matrix, new_test_tau);
@@ -195,16 +197,18 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
                     trans = Basis[j].get_coordinate() - test_basis[k].get_coordinate();
                     for (int m = 0; m < test_basis.size(); m++)
                     {
-                        Eigen::Vector3d changed_basis = test_basis[k].get_coordinate() + trans;
-                        total_basis.push_back(Site(test_basis[k].get_atom(), changed_basis));
+                        Eigen::Vector3d changed_basis = test_basis[m].get_coordinate() + trans;
+                        total_basis.push_back(Site(test_basis[m].get_atom(), changed_basis));
                     }
                 }
             }
 
             if (basis_maps_onto_itself(Basis, total_basis))
             {
-                symop.m_translation = trans;
-                tally.push_back(symop);
+                //symop.get_translation() = trans;
+              
+		//tally.push_back(symop);
+		tally.push_back(SymOp(cart_matrix, trans));
             }
         }
     }

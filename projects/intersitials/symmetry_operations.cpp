@@ -118,23 +118,31 @@ std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& b
 
 bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::vector<Site>& transformed_basis)
 {
-    //	std::cout<<"in basis maps onto itself";
-    std::vector<Eigen::Vector3d> vector_of_coordinates;
-    for (const auto& site : original_basis)
-    {
-        vector_of_coordinates.push_back(site.get_coordinate());
-    }
+     for (const auto& basis: transformed_basis)
+     {
+   	  SiteCompare_f test_basis(basis, 1E-3); 
+     	  if (find_if(original_basis.begin(), original_basis.end(), test_basis)==original_basis.end()) 
+	  {
+		  return false;
+          }
+     }
+     return true;
+	     // std::vector<Eigen::Vector3d> vector_of_coordinates;
+   // for (const auto& site : original_basis)
+   // {
+   //     vector_of_coordinates.push_back(site.get_coordinate());
+   // }
 
-    for (int l = 0; l < transformed_basis.size(); l++)
-    {
-        VectorCompare_f compare(transformed_basis[l].get_coordinate());
-        if (std::find_if(vector_of_coordinates.begin(), vector_of_coordinates.end(), compare) ==
-            vector_of_coordinates.end())
-        {
-            return false;
-        }
-    }
-    return true;
+   // for (int l = 0; l < transformed_basis.size(); l++)
+   // {
+    //    VectorCompare_f compare(transformed_basis[l].get_coordinate());
+     //   if (std::find_if(vector_of_coordinates.begin(), vector_of_coordinates.end(), compare) ==
+     //       vector_of_coordinates.end())
+     //   {
+     //       return false;
+     //   }
+   // }
+   // return true;
 }
 
 // find factor group using constructor
@@ -147,10 +155,8 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
     std::vector<Eigen::Matrix3d> ValidCartMatricies;
     std::vector<SymOp> ValidSymOps = Calculate_point_group(my_struc.get_lattice());
    
-    std::cout<<"Test";
 
     Eigen::Matrix3d Lattice = my_struc.get_lattice().col_vector_matrix();
-    std::cout<<Lattice;
     
     for (int j = 0; j < my_struc.get_sites().size(); j++)
     {
@@ -160,19 +166,20 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
     {
         ValidCartMatricies.push_back(ValidSymOps.at(i).get_cart_matrix());
     }
-    std::cout<<ValidCartMatricies.size();
-    for (int i = 0; i < ValidSymOps.size(); i++)
-    {
-	  //  std::cout<<ValidCartMatricies.at[i];
-    }
+   
     std::vector<SymOp> tally;
     Eigen::Matrix3d test_cart_matrix;
     Eigen::Vector3d test_tau;
-    test_tau << 0, 0, 0;
-    for (auto cart_matrix : ValidCartMatricies)
+    
+    SymOp symop(test_cart_matrix, test_tau);
+    for (const auto& cart_matrix : ValidCartMatricies)
     {
-        SymOp symop(cart_matrix, test_tau);
-        auto test_basis = transform_basis(symop, Basis);
+	symop.m_cart_matrix=cart_matrix;    
+        symop.m_translation << 0, 0, 0;
+	    //Eigen::Vector3d new_test_tau;
+		  // new_test_tau <<0,0,0;
+       // symop(cart_matrix, new_test_tau);
+	auto test_basis = transform_basis(symop, Basis);
         if (basis_maps_onto_itself(Basis, test_basis))
         {
             tally.push_back(symop); // necessary?
@@ -196,7 +203,7 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
 
             if (basis_maps_onto_itself(Basis, total_basis))
             {
-                symop.get_translation() = trans;
+                symop.m_translation = trans;
                 tally.push_back(symop);
             }
         }
@@ -204,9 +211,9 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
 
     for (const auto& x : tally)
     {
-        std::cout << x.get_cart_matrix() << std::endl;
-        std::cout << x.get_translation() << std::endl;
-        std::cout << "-----" << std::endl;
+       std::cout << x.get_cart_matrix() << std::endl;
+       std::cout << x.get_translation() << std::endl;
+       std::cout << "-----" << std::endl;
     }
 
     std::cout << tally.size() << std::endl;

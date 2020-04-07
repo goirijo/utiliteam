@@ -1,3 +1,6 @@
+#ifndef INTERSTITIALS_H
+#define INTERSTITIALS_H
+
 #include "xtal_classes.hpp"
 //Tools we already have:
 //Structrue class
@@ -23,38 +26,17 @@ class Site;
 class SymOp;
 
 ///TODO: Write out documentation here
-std::vector<Site> make_asymmetric_unit(const std::vector<Site>& complete_structure_basis, const std::vector<SymOp>& factor_group)
-{
-    std::vector<Site> asymmetric_unit;
-    Site transformedsite;
-    //for each site on the basis
-    //apply allsymmetry operations
-    for (auto basis: complete_structure_basis)
-    {
-	for (auto factor_group_operation: factor_group)
-	{
-	    transformedsite.get_coordinate()=basis.get_coordinate()*factor_group_operation;
-	    transformedsite.get_atom()=basis.get_atom(); //is this alright or do I need to make atom and coorindate public in the site class and do that
-	    SiteCompare_f test_site(transformed_site, 1E-5); 
-	    //compare_mat compare(transformedbasis);
-	    //if (find_if(asymmetric_unit.begin(), asymmetric_unit.end(), compare)==asymmetric_unit.end() && find(asymmetric_unit.begin(), asymmetric_unit.end(), transformed_basis)==asymmetric_unit.end())
-    	    if(!SiteCompare_f)
-            {
-	    	     asymmetric_unit.push_back(transformedsite);
-	    }    
-		//if NONE of the transformed sites are in the asymmetric unit, then add site to asymmetric unit
-	}
-    }
-    return asymmetric_unit;
+//Find asymmetric sites
+std::vector<Site> make_asymmetric_unit(const std::vector<Site>& complete_structure_basis, const std::vector<SymOp>& Sym_group);
 
-    //How to test this?
-    //Take the asymmetric unit
-    //Apply symmetry to each site (except identity)
-    //If you create a site that's already in the asymmetric unit, you failed
-}
+//Find geometric center for the cluster
+Eigen::Vector3d find_geometric_center(const Cluster& test_cluster);
+
 
 //Arithmetic center of mass -Muna
 //TODO: Find sites within a radius. 
 // args: Coordinate, radius, Structure
 
 //
+//
+#endif 

@@ -161,8 +161,9 @@ int main() {
   // Test SymOp
   //
   // Test make_factor_group
-  find_factor_group(my_structure);
-
+  auto factorgroup=find_factor_group(my_structure);
+  EXPECT_T(factorgroup.size()==6, "Wrong number of factor Group Operations");
+  //EXPECT_T(test_cluster 
   return 0;
 
 }

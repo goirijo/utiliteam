@@ -31,7 +31,7 @@ std::vector<Eigen::Matrix3d> Calculate_Lprimes(const Lattice& my_lattice)
     Eigen::Matrix3d lattice = my_lattice.row_vector_matrix();
     int radius = 1;
     std::vector<Eigen::Matrix3d> Lprimes;
-    auto PS = calculate_gridpoints(lattice, radius);
+    auto PS = calculate_gridpoints(my_lattice, radius);
     Eigen::Matrix3d MakeMatrix;
     for (const auto& p1 : PS)
     {
@@ -69,7 +69,7 @@ std::vector<SymOp> Calculate_point_group(const Lattice& my_lattice) // Is the ty
     std::vector<SymOp> validsymops;
     Eigen::Vector3d trans;
     trans << 0, 0, 0;
-    auto Lprimes = Calculate_Lprimes(lattice);
+    auto Lprimes = Calculate_Lprimes(my_lattice);
     Eigen::Matrix3d SymmetryOp;
     for (const auto& Lp : Lprimes)
     {
@@ -120,7 +120,7 @@ bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::
 {
      for (const auto& basis: transformed_basis)
      {
-   	  SiteCompare_f test_basis(basis, 1E-3); 
+   	  SiteCompare_f test_basis(basis, 1E-1); 
      	  if (std::find_if(original_basis.begin(), original_basis.end(), test_basis)==original_basis.end()) 
 	  {
 		  return false;
@@ -154,8 +154,6 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
     std::vector<Site> Basis;
     std::vector<Eigen::Matrix3d> ValidCartMatricies;
     std::vector<SymOp> ValidSymOps = Calculate_point_group(my_struc.get_lattice());
-   
-
     Eigen::Matrix3d Lattice = my_struc.get_lattice().col_vector_matrix();
     
     for (int j = 0; j < my_struc.get_sites().size(); j++)
@@ -166,13 +164,13 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
     {
         ValidCartMatricies.push_back(ValidSymOps.at(i).get_cart_matrix());
     }
-   
+  //  std::cout<< ValidCartMatricies.size();  
     std::vector<SymOp> tally;
     Eigen::Matrix3d test_cart_matrix;
     Eigen::Vector3d test_tau;
-    test_tau<<0,0,0;    
     SymOp symop(test_cart_matrix, test_tau);
-    for (const auto& cart_matrix : ValidCartMatricies)
+    test_tau<<0,0,0;    
+    for (auto cart_matrix : ValidCartMatricies)
     {
 
         SymOp symop(cart_matrix, test_tau);
@@ -184,7 +182,7 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
 	auto test_basis = transform_basis(symop, Basis);
         if (basis_maps_onto_itself(Basis, test_basis))
         {
-            tally.push_back(symop); // necessary?
+            tally.push_back(symop); 
         }
         else
         {
@@ -192,7 +190,7 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
             Eigen::Vector3d trans;
             for (int j = 0; j < Basis.size(); j++)
             {
-                for (int k = 0; k < Basis.size(); k++)
+                for (int k = 0; k < test_basis.size(); k++)
                 {
                     trans = Basis[j].get_coordinate() - test_basis[k].get_coordinate();
                     for (int m = 0; m < test_basis.size(); m++)
@@ -205,14 +203,14 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
 
             if (basis_maps_onto_itself(Basis, total_basis))
             {
-                //symop.get_translation() = trans;
+                symop.get_translation() = trans;
               
-		//tally.push_back(symop);
-		tally.push_back(SymOp(cart_matrix, trans));
+		tally.push_back(symop);
+		//tally.push_back(SymOp(cart_matrix, trans));
             }
         }
     }
-
+    std::cout<<'\n';
     for (const auto& x : tally)
     {
        std::cout << x.get_cart_matrix() << std::endl;

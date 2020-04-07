@@ -1,5 +1,6 @@
 #include "xtal_classes.hpp"
 #include "symmetry_operations.hpp"
+#include "interstitials.hpp"
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -163,7 +164,10 @@ int main() {
   // Test make_factor_group
   auto factorgroup=find_factor_group(my_structure);
   EXPECT_T(factorgroup.size()==6, "Wrong number of factor Group Operations");
-  //EXPECT_T(test_cluster 
+  auto asym_units=make_asymmetric_unit(cluster_sites, factorgroup);
+  EXPECT_T(asym_units.size()>=3, "Wrong number of asymmetric units");
+  auto geometric_center	=find_geometric_center(test_cluster);
+
   return 0;
 
 }

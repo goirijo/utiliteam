@@ -1,5 +1,6 @@
 #include "xtal_classes.hpp"
 #include "symmetry_operations.hpp"
+#include "interstitials.hpp"
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -158,12 +159,32 @@ int main() {
   ////////////////////////////////////
   // EXPECT_T(find_factor_group(Valid_symops, my_lattice), "Doesn't have factor
   // group over 0");
-  // Test SymOp
   //
+  // Test SitePeriodicCompare_f
+  //
+  // Test point group
+  
+  // Test transform_basis
+  //
+  // Test basis_maps_onto_itself
+
+  // Test SymOp
+ 
   // Test make_factor_group
   auto factorgroup=find_factor_group(my_structure);
   EXPECT_T(factorgroup.size()==6, "Wrong number of factor Group Operations");
-  //EXPECT_T(test_cluster 
+
+  //Test asymmetric unit without factor group routine
+  //Start with an asymmetric unit (make it up)
+  //Start with a small symmetry group (make it up)
+  //Make a basis by applying symmetry group to asymmetric unit
+  //call make_asymmetric_unit on basis
+  //make sure you get the original asymmetric unit back
+
+  auto asym_units=make_asymmetric_unit(cluster_sites, factorgroup);
+  EXPECT_T(asym_units.size()>=3, "Wrong number of asymmetric units");
+  auto geometric_center	=find_geometric_center(test_cluster);
+
   return 0;
 
 }

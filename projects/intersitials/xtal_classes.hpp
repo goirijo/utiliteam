@@ -82,6 +82,7 @@ private:
     std::vector<Site> m_sites;
 };
 
+/// Compares two sites to see if coordinates and atom types match
 struct SiteCompare_f
 {
     SiteCompare_f(const Site& site, double prec);
@@ -90,6 +91,21 @@ struct SiteCompare_f
 private:
     Site m_site;
     double m_precision;
+};
+
+/// Compares two sites and returns true if the types match and
+/// the coordinates are the same after applying unit cell tranlsations
+struct SitePeriodicCompare_f
+{
+    SitePeriodicCompare_f(const Site& site, double prec, const Lattice& unit_cell);
+    bool operator()(const Site& other) const
+    {
+        //TODO: bring site within
+        //Use SiteCompare_f
+    }
+    
+    private:
+    //TODO
 };
 
 struct ClusterCompare_f

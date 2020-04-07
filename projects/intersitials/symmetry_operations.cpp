@@ -30,7 +30,7 @@ std::vector<Eigen::Matrix3d> Calculate_Lprimes(const Lattice& my_lattice)
     Eigen::Matrix3d lattice = my_lattice.row_vector_matrix();
     int radius = 1;
     std::vector<Eigen::Matrix3d> Lprimes;
-    auto PS = calculate_gridpoints(lattice, radius);
+    auto PS = calculate_gridpoints(my_lattice, radius);
     Eigen::Matrix3d MakeMatrix;
     for (const auto& p1 : PS)
     {
@@ -68,7 +68,7 @@ std::vector<SymOp> Calculate_point_group(const Lattice& my_lattice) // Is the ty
     std::vector<SymOp> validsymops;
     Eigen::Vector3d trans;
     trans << 0, 0, 0;
-    auto Lprimes = Calculate_Lprimes(lattice);
+    auto Lprimes = Calculate_Lprimes(my_lattice);
     Eigen::Matrix3d SymmetryOp;
     for (const auto& Lp : Lprimes)
     {
@@ -118,29 +118,13 @@ bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::
 {
     for (const auto& basis : transformed_basis)
     {
-        SiteCompare_f test_basis(basis, 1E-3);
+        SitePeriodicCompare_f test_basis(basis, 1E-1); // Huge tolerance!
         if (std::find_if(original_basis.begin(), original_basis.end(), test_basis) == original_basis.end())
         {
             return false;
         }
     }
     return true;
-    // std::vector<Eigen::Vector3d> vector_of_coordinates;
-    // for (const auto& site : original_basis)
-    // {
-    //     vector_of_coordinates.push_back(site.get_coordinate());
-    // }
-
-    // for (int l = 0; l < transformed_basis.size(); l++)
-    // {
-    //    VectorCompare_f compare(transformed_basis[l].get_coordinate());
-    //   if (std::find_if(vector_of_coordinates.begin(), vector_of_coordinates.end(), compare) ==
-    //       vector_of_coordinates.end())
-    //   {
-    //       return false;
-    //   }
-    // }
-    // return true;
 }
 
 // find factor group using constructor
@@ -148,76 +132,50 @@ bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::
 // ValidSymOps, Eigen::Matrix3d Lattice)
 std::vector<SymOp> find_factor_group(Structure my_struc)
 {
+    const std::vector<Site>& Basis = my_struc.get_sites();
+    std::vector<SymOp> point_group = Calculate_point_group(my_struc.get_lattice());
 
-    std::vector<Site> Basis;
-    std::vector<Eigen::Matrix3d> ValidCartMatricies;
-    std::vector<SymOp> ValidSymOps = Calculate_point_group(my_struc.get_lattice());
-
-    Eigen::Matrix3d Lattice = my_struc.get_lattice().col_vector_matrix();
-
-    for (int j = 0; j < my_struc.get_sites().size(); j++)
+    std::vector<SymOp> factor_group;
+    for (SymOp point_group_op : point_group)
     {
-        Basis.push_back(my_struc.get_sites()[j]);
-    }
-
-    for (int i = 0; i < ValidSymOps.size(); i++)
-    {
-        ValidCartMatricies.push_back(ValidSymOps.at(i).get_cart_matrix());
-    }
-
-    std::vector<SymOp> tally;
-    Eigen::Matrix3d test_cart_matrix;
-    Eigen::Vector3d test_tau;
-    test_tau << 0, 0, 0;
-    SymOp symop(test_cart_matrix, test_tau);
-    for (const auto& cart_matrix : ValidCartMatricies)
-    {
-
-        SymOp symop(cart_matrix, test_tau);
-        //	symop.m_cart_matrix=cart_matrix;
-        //      symop.m_translation << 0, 0, 0;
-        // Eigen::Vector3d new_test_tau;
-        // new_test_tau <<0,0,0;
-        // symop(cart_matrix, new_test_tau);
-        auto test_basis = transform_basis(symop, Basis);
-        if (basis_maps_onto_itself(Basis, test_basis))
+        auto transformed_basis = transform_basis(point_group_op, Basis);
+        if (basis_maps_onto_itself(Basis, transformed_basis))
         {
-            tally.push_back(symop); // necessary?
+            factor_group.push_back(point_group_op);
         }
         else
         {
-            std::vector<Site> total_basis;
+            std::vector<Site> transformed_tranlsated_basis;
             Eigen::Vector3d trans;
+            // Refactor into "make_all_possible_translations" or something similar
             for (int j = 0; j < Basis.size(); j++)
             {
-                for (int k = 0; k < Basis.size(); k++)
+                for (int k = 0; k < transformed_basis.size(); k++)
                 {
-                    trans = Basis[j].get_coordinate() - test_basis[k].get_coordinate();
-                    for (int m = 0; m < test_basis.size(); m++)
+                    trans = Basis[j].get_coordinate() - transformed_basis[k].get_coordinate();
+                    for (int m = 0; m < transformed_basis.size(); m++)
                     {
-                        Eigen::Vector3d changed_basis = test_basis[m].get_coordinate() + trans;
-                        total_basis.push_back(Site(test_basis[m].get_atom(), changed_basis));
+                        Eigen::Vector3d changed_basis = transformed_basis[m].get_coordinate() + trans;
+                        transformed_tranlsated_basis.push_back(Site(transformed_basis[m].get_atom(), changed_basis));
                     }
                 }
             }
 
-            if (basis_maps_onto_itself(Basis, total_basis))
+            if (basis_maps_onto_itself(Basis, transformed_tranlsated_basis))
             {
-                // symop.get_translation() = trans;
-
-                // tally.push_back(symop);
-                tally.push_back(SymOp(cart_matrix, trans));
+                factor_group.emplace_back(point_group_op.get_cart_matrix(),trans);
             }
         }
     }
 
-    for (const auto& x : tally)
+    std::cout << '\n';
+    for (const auto& x : factor_group)
     {
         std::cout << x.get_cart_matrix() << std::endl;
         std::cout << x.get_translation() << std::endl;
         std::cout << "-----" << std::endl;
     }
 
-    std::cout << tally.size() << std::endl;
-    return tally;
+    std::cout << factor_group.size() << std::endl;
+    return factor_group;
 }

@@ -1,4 +1,5 @@
 #include "./symmetry.hpp"
+#include "./symgroup.hpp"
 #include "./crystal.hpp"
 #include "./fastsymmetry.hpp"
 #include "./io.hpp"

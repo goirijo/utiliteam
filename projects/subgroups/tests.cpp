@@ -1,4 +1,5 @@
 #include "./symmetry.hpp"
+#include "./symgroup.hpp"
 
 #define PREC 1e-6
 

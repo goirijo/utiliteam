@@ -1,6 +1,7 @@
 #include "../eigen-git-mirror/Eigen/Dense"
 #include "./math.hpp"
 #include "./symmetry.hpp"
+#include "./symgroup.hpp"
 #include <cmath>
 #include <fstream>
 #include <iostream>

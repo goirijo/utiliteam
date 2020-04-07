@@ -1,4 +1,5 @@
 #include "./fastsymmetry.hpp"
+#include "./symmetry.hpp"
 
 AbstractSymOp::AbstractSymOp(int id, std::shared_ptr<MultTable> multiplication_table_ptr) : id(id), multiplication_table_ptr(multiplication_table_ptr) {}
 int AbstractSymOp::get_id() const { return this->id; }
@@ -49,7 +50,7 @@ std::vector<std::vector<int>> make_multiplication_table(const std::vector<SymOp>
 SymGroup<AbstractSymOp, AbstractSymOpCompare_f> transform_representation(const SymGroup<SymOp, SymOpCompare_f>& cartesian_group, double tol) 
 {
     MultTable multiplication_table = make_multiplication_table(cartesian_group.operations(), tol);
-    SymGroup<AbstractSymOp, AbstractSymOpCompare_f> pot_abstract_group(std::vector<AbstractSymOp>);
+    SymGroup<AbstractSymOp, AbstractSymOpCompare_f> pot_abstract_group({});
     std::shared_ptr<MultTable> table_ptr = std::make_shared<MultTable>(multiplication_table);
     for (int i = 0; i < cartesian_group.operations().size(); i++) 
     {

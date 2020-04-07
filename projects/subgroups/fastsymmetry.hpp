@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include "./symmetry.hpp"
+#include "./symgroup.hpp"
 
 
 typedef std::vector<std::vector<int>> MultTable;
@@ -29,6 +30,8 @@ private:
 
 struct AbstractSymOpCompare_f
 {
+    typedef std::tuple<> CompareArgs;
+
     AbstractSymOpCompare_f(AbstractSymOp input1);
     bool operator()(const AbstractSymOp& element2) const;
 

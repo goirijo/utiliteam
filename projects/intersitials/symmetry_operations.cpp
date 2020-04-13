@@ -108,7 +108,7 @@ std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& b
     std::vector<Site> test_basis;
     for (const auto& basis_index : basis)
     {
-        Eigen::Vector3d transformed_coordinate = symop.get_cart_matrix() * basis_index.get_coordinate() + symop.get_translation();
+        Eigen::Vector3d transformed_coordinate = symop.get_cart_matrix() * basis_index.get_eigen_coordinate() + symop.get_translation();
         test_basis.push_back(Site(basis_index.get_atom(), transformed_coordinate));
     }
     return test_basis;
@@ -152,10 +152,10 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
             {
                 for (int k = 0; k < transformed_basis.size(); k++)
                 {
-                    trans = Basis[j].get_coordinate() - transformed_basis[k].get_coordinate();
+                    trans = Basis[j].get_eigen_coordinate() - transformed_basis[k].get_eigen_coordinate();
                     for (int m = 0; m < transformed_basis.size(); m++)
                     {
-                        Eigen::Vector3d changed_basis = transformed_basis[m].get_coordinate() + trans;
+                        Eigen::Vector3d changed_basis = transformed_basis[m].get_eigen_coordinate() + trans;
                         transformed_tranlsated_basis.push_back(Site(transformed_basis[m].get_atom(), changed_basis));
                     }
                 }

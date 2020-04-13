@@ -33,7 +33,8 @@ void Coordinate::bring_within(const Lattice& lattice)
 // Defines position and type of atom in a crystal
 Site::Site(const std::string atom_name, const Coordinate& init_coord) : m_coord(init_coord), m_atom(atom_name) {}
 std::string Site::get_atom() const { return this->m_atom; }
-Eigen::Vector3d Site::get_coordinate() const { return this->m_coord.get_coordinate(); }
+Eigen::Vector3d Site::get_eigen_coordinate() const { return this->m_coord.get_coordinate(); }
+Coordinate Site::get_coordinate() const { return this->m_coord; }
 
 // SymOp class definitions
 SymOp::SymOp(const Eigen::Matrix3d& cart_matrix, const Eigen::Vector3d& translation)
@@ -63,7 +64,7 @@ const std::vector<Site>& Cluster::sites() const { return this->m_sites; }
 SiteCompare_f::SiteCompare_f(const Site& site, double prec) : m_site(site), m_precision(prec) {}
 bool SiteCompare_f::operator()(const Site& other) const
 {
-    if (m_site.get_coordinate().isApprox(other.get_coordinate(), m_precision))
+    if (m_site.get_eigen_coordinate().isApprox(other.get_eigen_coordinate(), m_precision))
     {
         if (m_site.get_atom() == other.get_atom())
         {
@@ -96,7 +97,7 @@ bool ClusterCompare_f::operator()(const Cluster& other) const
 // Site operator * overload
 Site operator*(const SymOp& transformation, const Site& site)
 {
-    Eigen::Vector3d transformed = (transformation.get_cart_matrix()) * (site.get_coordinate());
+    Eigen::Vector3d transformed = (transformation.get_cart_matrix()) * (site.get_eigen_coordinate());
     Coordinate transformedcoord(transformed);
     return Site(site.get_atom(), transformedcoord);
 }

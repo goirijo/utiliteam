@@ -163,15 +163,21 @@ int main() {
   // Test SitePeriodicCompare_f
   //
   // Test point group
-  
+  EXPECT_T(pointgroup.size()==24, "Wrong number of point group operations")
   // Test transform_basis
-  //
+  Site test_coord<<0.5, 0.5, 0.5;
+  SymOp transformation<<
   // Test basis_maps_onto_itself
 
   // Test SymOp
- 
-  // Test make_factor_group
   auto factorgroup=find_factor_group(my_structure);
+  Eigen::Matrix3d cart_matrix_at_position;
+  cart_matrix_at_position<<1.0, 0.0, 0.0,
+			   0.0, 1.0, 0.0,
+			   0.0, 0.0, 1.0;
+  //TestSymOp (or whateverr number it is after we figure it out)
+  EXPECT_T(factorgroup[0].get_cart_matrix().isApprox(cart_matrix_at_position, 1e-5), "wrong symOp");
+  //Test factor group	  
   EXPECT_T(factorgroup.size()==6, "Wrong number of factor Group Operations");
 
   //Test asymmetric unit without factor group routine
@@ -184,7 +190,16 @@ int main() {
   auto asym_units=make_asymmetric_unit(cluster_sites, factorgroup);
   EXPECT_T(asym_units.size()>=3, "Wrong number of asymmetric units");
   auto geometric_center	=find_geometric_center(test_cluster);
+  std::vector<Site> sites_within_radius;
+  Coordinate center_point= Coordinate(1.00000, 1.00000, 0.34956);
+  sites_within_radius.emplace_back("Li" ,Coordinate(1.00000,  1.00000,  0.34956)); 
+  sites_within_radius.emplace_back("Se" ,Coordinate(1.00000,  1.00000,  0.75083)); 
+  sites_within_radius.emplace_back("Se" ,Coordinate(1.33333,  1.66667,  0.24707)); 
+  sites_within_radius.emplace_back("Se" ,Coordinate(1.33333,  0.66667,  0.24707)); 
+  sites_within_radius.emplace_back("Se" ,Coordinate(0.33333,  0.66667,  0.24707)); 
 
+  EXPECT_T(find_sites_within_radius(center_point, 3.5, my_structure).size()==5, "Correct number of sites") 
+  EXPECT_T(find_sites_within_radius(center_point, 3.5, my_structure).size()==sites_within_radius, "Correct sites")
   return 0;
 
 }

@@ -1,5 +1,6 @@
 #include "interstitials.hpp"
 #include "xtal_classes.hpp"
+#include "cmath"
 
 // Tools we already have:
 // Structrue class
@@ -56,12 +57,30 @@ Eigen::Vector3d find_geometric_center(const Cluster& test_cluster)
     Eigen::Vector3d added_coord;
     for (int i = 0; i < test_cluster.cluster_size(); i++)
     {
-        added_coord = added_coord + test_cluster.get_site(i).get_coordinate();
+        added_coord = added_coord + test_cluster.get_site(i).get_eigen_coordinate();
     }
     return added_coord / test_cluster.cluster_size();
 }
 // Arithmetic center of mass -Muna
 // TODO: Find sites within a radius.
 // args: Coordinate, radius, Structure
+std::vector<Site> find_sites_within_radius(Coordinate middlepoint, int my_radius, Structure my_struc)
+{
+	//use flooring function
+	std::vector<Site> sites_within_radius;
+	//Compute Distance between sites and floor coord
+	for (const auto& site: my_struc.get_sites()) 
+	{
+		auto within_coord=site.get_coordinate().bring_within(my_struc.get_lattice());
+		if (distance(middlepoint, within_coord)<my_radius)
+		{
+			sites_within_radius.emplace_back(site);
+		}
+	}
+     return sites_within_radius;
+}
+
+
+
 
 //

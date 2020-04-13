@@ -38,7 +38,8 @@ class Site
 public:
     Site(const std::string atom_name, const Coordinate& init_coord);
     std::string get_atom() const;
-    Eigen::Vector3d get_coordinate() const;
+    Eigen::Vector3d get_eigen_coordinate() const;
+    Coordinate get_coordinate() const;
 
 private:
     std::string m_atom;

@@ -10,7 +10,7 @@
 #include "crystal.hpp"//comment out to compile factor group 
 //#include "categorize_symop_main.cpp"
 #include "symmetry.hpp"
-
+#include "symgroup.hpp"
 
 using namespace std;
 
@@ -79,7 +79,7 @@ CrystalStructure read_poscar(std::string filename)
      return xtal_struct;
 
 }
-void print_sub_groups(SymGroup<SymOp, SymOpCompare_f> input_group, std::vector<SymGroup<SymOp, SymOpCompare_f>> list_of_subgroups)
+void print_sub_groups(SymGroup<SymOp, BinaryComparator_f> input_group, std::vector<SymGroup<SymOp, BinaryComparator_f>> list_of_subgroups)
 {//Pringing out the total group and list of subgroups.
     std::cout << "The total group has " << input_group.operations().size() << " operations: " << std::endl;
     for (SymOp operation : input_group.operations()) 
@@ -92,7 +92,7 @@ void print_sub_groups(SymGroup<SymOp, SymOpCompare_f> input_group, std::vector<S
     std::cout << "There are " << list_of_subgroups.size() << " subgroups in the total group: " << std::endl << std::endl;
     
     int subgroup_num = 1;
-    for (SymGroup<SymOp, SymOpCompare_f> subgroup : list_of_subgroups) 
+    for (SymGroup<SymOp, BinaryComparator_f> subgroup : list_of_subgroups) 
     {
         std::cout << "Subgroup " << subgroup_num << " has " << subgroup.operations().size() << " operations: " << std::endl << std::endl;
         for (SymOp operation : subgroup.operations()) 

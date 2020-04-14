@@ -21,7 +21,7 @@ AbstractSymOp AbstractSymOp::operator*(const AbstractSymOp& rhs)
 }
 
 
-AbstractSymOpCompare_f::AbstractSymOpCompare_f(AbstractSymOp input1) : input1_id(input1.get_id()), table_ptr(input1.mult_table_ptr()){};
+AbstractSymOpCompare_f::AbstractSymOpCompare_f(const AbstractSymOp input1) : input1_id(input1.get_id()), table_ptr(input1.mult_table_ptr()){};
 bool AbstractSymOpCompare_f::operator()(const AbstractSymOp& element2) const
 {
     return (input1_id == element2.get_id() && table_ptr == element2.mult_table_ptr());
@@ -46,11 +46,20 @@ std::vector<std::vector<int>> make_multiplication_table(const std::vector<SymOp>
     return multiplication_table;
 }  
 
+
+
+BinaryAbstractComparator_f::BinaryAbstractComparator_f(const AbstractSymOp& lhs, const AbstractSymOp& rhs):lhs(lhs), rhs(rhs){}
+bool BinaryAbstractComparator_f::operator()()//const AbstractSymOp lhs, const AbstractSymOp rhs)
+{
+      AbstractSymOpCompare_f compare(this->lhs);
+      return compare(this->rhs);
+}
+
 //TODO: This will eventually change to return a SymGroup
-SymGroup<AbstractSymOp, AbstractSymOpCompare_f> transform_representation(const SymGroup<SymOp, SymOpCompare_f>& cartesian_group, double tol) 
+SymGroup<AbstractSymOp, BinaryAbstractComparator_f> transform_representation(const SymGroup<SymOp, BinaryComparator_f>& cartesian_group, double tol) 
 {
     MultTable multiplication_table = make_multiplication_table(cartesian_group.operations(), tol);
-    SymGroup<AbstractSymOp, AbstractSymOpCompare_f> pot_abstract_group({});
+    SymGroup<AbstractSymOp, BinaryAbstractComparator_f> pot_abstract_group({});
     std::shared_ptr<MultTable> table_ptr = std::make_shared<MultTable>(multiplication_table);
     for (int i = 0; i < cartesian_group.operations().size(); i++) 
     {

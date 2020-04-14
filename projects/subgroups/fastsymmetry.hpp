@@ -30,7 +30,6 @@ private:
 
 struct AbstractSymOpCompare_f
 {
-    typedef std::tuple<> CompareArgs;
 
     AbstractSymOpCompare_f(AbstractSymOp input1);
     bool operator()(const AbstractSymOp& element2) const;
@@ -43,6 +42,13 @@ private:
 std::vector<std::vector<int>> make_multiplication_table(const std::vector<SymOp>& group, double tol);
 
 
-SymGroup<AbstractSymOp, AbstractSymOpCompare_f> transform_representation(const SymGroup<SymOp, SymOpCompare_f>& cartesian_group, double tol);
+class BinaryAbstractComparator_f
+{
+public:
+    AbstractSymOp lhs, rhs;
+    BinaryAbstractComparator_f(const AbstractSymOp& lhs, const AbstractSymOp& rhs);
+    bool operator()();//(const AbstractSymOp lhs, const AbstractSymOp rhs);
+};
 
+SymGroup<AbstractSymOp, BinaryAbstractComparator_f> transform_representation(const SymGroup<SymOp, BinaryComparator_f>& cartesian_group, double tol);
 #endif

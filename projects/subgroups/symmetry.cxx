@@ -1,6 +1,6 @@
 #include "./symmetry.hpp"
 #include "./math.hpp"
-#define PREC 1e-6
+//#define PREC 1e-6
 
 SymOp::SymOp(Eigen::Matrix3d input_matrix) : cart_matrix(input_matrix)
 {
@@ -26,4 +26,14 @@ SymOp operator*(const SymOp& lhs, const SymOp& rhs)
 SymOpCompare_f::SymOpCompare_f(SymOp input1, double tol) : element1(input1), tol(tol) {}
 
 bool SymOpCompare_f::operator()(const SymOp& element2) const { return element1.cart_matrix.isApprox(element2.cart_matrix, tol); }
+
+BinaryComparator_f::BinaryComparator_f(const SymOp& lhs, const SymOp& rhs):lhs(lhs), rhs(rhs){}
+
+bool BinaryComparator_f::operator()()//const SymOp& lhs, const SymOp& rhs)
+{
+      SymOpCompare_f compare(this->lhs,tol);
+      return compare(this->rhs);
+}
+
+
 

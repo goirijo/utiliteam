@@ -68,7 +68,7 @@ auto calc_L_primes(const std::vector<std::vector<double>> grid)
     return L_prime;
 }
 
-SymGroup<SymOp, SymOpCompare_f> calc_point_group(const Eigen::Matrix3d L, double tol)
+SymGroup<SymOp, BinaryComparator_f> calc_point_group(const Eigen::Matrix3d L, double tol)
 {
     // calculate all valid SymOps for the input Lattice
     // returns vector of SymOp matrices
@@ -87,7 +87,7 @@ SymGroup<SymOp, SymOpCompare_f> calc_point_group(const Eigen::Matrix3d L, double
 
         pt_group_list.emplace_back(cart_mat);
     }
-    SymGroup<SymOp, SymOpCompare_f> pt_group(pt_group_list);
+    SymGroup<SymOp, BinaryComparator_f> pt_group(pt_group_list);
     return pt_group;
 }
 

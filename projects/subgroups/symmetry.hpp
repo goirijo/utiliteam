@@ -12,6 +12,7 @@
 #include <vector>
 #include <tuple>
 
+#define PREC 1e-6
 class SymOp
 {
 public:
@@ -25,7 +26,6 @@ SymOp operator*(const SymOp& lhs, const SymOp& rhs);
 
 struct SymOpCompare_f
 {
-    typedef std::tuple<double> CompareArgs;
 
     SymOpCompare_f(SymOp input1, double tol=1e-5);
     bool operator()(const SymOp& element2) const;
@@ -33,6 +33,16 @@ struct SymOpCompare_f
 private:
     const SymOp element1;
     double tol;
+};
+
+class BinaryComparator_f
+{
+    public:
+            SymOp lhs, rhs;
+            BinaryComparator_f(const SymOp& lhs, const SymOp& rhs);
+            bool operator()();//const SymOp& lhs, const SymOp& rhs);
+    private:
+            double tol=PREC;
 };
 
 #endif

@@ -27,12 +27,12 @@ SymOpCompare_f::SymOpCompare_f(SymOp input1, double tol) : element1(input1), tol
 
 bool SymOpCompare_f::operator()(const SymOp& element2) const { return element1.cart_matrix.isApprox(element2.cart_matrix, tol); }
 
-BinaryComparator_f::BinaryComparator_f(const SymOp& lhs, const SymOp& rhs):lhs(lhs), rhs(rhs){}
+BinaryComparator_f::BinaryComparator_f(double tol):tol(tol){}
 
-bool BinaryComparator_f::operator()()//const SymOp& lhs, const SymOp& rhs)
+bool BinaryComparator_f::operator()(const SymOp& lhs, const SymOp& rhs) const
 {
-      SymOpCompare_f compare(this->lhs,tol);
-      return compare(this->rhs);
+      SymOpCompare_f compare(lhs,tol);
+      return compare(rhs);
 }
 
 

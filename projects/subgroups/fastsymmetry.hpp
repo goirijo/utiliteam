@@ -45,9 +45,7 @@ std::vector<std::vector<int>> make_multiplication_table(const std::vector<SymOp>
 class BinaryAbstractComparator_f
 {
 public:
-    AbstractSymOp lhs, rhs;
-    BinaryAbstractComparator_f(const AbstractSymOp& lhs, const AbstractSymOp& rhs);
-    bool operator()();//(const AbstractSymOp lhs, const AbstractSymOp rhs);
+    bool operator()(const AbstractSymOp& lhs, const AbstractSymOp& rhs) const;
 };
 
 SymGroup<AbstractSymOp, BinaryAbstractComparator_f> transform_representation(const SymGroup<SymOp, BinaryComparator_f>& cartesian_group, double tol);

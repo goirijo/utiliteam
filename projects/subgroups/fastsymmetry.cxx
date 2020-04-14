@@ -48,18 +48,18 @@ std::vector<std::vector<int>> make_multiplication_table(const std::vector<SymOp>
 
 
 
-BinaryAbstractComparator_f::BinaryAbstractComparator_f(const AbstractSymOp& lhs, const AbstractSymOp& rhs):lhs(lhs), rhs(rhs){}
-bool BinaryAbstractComparator_f::operator()()//const AbstractSymOp lhs, const AbstractSymOp rhs)
+bool BinaryAbstractComparator_f::operator()(const AbstractSymOp& lhs, const AbstractSymOp& rhs) const
 {
-      AbstractSymOpCompare_f compare(this->lhs);
-      return compare(this->rhs);
+      AbstractSymOpCompare_f compare(lhs);
+      return compare(rhs);
 }
 
 //TODO: This will eventually change to return a SymGroup
 SymGroup<AbstractSymOp, BinaryAbstractComparator_f> transform_representation(const SymGroup<SymOp, BinaryComparator_f>& cartesian_group, double tol) 
 {
     MultTable multiplication_table = make_multiplication_table(cartesian_group.operations(), tol);
-    SymGroup<AbstractSymOp, BinaryAbstractComparator_f> pot_abstract_group({});
+    BinaryAbstractComparator_f comp;
+    SymGroup<AbstractSymOp, BinaryAbstractComparator_f> pot_abstract_group({}, comp);
     std::shared_ptr<MultTable> table_ptr = std::make_shared<MultTable>(multiplication_table);
     for (int i = 0; i < cartesian_group.operations().size(); i++) 
     {

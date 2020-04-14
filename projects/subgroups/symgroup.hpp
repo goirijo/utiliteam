@@ -6,19 +6,31 @@
 #include <tuple>
 #include <vector>
 //#define PREC 1e-6
+//
+
+//What we want:
+//User specify the type of operations, and how to compare the operations
+//The user gives the vector of operations at construction, as well
+//as whatever is needed to compare two operations.
+//
+//For example:
+//std::vector<SymOp> my_ops;
+//SymOpBinaryCompare_f how_to_compare(1e-5);
+//SymGroup<SymOp, SymOpBinaryCompare_f> group(my_ops, how_to_compare);
 
 template <typename SymOpType, typename BinaryCompareType>
 class SymGroup
 {
 public:
  
-    SymGroup(std::vector<SymOpType> generating_elements);
-    static void close_group(std::vector<SymOpType>* operations_ptr);
+    SymGroup(std::vector<SymOpType> generating_elements, const BinaryCompareType& binary_comparator);
+    static void close_group(std::vector<SymOpType>* operations_ptr, const BinaryCompareType& binary_comparator);
     bool insert(SymOpType& new_operation);
     const std::vector<SymOpType>& operations() const { return this->group; }
 
 private:
     std::vector<SymOpType> group;
+    BinaryCompareType binary_comparator;
 };
 
 template <typename SymOpType,typename BinaryCompareType>
@@ -42,7 +54,7 @@ std::vector<SymGroup<SymOpType, BinaryCompareType>> find_subgroups(SymGroup<SymO
 //*********************************************************************//
 
 template <typename SymOpType, typename BinaryCompareType>
-void SymGroup<SymOpType, BinaryCompareType>::close_group(std::vector<SymOpType>* operations_ptr)
+void SymGroup<SymOpType, BinaryCompareType>::close_group(std::vector<SymOpType>* operations_ptr, const BinaryCompareType& binary_comparator)
 {
     int push_limit = 200;
     int push_count = 0;
@@ -62,10 +74,12 @@ void SymGroup<SymOpType, BinaryCompareType>::close_group(std::vector<SymOpType>*
         {
             for (int j = 0; j < last_size; ++j)
             {
+                //TODO: Think of a way of not repeating this
                 SymOpType candidate_operation = operations[i] * operations[j];
-                auto compare_lambda=[ candidate_operation](const SymOpType& other){
-                    BinaryCompareType b_compare(candidate_operation, other);
-                    return b_compare();};
+                auto compare_lambda=[candidate_operation, binary_comparator](const SymOpType& other){
+                    return binary_comparator(other, candidate_operation);
+                    };
+
                 if (std::find_if(operations.begin(), operations.end(), compare_lambda) == operations.end())
                 {
                     operations.push_back(candidate_operation);
@@ -86,14 +100,15 @@ void SymGroup<SymOpType, BinaryCompareType>::close_group(std::vector<SymOpType>*
 template <typename SymOpType, typename BinaryCompareType>
 bool SymGroup<SymOpType, BinaryCompareType>::insert(SymOpType& new_operation)
 {
-//    BinaryCompareType compare;
-    auto compare_lambda=[new_operation](const SymOpType& other){
-        BinaryCompareType compare(other, new_operation);
-        return compare();};
+                //TODO: Think of a way of not repeating this
+    auto compare_lambda=[this, new_operation](const SymOpType& other){
+        return this->binary_comparator(other, new_operation);
+        };
+
     if (std::find_if(this->group.begin(), this->group.end(), compare_lambda) == this->group.end())
     {
         this->group.push_back(new_operation);
-        close_group(&this->group);
+        close_group(&this->group, this->binary_comparator);
         return true;
     }
 
@@ -101,7 +116,7 @@ bool SymGroup<SymOpType, BinaryCompareType>::insert(SymOpType& new_operation)
 }
 
 template <typename SymOpType, typename BinaryCompareType>
-SymGroup<SymOpType, BinaryCompareType>::SymGroup(std::vector<SymOpType> generating_elements)
+SymGroup<SymOpType, BinaryCompareType>::SymGroup(std::vector<SymOpType> generating_elements, const BinaryCompareType& binary_comparator): binary_comparator(binary_comparator)
 {
     for (SymOpType element : generating_elements)
     {

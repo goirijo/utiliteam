@@ -35,14 +35,14 @@ private:
     double tol;
 };
 
+//TODO: Better name. This doesn't describe anything except the function signature
 class BinaryComparator_f
 {
     public:
-            SymOp lhs, rhs;
-            BinaryComparator_f(const SymOp& lhs, const SymOp& rhs);
-            bool operator()();//const SymOp& lhs, const SymOp& rhs);
+            BinaryComparator_f(double tol);
+            bool operator()(const SymOp& lhs, const SymOp& rhs) const;
     private:
-            double tol=PREC;
+            double tol;
 };
 
 #endif

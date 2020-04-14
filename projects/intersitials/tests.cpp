@@ -136,7 +136,7 @@ int main() {
 
   for (int i = 0; i < my_sites.size(); ++i) {
     EXPECT_T(Eigen::Vector3d(raw_coordinate_rows.row(i))
-                 .isApprox(my_sites.at(i).get_coordinate()),
+                 .isApprox(my_sites.at(i).get_eigen_coordinate()),
              "Coordinate mismatch for " + std::to_string(i) + "th site");
   }
 
@@ -163,10 +163,25 @@ int main() {
   // Test SitePeriodicCompare_f
   //
   // Test point group
-  EXPECT_T(pointgroup.size()==24, "Wrong number of point group operations")
+  std::vector<SymOp> pointgroup = Calculate_point_group(my_structure.get_lattice());
+  EXPECT_T(pointgroup.size()==24, "Wrong number of point group operations");
   // Test transform_basis
-  Site test_coord<<0.5, 0.5, 0.5;
-  SymOp transformation<<
+  Eigen::Vector3d test_coord;
+  test_coord<<0.5, 0.5, 0.5;
+  std::vector<Site> test_basis;
+  test_basis.push_back(Site("Se", Coordinate(test_coord)));
+  Eigen::Matrix3d test_cart_matrix;
+  test_cart_matrix<< 1, 0, 0, 0, 1, 0, 0, 0, -1;
+  Eigen::Vector3d test_tau;
+  test_tau<< 0, 0 ,0;
+  SymOp test_transformation=SymOp(test_cart_matrix, test_tau);
+  Eigen::Vector3d correct_coord;
+  correct_coord << 0.5, 0.5, -0.5;
+  std::vector<Site> correct_basis;
+  correct_basis.push_back(Site("Se", Coordinate(correct_coord)));
+  //EXPECT_T(transform_basis(test_transformation, test_basis).at(0).isApprox(correct_basis.at(0), 1e-5), "wrong coords"); 
+  SiteCompare_f my_site(test_basis.at(0), 1e-5);
+  EXPECT_T(my_site(correct_basis.at(0)), "wrong coords"); 
   // Test basis_maps_onto_itself
 
   // Test SymOp

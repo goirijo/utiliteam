@@ -66,21 +66,27 @@ Eigen::Vector3d find_geometric_center(const Cluster& test_cluster)
 // args: Coordinate, radius, Structure
 std::vector<Site> find_sites_within_radius(Coordinate middlepoint, int my_radius, Structure my_struc)
 {
-	//use flooring function
+	/* //use flooring function */
+	/* std::vector<Site> sites_within_radius; */
+	/* //Compute Distance between sites and floor coord */
+	/* for (const auto& site: my_struc.get_sites()) */ 
+	/* { */
+	/* 	auto within_coord=site.get_coordinate().bring_within(my_struc.get_lattice()); */
+	/* 	if (distance(middlepoint, within_coord)<my_radius) */
+	/* 	{ */
+	/* 		sites_within_radius.emplace_back(site); */
+	/* 	} */
+	/* } */
+     /* return sites_within_radius; */
+
 	std::vector<Site> sites_within_radius;
-	//Compute Distance between sites and floor coord
-	for (const auto& site: my_struc.get_sites()) 
-	{
-		auto within_coord=site.get_coordinate().bring_within(my_struc.get_lattice());
-		if (distance(middlepoint, within_coord)<my_radius)
-		{
-			sites_within_radius.emplace_back(site);
-		}
-	}
-     return sites_within_radius;
+
+    //bring middlepoint within structure
+
+    //get all within ixjxk superstructure that can contain a sphere of my_radius
+    //loop over each of those sites
+    //for each Site, calculate the distace to middlepoint
+    //if the distance is below the radius, push to list
+
+    return sites_within_radius;
 }
-
-
-
-
-//

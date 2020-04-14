@@ -165,6 +165,7 @@ int main() {
   // Test point group
   std::vector<SymOp> pointgroup = Calculate_point_group(my_structure.get_lattice());
   EXPECT_T(pointgroup.size()==24, "Wrong number of point group operations");
+
   // Test transform_basis
   Eigen::Vector3d test_coord;
   test_coord<<0.5, 0.5, 0.5;
@@ -180,8 +181,9 @@ int main() {
   std::vector<Site> correct_basis;
   correct_basis.push_back(Site("Se", Coordinate(correct_coord)));
   //EXPECT_T(transform_basis(test_transformation, test_basis).at(0).isApprox(correct_basis.at(0), 1e-5), "wrong coords"); 
-  SiteCompare_f my_site(test_basis.at(0), 1e-5);
+  SiteCompare_f my_site(transform_basis(test_transformation,test_basis).at(0), 1e-5);
   EXPECT_T(my_site(correct_basis.at(0)), "wrong coords"); 
+  
   // Test basis_maps_onto_itself
 
   // Test SymOp

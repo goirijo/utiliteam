@@ -65,6 +65,7 @@ Useful links:
 - <https://www.geeksforgeeks.org/map-vs-unordered_map-c/>
 - <https://en.cppreference.com/w/cpp/container/map> 
 
+<<<<<<< HEAD
 ***
 <h2>Classes</h2>
 
@@ -77,6 +78,18 @@ Classes are a type of data structure that contains data members and data functio
 After declarations are done, any public data members and data functions may be called with using a dot after the member name <br>A constructor is called when any class is created though there is no requirement write out the empty consructor explicitly <br>One may create either parameterized or unparamterized constructors
 
 For more information please see [Colleen's Code](https://github.com/goirijo/utiliteam/blob/master/slides/200212_casmmeeting_classes.pdf)
+=======
+-------
+## Classes
+### 11-Feb-2020, MS
+
+#### [Classes](slides/200212_casmmeeting_classes.pdf) \(presented by Colleen\) 
+Classes are a type of data structure that contains data members and data functions, both of which can be public or private (and also protected).
+After declarations are done, any public data members and data functions may be called with using a dot after the member name.
+A constructor is called when any class is created though there is no requirement write out the empty consructor explicitly.
+One may create either parameterized or unparamterized constructors
+
+>>>>>>> upstream/covid_muna_meeting_edits
 
 Useful links:
 - <http://www.cplusplus.com/doc/tutorial/classes/>
@@ -84,5 +97,36 @@ Useful links:
 - <http://www.trytoprogram.com/cplusplus-programming/constructors/>
 
 
+<<<<<<< HEAD
 <h4>A breaking down code based exercise (presented by John)</h4>
 Potential functions for a factor group code were broken into a Methods and Data Structure column only to be broken down more <br>The exercise followed a "big picture" to smaller unit workflow where the goal was to determine all individual functions <br>necessary to find the factor group of a crystal.
+=======
+#### A breaking down code based exercise (presented by John)
+Potential functions for a factor group code were broken into a Methods and Data Structure column only to be broken down more.
+The exercise followed a "big picture" to smaller unit workflow where the goal was to determine all individual functions necessary to find the factor group of a crystal.
+
+-------
+## Values and References
+### 20-Feb-2020, SHA
+
+#### [Lvalues and Rvalues](slides/lvaluervalue.pdf) \(presented by Sanjeev\)
+Lvalues are objects whose resources cannot be reused (a permanent label, should be treated as a *name*).
+Rvalues are objects whose resources can be reused (a temporary object, should be treated as *contents*).
+
+Lvalue references are attached to the named object (box/name and contents):
+- Can be passed to a function in a potentially non-const way. Look for '&'.
+- Can be passed to a function in a const way. Look for 'const' and '&'.
+
+Rvalue references are attached to details (just the contents, may be stolen and reboxed/named):
+- Can be passed to a function in a potentially non-const way. Look for '&&'.
+- Once the object is passed the user loses access to the object.
+
+Rules:
+- Cannot bind R value reference to L value or L value reference.
+- Cannot bind non-const L value reference to R value or R value reference.
+
+Useful links:
+- <https://www.fluentcpp.com/2018/02/06/understanding-lvalues-rvalues-and-their-references/>
+- <https://en.cppreference.com/w/cpp/language/reference>
+
+>>>>>>> upstream/covid_muna_meeting_edits

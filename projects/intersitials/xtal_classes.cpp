@@ -24,7 +24,7 @@ void Coordinate::bring_within(const Lattice& lattice, double prec)
     frac_coords = lattice.col_vector_matrix().inverse() * this->m_coord;
     for (int i = 0; i < 3; ++i)
     {
-        if (frac_coords(i) < -prec || frac_coords(i) >= 1+prec)		
+        if (frac_coords(i) < -prec || frac_coords(i) >= 1-prec)		
         {
             frac_coords(i) = frac_coords(i) - floor(frac_coords(i)+prec);
         }

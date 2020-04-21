@@ -3,7 +3,6 @@
 
 #include "../../submodules/eigen-git-mirror/Eigen/Core"
 #include "../../submodules/eigen-git-mirror/Eigen/Dense"
-#include "bring_within.hpp"
 #include <string>
 #include <vector>
 
@@ -101,10 +100,6 @@ struct SitePeriodicCompare_f
 {
     SitePeriodicCompare_f(const Site& site, double prec, const Lattice& unit_cell);
     bool operator()(const Site& other) const;
-//    {
-        //TODO: bring site within
-        //Use SiteCompare_f
-//    }
     
     private:
     //TODO

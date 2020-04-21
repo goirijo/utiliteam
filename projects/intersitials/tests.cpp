@@ -1,4 +1,3 @@
-#include "bring_within.hpp"
 #include "xtal_classes.hpp"
 #include "symmetry_operations.hpp"
 #include "interstitials.hpp"
@@ -91,6 +90,7 @@ void EXPECT_T(bool true_statement, std::string test_type) {
 int main() {
 
   // Test Coordinate class
+  // Maybe a new constructor that takes fractional coordinates and a lattice?
   //
   // Test Coordinate comparator
   //
@@ -127,16 +127,18 @@ int main() {
 
   // Coordinate test
   // Is site coordinate the same as Coordinate coordinate?
-  Eigen::MatrixXd raw_coordinate_rows(5, 3);
-  raw_coordinate_rows << 0.3333330000000032, 0.6666669999999968,
+  Eigen::MatrixXd raw_frac_coord_rows(5, 3);
+  raw_frac_coord_rows << 0.3333330000000032, 0.6666669999999968,
       0.6257012643865139, 0.0000000000000000, 0.0000000000000000,
       0.3495550691578657, 0.6666669999999968, 0.3333330000000032,
       0.0268432865670718, 0.0000000000000000, 0.0000000000000000,
       0.7508303712375408, 0.3333330000000032, 0.6666669999999968,
       0.2470700086510149;
 
+  Eigen::MatrixXd raw_cart_coord_rows=(my_lattice.col_vector_matrix()*raw_frac_coord_rows.transpose()).transpose();
+
   for (int i = 0; i < my_sites.size(); ++i) {
-    EXPECT_T(Eigen::Vector3d(raw_coordinate_rows.row(i))
+    EXPECT_T(Eigen::Vector3d(raw_cart_coord_rows.row(i))
                  .isApprox(my_sites.at(i).get_eigen_coordinate()),
              "Coordinate mismatch for " + std::to_string(i) + "th site");
   }
@@ -203,6 +205,15 @@ int main() {
   cart_matrix_at_position<<1.0, 0.0, 0.0,
 			   0.0, 1.0, 0.0,
 			   0.0, 0.0, 1.0;
+
+
+
+  Lattice identity_lat(Eigen::Matrix3d::Identity());
+  Coordinate coord_outside(Eigen::Vector3d(-1.6,0.9999999999999999999,4.000000000000001));
+  coord_outside.bring_within(identity_lat,1e-5);
+  EXPECT_T(coord_outside.get_coordinate().isApprox(Eigen::Vector3d(0.4,0.0,0.0),1e-5),"Bring within failed");
+
+
   //Test SitePeriodicCompare_f
   Eigen::Vector3d original_Site_Periodic_matrix;
   original_Site_Periodic_matrix<<0.0001, 0.000001, 0.0000001;
@@ -229,7 +240,7 @@ int main() {
   Eigen::Vector3d other_Site_Periodic_matrix_wrong;
   other_Site_Periodic_matrix_wrong<<-1.0001, -1.0001, 1.000000001;
   Site other_Site_Periodic_test_site_wrong=(Site("Se", Coordinate(other_Site_Periodic_matrix_wrong)));  
-  EXPECT_T(!test_periodic(other_Site_Periodic_test_site_wrong), "Doesn't recognize that it's the same site through siteperiodcompare_f");
+  EXPECT_T(!test_periodic_wrong(other_Site_Periodic_test_site_wrong), "Doesn't recognize that it's the same site through siteperiodcompare_f");
 
   //TestSymOp (or whateverr number it is after we figure it out)
   auto factorgroup=find_factor_group(my_structure);

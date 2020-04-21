@@ -1,4 +1,5 @@
 #include "xtal_classes.hpp"
+#define PREC 1E-3
 // Lattice definitions
 Lattice::Lattice(const Eigen::Matrix3d& lattice_matrix) : m_lat(lattice_matrix) {}
 Lattice::Lattice(const Eigen::Vector3d& a1, const Eigen::Vector3d& a2, const Eigen::Vector3d& a3)
@@ -17,15 +18,15 @@ Eigen::Vector3d Coordinate::get_coordinate() const { return this->m_coord; }
 double Coordinate::get_x() const { return this->m_coord(0); }
 double Coordinate::get_y() const { return this->m_coord(1); }
 double Coordinate::get_z() const { return this->m_coord(2); }
-void Coordinate::bring_within(const Lattice& lattice)
+void Coordinate::bring_within(const Lattice& lattice, double prec)
 {
     Eigen::Vector3d frac_coords;
     frac_coords = lattice.col_vector_matrix().inverse() * this->m_coord;
     for (int i = 0; i < 3; ++i)
     {
-        if (frac_coords(i) < 0 || frac_coords(i) >= 1)
+        if (frac_coords(i) < -prec || frac_coords(i) >= 1+prec)		
         {
-            frac_coords(i) = frac_coords(i) - floor(frac_coords(i));
+            frac_coords(i) = frac_coords(i) - floor(frac_coords(i)+prec);
         }
     }
     this->m_coord = lattice.col_vector_matrix() * frac_coords;
@@ -72,6 +73,26 @@ bool SiteCompare_f::operator()(const Site& other) const
         }
     }
     return false;
+}
+
+
+//Site compare taking into account perioduc boundary conditions
+SitePeriodicCompare_f::SitePeriodicCompare_f(const Site& site, double prec, const Lattice& unit_cell) : m_site(site), m_precision(prec), m_lattice(unit_cell){} 
+bool SitePeriodicCompare_f::operator()(const Site& other) const
+{
+	//auto other_coord=other.get_eigen_coordinate();
+	//move_the_atom_inside_the_crystal(&other_coord, m_lattice.col_vector_matrix());
+	auto other_coord=m_site.get_coordinate();
+	other_coord.bring_within(m_lattice, m_precision);
+	if (m_site.get_eigen_coordinate().isApprox(other_coord.get_coordinate()))
+	{
+		if (m_site.get_atom()==other.get_atom())
+		{
+			return true;
+		}
+	}
+	return false;
+	//may need to redefine new operator function?
 }
 
 // Cluster Compare functor

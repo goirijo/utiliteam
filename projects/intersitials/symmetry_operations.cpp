@@ -114,11 +114,11 @@ std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& b
     return test_basis;
 }
 
-bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::vector<Site>& transformed_basis)
+bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::vector<Site>& transformed_basis, const Lattice& lattice)
 {
     for (const auto& basis : transformed_basis)
     {
-        SitePeriodicCompare_f test_basis(basis, 1E-1); // Huge tolerance!
+        SitePeriodicCompare_f test_basis(basis, 1E-3, lattice.col_vector_matrix()); // Huge tolerance!
         if (std::find_if(original_basis.begin(), original_basis.end(), test_basis) == original_basis.end())
         {
             return false;
@@ -134,12 +134,11 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
 {
     const std::vector<Site>& Basis = my_struc.get_sites();
     std::vector<SymOp> point_group = Calculate_point_group(my_struc.get_lattice());
-
     std::vector<SymOp> factor_group;
     for (SymOp point_group_op : point_group)
     {
         auto transformed_basis = transform_basis(point_group_op, Basis);
-        if (basis_maps_onto_itself(Basis, transformed_basis))
+        if (basis_maps_onto_itself(Basis, transformed_basis, my_struc.get_lattice()))
         {
             factor_group.push_back(point_group_op);
         }
@@ -156,12 +155,12 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
                     for (int m = 0; m < transformed_basis.size(); m++)
                     {
                         Eigen::Vector3d changed_basis = transformed_basis[m].get_eigen_coordinate() + trans;
-                        transformed_tranlsated_basis.push_back(Site(transformed_basis[m].get_atom(), changed_basis));
+		       	transformed_tranlsated_basis.push_back(Site(transformed_basis[m].get_atom(), changed_basis));
                     }
                 }
             }
 
-            if (basis_maps_onto_itself(Basis, transformed_tranlsated_basis))
+            if (basis_maps_onto_itself(Basis, transformed_tranlsated_basis, my_struc.get_lattice()))
             {
                 factor_group.emplace_back(point_group_op.get_cart_matrix(),trans);
             }

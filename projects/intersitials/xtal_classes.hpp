@@ -3,6 +3,7 @@
 
 #include "../../submodules/eigen-git-mirror/Eigen/Core"
 #include "../../submodules/eigen-git-mirror/Eigen/Dense"
+#include "bring_within.hpp"
 #include <string>
 #include <vector>
 
@@ -27,7 +28,7 @@ public:
     double get_x() const;
     double get_y() const;
     double get_z() const;
-    void bring_within(const Lattice& lattice);
+    void bring_within(const Lattice& lattice, double prec);
 
 private:
     Eigen::Vector3d m_coord;
@@ -99,14 +100,17 @@ private:
 struct SitePeriodicCompare_f
 {
     SitePeriodicCompare_f(const Site& site, double prec, const Lattice& unit_cell);
-    bool operator()(const Site& other) const
-    {
+    bool operator()(const Site& other) const;
+//    {
         //TODO: bring site within
         //Use SiteCompare_f
-    }
+//    }
     
     private:
     //TODO
+    Site m_site;
+    double m_precision;
+    Lattice m_lattice;
 };
 
 struct ClusterCompare_f

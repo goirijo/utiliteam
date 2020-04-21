@@ -23,7 +23,7 @@ bool group_is_closed(const std::vector<Eigen::Matrix3d>& SymMatrix);
 
 std::vector<Eigen::Vector3d> transform_basis(const SymOp& symop, const std::vector<Eigen::Vector3d>& basis);
 
-bool basis_maps_onto_itself(const std::vector<Eigen::Vector3d>& original_basis, std::vector<Eigen::Vector3d> transformed_basis);
+bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::vector<Site>& transformed_basis, const Lattice& lattice);
 
 std::vector<SymOp> find_factor_group(const std::vector<SymOp>& ValidSymOps, const Structure& my_struc);
 std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& basis);

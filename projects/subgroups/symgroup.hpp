@@ -24,6 +24,8 @@ class SymGroup
 public:
  
     SymGroup(std::vector<SymOpType> generating_elements, const BinaryCompareType& binary_comparator);
+    template<typename ...Args>
+    SymGroup(std::vector<SymOpType> generating_elements, Args... args);
     static void close_group(std::vector<SymOpType>* operations_ptr, const BinaryCompareType& binary_comparator);
     bool insert(SymOpType& new_operation);
     const std::vector<SymOpType>& operations() const { return group; }
@@ -114,6 +116,11 @@ bool SymGroup<SymOpType, BinaryCompareType>::insert(SymOpType& new_operation)
 
     return false;
 }
+
+
+template <typename SymOpType, typename BinaryCompareType>
+template<typename ...Args>
+SymGroup<SymOpType, BinaryCompareType>::SymGroup(std::vector<SymOpType> generating_elements, Args... args): SymGroup<SymOpType,BinaryCompareType>(generating_elements,BinaryCompareType(args...)){}
 
 template <typename SymOpType, typename BinaryCompareType>
 SymGroup<SymOpType, BinaryCompareType>::SymGroup(std::vector<SymOpType> generating_elements, const BinaryCompareType& binary_comparator): binary_comparator(binary_comparator)

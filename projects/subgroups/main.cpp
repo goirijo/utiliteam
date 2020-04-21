@@ -12,7 +12,7 @@
 int main(int argc, char *argv[])
 {
     CrystalStructure structure=read_poscar(argv[1]);
-    SymGroup<SymOp, BinaryComparator_f> pt_group = calc_point_group(structure.lattice, PREC);
+    SymGroup<SymOp, CartesianBinaryComparator_f> pt_group = calc_point_group(structure.lattice, PREC);
     SymGroup<AbstractSymOp, BinaryAbstractComparator_f> abstract_pt_group = transform_representation(pt_group, PREC);
     std::vector<SymGroup<AbstractSymOp,BinaryAbstractComparator_f>> subgroups = find_subgroups(abstract_pt_group);
 //How do we print sub groups meaningful subgroups? The Abstract subgroups are not linked to the actual operations...

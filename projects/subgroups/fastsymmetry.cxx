@@ -55,7 +55,7 @@ bool BinaryAbstractComparator_f::operator()(const AbstractSymOp& lhs, const Abst
 }
 
 //TODO: This will eventually change to return a SymGroup
-SymGroup<AbstractSymOp, BinaryAbstractComparator_f> transform_representation(const SymGroup<SymOp, BinaryComparator_f>& cartesian_group, double tol) 
+SymGroup<AbstractSymOp, BinaryAbstractComparator_f> transform_representation(const SymGroup<SymOp, CartesianBinaryComparator_f>& cartesian_group, double tol) 
 {
     MultTable multiplication_table = make_multiplication_table(cartesian_group.operations(), tol);
     BinaryAbstractComparator_f comp;

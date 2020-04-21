@@ -26,8 +26,8 @@ public:
     SymGroup(std::vector<SymOpType> generating_elements, const BinaryCompareType& binary_comparator);
     static void close_group(std::vector<SymOpType>* operations_ptr, const BinaryCompareType& binary_comparator);
     bool insert(SymOpType& new_operation);
-    const std::vector<SymOpType>& operations() const { return this->group; }
-
+    const std::vector<SymOpType>& operations() const { return group; }
+    const BinaryCompareType get_comparator() const {return binary_comparator;}
 private:
     std::vector<SymOpType> group;
     BinaryCompareType binary_comparator;
@@ -39,7 +39,7 @@ SymGroup<SymOpType, BinaryCompareType> operator*(SymGroup<SymOpType, BinaryCompa
 template <typename SymOpType,typename BinaryCompareType>
 struct SymGroupCompare_f
 {
-    SymGroupCompare_f(SymGroup<SymOpType,BinaryCompareType> input1);
+    SymGroupCompare_f(const SymGroup<SymOpType,BinaryCompareType>& input1);
 
     bool operator()(const SymGroup<SymOpType,BinaryCompareType>& group2) const;
 
@@ -138,7 +138,7 @@ SymGroup<SymOpType, BinaryCompareType> operator*(SymGroup<SymOpType, BinaryCompa
 }
 
 template <typename SymOpType, typename BinaryCompareType>
-SymGroupCompare_f<SymOpType, BinaryCompareType>::SymGroupCompare_f(SymGroup<SymOpType, BinaryCompareType> input1) : group1(input1){}
+SymGroupCompare_f<SymOpType, BinaryCompareType>::SymGroupCompare_f(const SymGroup<SymOpType, BinaryCompareType>& input1) : group1(input1){}
 
 template <typename SymOpType,typename BinaryCompareType>
 bool SymGroupCompare_f<SymOpType, BinaryCompareType>::operator()(const SymGroup<SymOpType, BinaryCompareType>& group2) const
@@ -149,11 +149,11 @@ bool SymGroupCompare_f<SymOpType, BinaryCompareType>::operator()(const SymGroup<
     }
     else
     {
+        BinaryCompareType b_compare= group1.get_comparator();
         for (const SymOpType& symop : group1.operations())
         {
-            auto compare_elements=[symop](const SymOpType& other){
-                BinaryCompareType b_compare(symop, other);
-                return b_compare(other, symop);};
+            auto compare_elements=[symop, b_compare](const SymOpType& other){
+                return b_compare(symop, other);};
             if (std::find_if(group2.operations().begin(), group2.operations().end(), compare_elements) == group2.operations().end())
             {
                 return false;
@@ -172,16 +172,17 @@ std::vector<SymGroup<SymOpType, BinaryCompareType>> find_subgroups(SymGroup<SymO
     //Initializing a subgroup with each  element of the total group.
     for (const SymOpType& operation : input_group.operations()) 
     {
-        SymGroup<SymOpType, BinaryCompareType> pot_subgroup(std::vector<SymOpType> {operation});
+        BinaryCompareType compare = input_group.get_comparator();
+        SymGroup<SymOpType, BinaryCompareType> pot_subgroup(std::vector<SymOpType> {operation}, compare);
         if (pot_subgroup.operations().size() == input_group.operations().size()) 
         {
             continue;
         }
 //check that the group compare makes sense
         
-        auto compare_groups=[pot_subgroup](const SymOpType& other){
-            SymGroupCompare_f<SymOpType, BinaryCompareType> compare_symgroups(pot_subgroup);
-                return compare_symgroups(other);};
+        SymGroupCompare_f<SymOpType, BinaryCompareType> compare_symgroups(pot_subgroup);
+        auto compare_groups=[compare_symgroups, pot_subgroup](const SymGroup<SymOpType, BinaryCompareType>& other){
+            return compare_symgroups(other);};
 
         if (std::find_if(list_of_subgroups.begin(), list_of_subgroups.end(), compare_groups) == list_of_subgroups.end()) 
         {
@@ -206,9 +207,9 @@ std::vector<SymGroup<SymOpType, BinaryCompareType>> find_subgroups(SymGroup<SymO
                     continue;
                 }
 
-             auto compare_large_groups=[pot_larger_subgroup](const SymOpType& other){
-                SymGroupCompare_f<SymOpType, BinaryCompareType> compare_symgroups(pot_larger_subgroup, other);
-                return compare_symgroups();};
+             auto compare_large_groups=[pot_larger_subgroup](const SymGroup<SymOpType, BinaryCompareType>& other){
+                const SymGroupCompare_f<SymOpType, BinaryCompareType> compare_symgroups(pot_larger_subgroup);
+                return compare_symgroups(other);};
 
                 if (std::find_if(list_of_subgroups.begin(), list_of_subgroups.end(), compare_large_groups) == list_of_subgroups.end()) 
                 {

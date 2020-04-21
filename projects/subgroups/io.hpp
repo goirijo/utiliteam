@@ -16,6 +16,6 @@
 
 auto read_lattice(std::string filename);
 CrystalStructure read_poscar(std::string filename);
-void print_sub_groups(SymGroup<SymOp, BinaryComparator_f> input_group, std::vector<SymGroup<SymOp, BinaryComparator_f>> list_of_subgroups);
+void print_sub_groups(SymGroup<SymOp, CartesianBinaryComparator_f> input_group, std::vector<SymGroup<SymOp, CartesianBinaryComparator_f>> list_of_subgroups);
 
 #endif

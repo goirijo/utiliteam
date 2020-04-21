@@ -48,5 +48,5 @@ public:
     bool operator()(const AbstractSymOp& lhs, const AbstractSymOp& rhs) const;
 };
 
-SymGroup<AbstractSymOp, BinaryAbstractComparator_f> transform_representation(const SymGroup<SymOp, BinaryComparator_f>& cartesian_group, double tol);
+SymGroup<AbstractSymOp, BinaryAbstractComparator_f> transform_representation(const SymGroup<SymOp, CartesianBinaryComparator_f>& cartesian_group, double tol);
 #endif

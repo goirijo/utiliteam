@@ -36,10 +36,10 @@ private:
 };
 
 //TODO: Better name. This doesn't describe anything except the function signature
-class BinaryComparator_f
+class CartesianBinaryComparator_f
 {
     public:
-            BinaryComparator_f(double tol);
+            CartesianBinaryComparator_f(double tol);
             bool operator()(const SymOp& lhs, const SymOp& rhs) const;
     private:
             double tol;

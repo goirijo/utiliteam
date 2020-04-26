@@ -4,7 +4,7 @@
 std::vector<Eigen::Vector3d> calculate_gridpoints(const Lattice& my_lattice,
                                                   int radius) // Might take in a structure instead and get a lattice from it
 {
-    Eigen::Matrix3d lattice = my_lattice.row_vector_matrix();
+    Eigen::Matrix3d lattice = my_lattice.col_vector_matrix();
     std::vector<Eigen::Vector3d> gridpoints; // left in int since I put radius in int
     Eigen::Vector3d pn;
 
@@ -27,7 +27,7 @@ std::vector<Eigen::Vector3d> calculate_gridpoints(const Lattice& my_lattice,
 // calculate a list of potentials Lprimes
 std::vector<Eigen::Matrix3d> Calculate_Lprimes(const Lattice& my_lattice)
 {
-    Eigen::Matrix3d lattice = my_lattice.row_vector_matrix();
+    Eigen::Matrix3d lattice = my_lattice.col_vector_matrix();
     int radius = 1;
     std::vector<Eigen::Matrix3d> Lprimes;
     auto PS = calculate_gridpoints(my_lattice, radius);
@@ -63,7 +63,7 @@ bool is_symop_valid(const Eigen::Matrix3d& SymMatrix)
 // lattice
 std::vector<SymOp> Calculate_point_group(const Lattice& my_lattice) // Is the type symops?
 {
-    Eigen::Matrix3d lattice = my_lattice.row_vector_matrix();
+    Eigen::Matrix3d lattice = my_lattice.col_vector_matrix();
     int radius = 1;
     std::vector<SymOp> validsymops;
     Eigen::Vector3d trans;
@@ -118,7 +118,7 @@ bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::
 {
     for (const auto& basis : transformed_basis)
     {
-        SitePeriodicCompare_f test_basis(basis, 1E-3, lattice.col_vector_matrix()); // Huge tolerance!
+        SitePeriodicCompare_f test_basis(basis, 1E-3, lattice); // Huge tolerance!
         if (std::find_if(original_basis.begin(), original_basis.end(), test_basis) == original_basis.end())
         {
             return false;

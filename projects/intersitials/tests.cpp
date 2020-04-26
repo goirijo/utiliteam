@@ -78,11 +78,6 @@ Structure read_poscar(const std::string &poscar_path) {
     		raw_coordinate_values.push_back(cart_coord);
   	}
   }
-  for (auto& coord: raw_coordinate_values)
-  {
-	  std::cout<<coord;
-	  std::cout<<std::endl;
-  }
 
   //if coordtype='Cartesian' convert to cart
   
@@ -145,10 +140,10 @@ int main() {
       6.1326753166606398;
 
   // Stop using isApprox, build Coordinates/Sites manually,then use comparators
-  EXPECT_T(my_lattice.col_vector_matrix().isApprox(raw_poscar_lattice, 1e-5),
+  EXPECT_T(my_lattice.row_vector_matrix().isApprox(raw_poscar_lattice, 1e-5),
            "Lattice matrix does not match POSCAR");
   EXPECT_T(my_lattice.lattice_vector(0).isApprox(
-               Eigen::Vector3d(raw_poscar_lattice.col(0)), 1e-5),
+               Eigen::Vector3d(raw_poscar_lattice.row(0)), 1e-5),
            "Lattice vector does not match");
 
   // Coordinate test
@@ -167,12 +162,6 @@ int main() {
     EXPECT_T(Eigen::Vector3d(raw_cart_coord_rows.row(i))
                  .isApprox(my_sites.at(i).get_eigen_coordinate()),
              "Coordinate mismatch for " + std::to_string(i) + "th site");
-    //std::cout<<std::endl;
-
-     std::cout<<raw_cart_coord_rows.row(i)<<'\n';
-     std::cout<<std::endl;
-     //std::cout<<my_sites.at(i).get_eigen_coordinate().transpose();
-     //std::cout<<std::endl;
   }
 
   // Make test cluster

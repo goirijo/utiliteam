@@ -1,6 +1,8 @@
 #include "xtal_classes.hpp"
 #include "symmetry_operations.hpp"
 #include "interstitials.hpp"
+#include <cctype>
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -51,15 +53,39 @@ Structure read_poscar(const std::string &poscar_path) {
   std::string coord_type;
   std::istringstream ss4(line);
   ss4 >> coord_type;
+  
 
   // Raw coordinates
   Eigen::Vector3d coord;
   std::vector<Eigen::Vector3d> raw_coordinate_values;
-  while (std::getline(file, line)) {
-    std::istringstream ss5(line);
-    ss5 >> coord(0) >> coord(1) >> coord(2);
-    raw_coordinate_values.push_back(coord);
+  char m= std::tolower(coord_type[0]);
+  if (m=='c')
+  {	  
+  	while (std::getline(file, line)) 
+	{
+    		std::istringstream ss5(line);
+    		ss5 >> coord(0) >> coord(1) >> coord(2);
+    		raw_coordinate_values.push_back(coord);
+  	}
   }
+  else if (m=='d')
+  {
+  	while (std::getline(file, line)) 
+	{
+    		std::istringstream ss5(line);
+    		ss5 >> coord(0) >> coord(1) >> coord(2);
+		Eigen::Vector3d cart_coord=lat_row_matrix.transpose()*coord;
+    		raw_coordinate_values.push_back(cart_coord);
+  	}
+  }
+  for (auto& coord: raw_coordinate_values)
+  {
+	  std::cout<<coord;
+	  std::cout<<std::endl;
+  }
+
+  //if coordtype='Cartesian' convert to cart
+  
 
   // make Lattice
   Lattice latt(lat_row_matrix);
@@ -134,13 +160,19 @@ int main() {
       0.0268432865670718, 0.0000000000000000, 0.0000000000000000,
       0.7508303712375408, 0.3333330000000032, 0.6666669999999968,
       0.2470700086510149;
-
+  
   Eigen::MatrixXd raw_cart_coord_rows=(my_lattice.col_vector_matrix()*raw_frac_coord_rows.transpose()).transpose();
 
   for (int i = 0; i < my_sites.size(); ++i) {
     EXPECT_T(Eigen::Vector3d(raw_cart_coord_rows.row(i))
                  .isApprox(my_sites.at(i).get_eigen_coordinate()),
              "Coordinate mismatch for " + std::to_string(i) + "th site");
+    //std::cout<<std::endl;
+
+     std::cout<<raw_cart_coord_rows.row(i)<<'\n';
+     std::cout<<std::endl;
+     //std::cout<<my_sites.at(i).get_eigen_coordinate().transpose();
+     //std::cout<<std::endl;
   }
 
   // Make test cluster
@@ -162,8 +194,6 @@ int main() {
   ////////////////////////////////////
   // EXPECT_T(find_factor_group(Valid_symops, my_lattice), "Doesn't have factor
   // group over 0");
-  //
-  // Test SitePeriodicCompare_f
   //
   // Test point group
   std::vector<SymOp> pointgroup = Calculate_point_group(my_structure.get_lattice());

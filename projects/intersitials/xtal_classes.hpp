@@ -27,6 +27,7 @@ public:
     double get_x() const;
     double get_y() const;
     double get_z() const;
+    Eigen::Vector3d get_frac_coordinate(const Lattice& lattice) const;
     void bring_within(const Lattice& lattice, double prec);
 
 private:

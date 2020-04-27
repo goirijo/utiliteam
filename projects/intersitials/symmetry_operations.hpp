@@ -28,7 +28,9 @@ bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::
 std::vector<SymOp> find_factor_group(const std::vector<SymOp>& ValidSymOps, const Structure& my_struc);
 std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& basis);
 
-bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::vector<Site>& transformed_basis);
+bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::vector<Site>& transformed_basis, const Lattice& lattice);
+
+std::pair <std::vector<Site>, Eigen::Vector3d> get_transformed_translated_basis_and_translation(const std::vector<Site>& original_basis, const std::vector<Site>& transformed_basis, const Lattice & lattice);
 
 std::vector<SymOp> find_factor_group(Structure my_struc);
 

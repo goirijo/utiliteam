@@ -1,6 +1,6 @@
 #include "symmetry_operations.hpp"
 #include <iostream>
-
+#include <utility>
 std::vector<Eigen::Vector3d> calculate_gridpoints(const Lattice& my_lattice,
                                                   int radius) // Might take in a structure instead and get a lattice from it
 {
@@ -127,6 +127,46 @@ bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::
     return true;
 }
 
+//std::vector<Eigen::Vector3d> get_translations(original_basis, transformed_basis)
+//{
+
+//	return all_potential_translations;
+//}
+
+//std::vector<SymOp> expand_with_translations(single_point_group_op, std::vector<Eigen::Vector3d> translations)
+//{
+	//for every translation make a new op that's point group op with trans
+//	return 
+//}
+
+//std::vector<SymOp> get_transformed_translated_basis_and_translation(const std::vector<Site>& original_basis, const std::vector<Site>& transformed_basis, const Lattice & lattice)
+//{
+//            std::vector<Site> transformed_translated_basis;
+//            Eigen::Vector3d trans;
+//	    std::vector<Eigen::Vector3d> total_trans;
+//	    //refactor
+//            for (int j = 0; j < original_basis.size(); j++)
+//            {
+//                for (int k = 0; k < transformed_basis.size(); k++)
+//                {
+//                    trans = original_basis[j].get_eigen_coordinate() - transformed_basis[k].get_eigen_coordinate();
+//		    total_trans.push_back(trans);
+//                }
+//
+//            }
+//            for (int m = 0; m < transformed_basis.size(); m++)
+//            {
+//		   for (int t=0; t<total_trans.size(); t++)
+//		   {
+//                        Eigen::Vector3d changed_basis = transformed_basis[m].get_eigen_coordinate() + total_trans[t];
+//		       	transformed_translated_basis.push_back(Site(transformed_basis[m].get_atom(), changed_basis));
+//		   }
+//	    }
+//	    std::cout<<transformed_translated_basis.size()<<' '<<original_basis.size()<<' '<<transformed_basis.size()<<'\n';
+//            transformed_translated_basis_and_translation= std::make_pair(transformed_translated_basis,  trans);
+//	    return transformed_translated_basis_and_translation;
+//
+//}
 // find factor group using constructor
 // std::vector<factor_group> find_factor_group(std::vector<Eigen::Matrix3d>
 // ValidSymOps, Eigen::Matrix3d Lattice)
@@ -137,34 +177,15 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
     std::vector<SymOp> factor_group;
     for (SymOp point_group_op : point_group)
     {
-        auto transformed_basis = transform_basis(point_group_op, Basis);
-        if (basis_maps_onto_itself(Basis, transformed_basis, my_struc.get_lattice()))
-        {
-            factor_group.push_back(point_group_op);
-        }
-        else
-        {
-            std::vector<Site> transformed_tranlsated_basis;
-            Eigen::Vector3d trans;
-            // Refactor into "make_all_possible_translations" or something similar
-            for (int j = 0; j < Basis.size(); j++)
-            {
-                for (int k = 0; k < transformed_basis.size(); k++)
-                {
-                    trans = Basis[j].get_eigen_coordinate() - transformed_basis[k].get_eigen_coordinate();
-                    for (int m = 0; m < transformed_basis.size(); m++)
-                    {
-                        Eigen::Vector3d changed_basis = transformed_basis[m].get_eigen_coordinate() + trans;
-		       	transformed_tranlsated_basis.push_back(Site(transformed_basis[m].get_atom(), changed_basis));
-                    }
-                }
-            }
+           auto transformed_basis = transform_basis(point_group_op, Basis);
+ 	   //auto transformed_translated_basis_and_translation= get_transformed_translated_basis_and_translation(Basis, transformed_basis, my_struc.get_lattice());  
+      	  // auto all_translations= get_all_translations(Basis, transformed_basis);
+	  // auto get_expanded_ops= expand_with_translations(point_group_op, all_translations);
 
-            if (basis_maps_onto_itself(Basis, transformed_tranlsated_basis, my_struc.get_lattice()))
-            {
-                factor_group.emplace_back(point_group_op.get_cart_matrix(),trans);
-            }
-        }
+	   if (basis_maps_onto_itself(Basis, transformed_translated_basis_and_translation.first, my_struc.get_lattice()))
+           {
+                factor_group.emplace_back(point_group_op.get_cart_matrix(), transformed_translated_basis_and_translation.second);
+           }
     }
 
     std::cout << '\n';

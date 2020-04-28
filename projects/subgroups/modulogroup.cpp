@@ -27,14 +27,15 @@ class ModuloIntCompare
 
 int main()
 {
-    constexpr int Mod=600;
+    constexpr int Mod=100;
     SymGroup<ModuloInt<Mod>,ModuloIntCompare> mod_group({ModuloInt<Mod>(1)});
 
     auto elements=mod_group.operations();
     for(const auto& e : elements)
     {
-        std::cout<<e.value<<std::endl;
+        std::cout<<e.value<<" ";
     }
+    std::cout<<"\n";
 
     auto subgroups=find_subgroups(mod_group);
 
@@ -44,7 +45,7 @@ int main()
         {
             std::cout<<e.value<<" ";
         }
-        std::cout<<"--------------------------\n";
+        std::cout<<"\n--------------------------\n";
     }
     
     return 0;

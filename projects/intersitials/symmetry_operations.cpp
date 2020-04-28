@@ -118,7 +118,7 @@ bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::
 {
     for (const auto& basis : transformed_basis)
     {
-        SitePeriodicCompare_f test_basis(basis, .0000001, lattice); // Huge tolerance!
+        SitePeriodicCompare_f test_basis(basis, 1e-8, lattice); // Huge tolerance!
         if (std::find_if(original_basis.begin(), original_basis.end(), test_basis) == original_basis.end())
         {
             return false;
@@ -127,29 +127,31 @@ bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::
     return true;
 }
 
-//bool is_symop_unique(std::vector<SymOp>& SymOp_tally, SymOp point_group_op)
+// bool is_symop_unique(std::vector<SymOp>& SymOp_tally, SymOp point_group_op)
 //{
-	
-//        if (std::find_if(SymOp_tally.get_cart_matrix().begin(), SymOp_tally.get_cart_matrix().end(), test_basis) == SymOp_tally.get_cart_matrix().end())
+
+//        if (std::find_if(SymOp_tally.get_cart_matrix().begin(), SymOp_tally.get_cart_matrix().end(), test_basis) ==
+//        SymOp_tally.get_cart_matrix().end())
 //        {
 //            return false;
 //        }
 //    }
 //    return true;
 
-//std::vector<Eigen::Vector3d> get_translations(original_basis, transformed_basis)
+// std::vector<Eigen::Vector3d> get_translations(original_basis, transformed_basis)
 //{
 
 //	return all_potential_translations;
 //}
 
-//std::vector<SymOp> expand_with_translations(single_point_group_op, std::vector<Eigen::Vector3d> translations)
+// std::vector<SymOp> expand_with_translations(single_point_group_op, std::vector<Eigen::Vector3d> translations)
 //{
-	//for every translation make a new op that's point group op with trans
-//	return 
+// for every translation make a new op that's point group op with trans
+//	return
 //}
 
-//std::vector<SymOp> get_transformed_translated_basis_and_translation(const std::vector<Site>& original_basis, const std::vector<Site>& transformed_basis, const Lattice & lattice)
+// std::vector<SymOp> get_transformed_translated_basis_and_translation(const std::vector<Site>& original_basis, const std::vector<Site>&
+// transformed_basis, const Lattice & lattice)
 //{
 //            std::vector<Site> transformed_translated_basis;
 //            Eigen::Vector3d trans;
@@ -187,34 +189,31 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
     std::vector<SymOp> factor_group;
     for (SymOp point_group_op : point_group)
     {
-           auto transformed_basis = transform_basis(point_group_op, Basis);
-            std::vector<Eigen::Vector3d> total_trans;	    
-               Eigen::Vector3d trans;
-	    for (int j = 0; j < Basis.size(); j++)
+        auto transformed_basis = transform_basis(point_group_op, Basis);
+        std::vector<Eigen::Vector3d> total_trans;
+        Eigen::Vector3d trans;
+        for (int j = 0; j < 1; j++)
+        {
+            for (int k = 0; k < transformed_basis.size(); k++)
             {
-                for (int k = 0; k < transformed_basis.size(); k++)
-                {
-		
-                    std::vector<Site> transformed_translated_basis;
-		    
-                    trans = Basis[j].get_eigen_coordinate() - transformed_basis[k].get_eigen_coordinate();
-                    total_trans.push_back(trans);
-		    for (int i=0; i<transformed_basis.size(); i++)
-	            {
-		    	Eigen::Vector3d changed_basis = transformed_basis[i].get_eigen_coordinate() + trans;
-		    	transformed_translated_basis.push_back(Site(transformed_basis[i].get_atom(), changed_basis));
-		    }
-		    
-	            if (basis_maps_onto_itself(Basis, transformed_translated_basis, my_struc.get_lattice()))
-   		    {
-        		factor_group.emplace_back(point_group_op.get_cart_matrix(), trans);
-			
-   		    }
-		
-	    }
 
-	    }
-//	}
+                std::vector<Site> transformed_translated_basis;
+
+                trans = Basis[j].get_eigen_coordinate() - transformed_basis[k].get_eigen_coordinate();
+                total_trans.push_back(trans);
+                for (int i = 0; i < transformed_basis.size(); i++)
+                {
+                    Eigen::Vector3d changed_basis = transformed_basis[i].get_eigen_coordinate() + trans;
+                    transformed_translated_basis.push_back(Site(transformed_basis[i].get_atom(), changed_basis));
+                }
+
+                if (basis_maps_onto_itself(Basis, transformed_translated_basis, my_struc.get_lattice()))
+                {
+                    factor_group.emplace_back(point_group_op.get_cart_matrix(), trans);
+                }
+            }
+        }
+        //	}
     }
 
     std::cout << '\n';

@@ -122,6 +122,7 @@ int main() {
   // First Read POSCAR and get Structure
   Structure my_structure = read_poscar("POSCAR");
 
+  /*
   // get_sites from structure
   std::vector<Site> my_sites = my_structure.get_sites();
   EXPECT_T(my_sites.size() == 5, "Wrong number of sites in structure");
@@ -157,7 +158,9 @@ int main() {
       0.2470700086510149;
   
   Eigen::MatrixXd raw_cart_coord_rows=(my_lattice.col_vector_matrix()*raw_frac_coord_rows.transpose()).transpose();
+      */
 
+  /*
   for (int i = 0; i < my_sites.size(); ++i) {
     EXPECT_T(Eigen::Vector3d(raw_cart_coord_rows.row(i))
                  .isApprox(my_sites.at(i).get_eigen_coordinate()),
@@ -180,6 +183,7 @@ int main() {
            "Cluster Doesn't even recognize itself");
   EXPECT_T(!first_cluster(other_test_cluster),
            "Cluster incorrectly believes it is another site");
+  */
   ////////////////////////////////////
   // EXPECT_T(find_factor_group(Valid_symops, my_lattice), "Doesn't have factor
   // group over 0");
@@ -274,10 +278,10 @@ int main() {
   //call make_asymmetric_unit on basis
   //make sure you get the original asymmetric unit back
 
-  auto asym_units=make_asymmetric_unit(cluster_sites, factorgroup);
-  EXPECT_T(asym_units.size()>=3, "Wrong number of asymmetric units");
-  auto geometric_center	=find_geometric_center(test_cluster);
-  std::vector<Site> sites_within_radius;
+  /* auto asym_units=make_asymmetric_unit(cluster_sites, factorgroup); */
+  /* EXPECT_T(asym_units.size()>=3, "Wrong number of asymmetric units"); */
+  /* auto geometric_center	=find_geometric_center(test_cluster); */
+  /* std::vector<Site> sites_within_radius; */
 //  Coordinate center_point= Coordinate(1.00000, 1.00000, 0.34956);
 //  sites_within_radius.emplace_back("Li" ,Coordinate(1.00000,  1.00000,  0.34956)); 
 //  sites_within_radius.emplace_back("Se" ,Coordinate(1.00000,  1.00000,  0.75083)); 

@@ -93,13 +93,25 @@ bool SitePeriodicCompare_f::operator()(const Site& other) const
 	//move_the_atom_inside_the_crystal(&other_coord, m_lattice.col_vector_matrix());
 	auto other_coord=m_site.get_coordinate();
 	other_coord.bring_within(m_lattice, m_precision);
-	if (m_site.get_eigen_coordinate().isApprox(other_coord.get_coordinate()))
+	Eigen::Vector3d precision_vec;
+        precision_vec<<m_precision, m_precision, m_precision;
+	//if (m_site.get_eigen_coordinate().isApprox(other_coord.get_coordinate()))
+	int j=0;
+	for (int i=0; i<3; i++)
 	{
-		if (m_site.get_atom()==other.get_atom())
+		double diff=m_site.get_eigen_coordinate()[i]-other_coord.get_coordinate()[i];
+		if (diff>m_precision)
 		{
-			return true;
+			j=j+1;
 		}
 	}
+	if (j==0)
+	   {	
+			if (m_site.get_atom()==other.get_atom())
+			{
+				return true;
+			}
+	   }
 	return false;
 	//may need to redefine new operator function?
 }

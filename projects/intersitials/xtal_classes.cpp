@@ -30,9 +30,14 @@ void Coordinate::bring_within(const Lattice& lattice, double prec)
     //frac_coords = lattice.col_vector_matrix().inverse() * get_cart_coordinate(lattice);
     for (int i = 0; i < 3; ++i)
     {
-        if (frac_coords(i) < -prec || frac_coords(i) >= 1-prec)		
+ //       if (frac_coords(i) < -prec || frac_coords(i) >= 1-prec)		
+ //       {
+ //           frac_coords(i) = frac_coords(i) - floor(frac_coords(i)+prec);
+ //       }
+ // 
+        if (frac_coords(i) < 0 || frac_coords(i) >= 1)		
         {
-            frac_coords(i) = frac_coords(i) - floor(frac_coords(i)+prec);
+            frac_coords(i) = frac_coords(i) - floor(frac_coords(i));
         }
     }
     this->m_coord = lattice.col_vector_matrix() * frac_coords;
@@ -95,12 +100,12 @@ bool SitePeriodicCompare_f::operator()(const Site& other) const
 	other_coord.bring_within(m_lattice, m_precision);
 	Eigen::Vector3d precision_vec;
         precision_vec<<m_precision, m_precision, m_precision;
-	//if (m_site.get_eigen_coordinate().isApprox(other_coord.get_coordinate()))
+//	if (m_site.get_eigen_coordinate().isApprox(other_coord.get_coordinate()))
 	int j=0;
 	for (int i=0; i<3; i++)
 	{
 		double diff=m_site.get_eigen_coordinate()[i]-other_coord.get_coordinate()[i];
-		if (diff>m_precision)
+		if (abs(diff)>m_precision)
 		{
 			j=j+1;
 		}

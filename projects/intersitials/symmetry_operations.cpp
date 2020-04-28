@@ -118,7 +118,7 @@ bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::
 {
     for (const auto& basis : transformed_basis)
     {
-        SitePeriodicCompare_f test_basis(basis, 1E-6, lattice); // Huge tolerance!
+        SitePeriodicCompare_f test_basis(basis, 0.01, lattice); // Huge tolerance!
         if (std::find_if(original_basis.begin(), original_basis.end(), test_basis) == original_basis.end())
         {
             return false;
@@ -204,12 +204,13 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
 		    	transformed_translated_basis.push_back(Site(transformed_basis[i].get_atom(), changed_basis));
 		    }
 		    
-		    if (basis_maps_onto_itself(Basis, transformed_translated_basis, my_struc.get_lattice()))
-           		{
-                		factor_group.emplace_back(point_group_op.get_cart_matrix(), trans);
-           		}
+	            if (basis_maps_onto_itself(Basis, transformed_translated_basis, my_struc.get_lattice()))
+   		    {
+        		factor_group.emplace_back(point_group_op.get_cart_matrix(), trans);
+   		    }
 		}
-	    }	
+	    }
+
             
 	}
     }

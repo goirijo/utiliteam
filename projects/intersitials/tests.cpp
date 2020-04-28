@@ -237,7 +237,7 @@ int main() {
   Eigen::Vector3d original_Site_Periodic_matrix;
   original_Site_Periodic_matrix<<0.0001, 0.000001, 0.0000001;
   Site orginial_Site_Periodic_test_site=(Site("Se", Coordinate(original_Site_Periodic_matrix)));  
-  SitePeriodicCompare_f test_periodic(orginial_Site_Periodic_test_site, 0.0001, my_structure.get_lattice());
+  SitePeriodicCompare_f test_periodic(orginial_Site_Periodic_test_site, 0.001, my_structure.get_lattice());
   Eigen::Vector3d other_Site_Periodic_matrix;
   other_Site_Periodic_matrix<<1.0001, 1.0001, 1.000000001;
   Site other_Site_Periodic_test_site=(Site("Se", Coordinate(other_Site_Periodic_matrix)));  
@@ -246,7 +246,7 @@ int main() {
   Eigen::Vector3d original_Site_Periodic_matrix_neg;
   original_Site_Periodic_matrix_neg<<0.0001, -0.000001, 0.0000001;
   Site orginial_Site_Periodic_test_site_neg=(Site("Se", Coordinate(original_Site_Periodic_matrix_neg)));  
-  SitePeriodicCompare_f test_periodic_neg(orginial_Site_Periodic_test_site_neg, 0.0001, my_structure.get_lattice());
+  SitePeriodicCompare_f test_periodic_neg(orginial_Site_Periodic_test_site_neg, 0.001, my_structure.get_lattice());
   Eigen::Vector3d other_Site_Periodic_matrix_neg;
   other_Site_Periodic_matrix_neg<<-1.0001, -1.0001, 1.000000001;
   Site other_Site_Periodic_test_site_neg=(Site("Se", Coordinate(other_Site_Periodic_matrix_neg)));  
@@ -255,7 +255,7 @@ int main() {
   Eigen::Vector3d original_Site_Periodic_matrix_wrong;
   original_Site_Periodic_matrix_wrong<<0.0001, -0.500001, 0.0000001;
   Site orginial_Site_Periodic_test_site_wrong=(Site("Se", Coordinate(original_Site_Periodic_matrix_wrong)));  
-  SitePeriodicCompare_f test_periodic_wrong(orginial_Site_Periodic_test_site_wrong, 0.0001, my_structure.get_lattice());
+  SitePeriodicCompare_f test_periodic_wrong(orginial_Site_Periodic_test_site_wrong, 0.001, my_structure.get_lattice());
   Eigen::Vector3d other_Site_Periodic_matrix_wrong;
   other_Site_Periodic_matrix_wrong<<-1.0001, -1.0001, 1.000000001;
   Site other_Site_Periodic_test_site_wrong=(Site("Se", Coordinate(other_Site_Periodic_matrix_wrong)));  

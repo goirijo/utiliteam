@@ -182,6 +182,30 @@ bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::
 // find factor group using constructor
 // std::vector<factor_group> find_factor_group(std::vector<Eigen::Matrix3d>
 // ValidSymOps, Eigen::Matrix3d Lattice)
+/*
+std::vector<SymOp> _find_factor_group(Structure struc)
+{
+    const std::vector<Site>& original_basis=struc.basis();
+    std::vector<SymOp> point_group=make_point_group(struc.lattic());
+    std::vector<SymOp> factor_group;
+    for(const SymOp& point_op : point_group)
+    {
+        std::vector<Site> transformed_basis=transform_basis(point_op,original_basis);
+        std::vector<Eigen::Vector3d> all_possible_translations=make_all_translations(original_basis[0],transformed_basis);
+
+        for(const Eigen::Vector3d translation : all_possible_translations)
+        {
+            std::vector<Site> transformed_translated_basis=translate_basis(transformed_basis,translation);
+            if(basis_maps_onto_itself(original_basis,transformed_translated_basis))
+            {
+                factor_group.emplace_back(point_op,translation);
+            }
+        }
+    }
+    return factor_group;
+}
+*/
+
 std::vector<SymOp> find_factor_group(Structure my_struc)
 {
     const std::vector<Site>& Basis = my_struc.get_sites();

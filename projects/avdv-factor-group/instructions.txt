@@ -1,0 +1,16 @@
+Declare single class and related functions/types (e.g. comparators and helper functions) in their hpp file.
+Make a cpp/cxx file for each hpp file where you define every declared type.
+Make a testing cpp for each of those hpp files.
+
+Workflow:
+1. write a test (start with easiest, smallest thing possible)
+2. write code that makes the test pass
+3. refactor <-- don't skip this
+
+Pro tips:
+* Use good naming by picking good conventions
+* DRY (Don't repeat yourself). If you copy and paste you will 100% guaranteed regret it.
+* Write documentation first
+* Short functions (~10 lines max)
+* Imagine you have to show your code to a new incoming student
+* Encapsulate tests in functions/classes as needed

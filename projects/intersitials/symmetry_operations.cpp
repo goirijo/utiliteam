@@ -190,7 +190,7 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
            auto transformed_basis = transform_basis(point_group_op, Basis);
             std::vector<Eigen::Vector3d> total_trans;	    
                Eigen::Vector3d trans;
-	    for (int j = 0; j < Basis.size(); j++)
+	    for (int j = 0; j < 1; j++)
             {
                 for (int k = 0; k < transformed_basis.size(); k++)
                 {

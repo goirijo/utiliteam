@@ -213,12 +213,10 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
     std::vector<SymOp> factor_group;
     for (SymOp point_group_op : point_group)
     {
-        auto transformed_basis = transform_basis(point_group_op, Basis);
-        std::vector<Eigen::Vector3d> total_trans;
-        Eigen::Vector3d trans;
-        for (int j = 0; j < 1; j++)
-        {
-            for (int k = 0; k < transformed_basis.size(); k++)
+           auto transformed_basis = transform_basis(point_group_op, Basis);
+            std::vector<Eigen::Vector3d> total_trans;	    
+               Eigen::Vector3d trans;
+	    for (int j = 0; j < 1; j++)
             {
 
                 std::vector<Site> transformed_translated_basis;

@@ -21,11 +21,6 @@ void Coordinate::bring_within(const Lattice& lattice, double prec)
         {
             frac_coords(i) = frac_coords(i) - floor(frac_coords(i)+prec);
         }
-  
-  //      if (frac_coords(i) < 0 || frac_coords(i) >= 1)		
-  //      {
-  //          frac_coords(i) = frac_coords(i) - floor(frac_coords(i));
-  //      }
     }
     this->m_coord = lattice.col_vector_matrix() * frac_coords;
 }

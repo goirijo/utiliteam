@@ -1,5 +1,6 @@
 #include "tests.hpp"
 #include "coordinate.hpp"
+#include <ostream>
 
 int main()
 {
@@ -19,12 +20,14 @@ EXPECT_TRUE(my_coordinate.get_y()==y, "get correct y");
 EXPECT_TRUE(my_coordinate.get_z()==z, "get correct z");
 
 //testing frac coordinates
-Lattice my_lattice=Lattice(Eigen::Matrix3d(1,0,0,0,1,0,0,0,1));
+Eigen::Matrix3d test_frac_matrix;
+test_frac_matrix<<1,0,0,0,1,0,0,0,1;
+Lattice my_lattice=Lattice(test_frac_matrix);
 EXPECT_TRUE(my_coordinate.get_frac_coordinate(my_lattice)==my_coordinate.get_cart_coordinate(), "test get frac coordinate function");
 
 //testing bring_within
 Coordinate brought_within_coord= Coordinate(Eigen::Vector3d(0.1, 0.1, 0.1)); 
 my_coordinate.bring_within(my_lattice, 0.0001);
-EXPECT_TRUE(my_coordinate.get_frac_coordinate(my_lattice)==brought_within_coord.get_frac_coordinate(my_lattice), "test bring within");
+EXPECT_TRUE(my_coordinate.get_frac_coordinate(my_lattice).isApprox(brought_within_coord.get_frac_coordinate(my_lattice)), "test bring within");
 return 0;
 }

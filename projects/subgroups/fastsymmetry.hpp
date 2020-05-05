@@ -4,19 +4,19 @@
 #include <memory>
 #include <vector>
 #include "./symmetry.hpp"
+#include "./symgroup.hpp"
+
 
 typedef std::vector<std::vector<int>> MultTable;
 
 class AbstractSymOp
 {
 public:
-
     AbstractSymOp(int id, std::shared_ptr<MultTable> multiplication_table_ptr);
-    int get_id();
+    int get_id() const;
     const std::shared_ptr<MultTable>& mult_table_ptr() const;
 
-
-AbstractSymOp operator*(const AbstractSymOp& rhs);
+    AbstractSymOp operator*(const AbstractSymOp& rhs);
 
 private:
     /// ID of this particular symmetry operation, represented as integer
@@ -30,20 +30,23 @@ private:
 
 struct AbstractSymOpCompare_f
 {
+
     AbstractSymOpCompare_f(AbstractSymOp input1);
     bool operator()(const AbstractSymOp& element2) const;
-    
 
 private:
-
     int input1_id;
     const std::shared_ptr<MultTable> table_ptr;
 };
 
-//TODO:
-std::vector<std::vector<int>> make_multiplication_table(const SymGroup& group); 
+std::vector<std::vector<int>> make_multiplication_table(const std::vector<SymOp>& group, double tol);
 
-//TODO:
-std::vector<AbstractSymOp> transform_representation(const SymGroup& cartesian_group);
 
+class BinaryAbstractComparator_f
+{
+public:
+    bool operator()(const AbstractSymOp& lhs, const AbstractSymOp& rhs) const;
+};
+
+SymGroup<AbstractSymOp, BinaryAbstractComparator_f> transform_representation(const SymGroup<SymOp, CartesianBinaryComparator_f>& cartesian_group, double tol);
 #endif

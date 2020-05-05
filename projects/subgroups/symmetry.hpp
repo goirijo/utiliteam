@@ -10,7 +10,9 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <tuple>
 
+#define PREC 1e-6
 class SymOp
 {
 public:
@@ -24,7 +26,8 @@ SymOp operator*(const SymOp& lhs, const SymOp& rhs);
 
 struct SymOpCompare_f
 {
-    SymOpCompare_f(SymOp input1, double tol);
+
+    SymOpCompare_f(SymOp input1, double tol=1e-5);
     bool operator()(const SymOp& element2) const;
 
 private:
@@ -32,34 +35,14 @@ private:
     double tol;
 };
 
-class SymGroup
+//TODO: Better name. This doesn't describe anything except the function signature
+class CartesianBinaryComparator_f
 {
-public:
-    static void close_group(std::vector<SymOp>* operations_ptr);
-
-    SymGroup(std::vector<SymOp> generating_elements);
-    bool insert(SymOp& new_operation);
-    const std::vector<SymOp>& operations() const { return this->group; }
-
-private:
-    std::vector<SymOp> group;
+    public:
+            CartesianBinaryComparator_f(double tol);
+            bool operator()(const SymOp& lhs, const SymOp& rhs) const;
+    private:
+            double tol;
 };
-
-SymGroup operator*(SymGroup lhs, const SymGroup& rhs);
-
-struct SymGroupCompare_f
-{
-    SymGroupCompare_f(SymGroup input1, double tol);
-
-    bool operator()(const SymGroup& group2) const;
-
-private:
-    const SymGroup group1;
-    double tol;
-};
-
-Eigen::Matrix3d make_z_rotation_matrix(double degrees); 
-
-std::vector<SymGroup> find_subgroups(SymGroup input_group);
 
 #endif

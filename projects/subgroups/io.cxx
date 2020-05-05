@@ -10,7 +10,7 @@
 #include "crystal.hpp"//comment out to compile factor group 
 //#include "categorize_symop_main.cpp"
 #include "symmetry.hpp"
-
+#include "symgroup.hpp"
 
 using namespace std;
 
@@ -33,7 +33,7 @@ auto read_lattice(string filename)
      return L;
 }
 
-Crystal_Structure read_poscar(std::string filename)
+CrystalStructure read_poscar(std::string filename)
 {
     /*input is the path to a Poscar file
      * This function reads the file and puts the information of the lattice and basis
@@ -42,7 +42,7 @@ Crystal_Structure read_poscar(std::string filename)
 
      Eigen::Matrix3d  lattice;
      std::vector<Eigen::Vector3d> basis;
-     Crystal_Structure xtal_struct(lattice, basis);
+     CrystalStructure xtal_struct(lattice, basis);
      std::ifstream file(filename);
      std::string line;
 //     file.open(filename.c_str());
@@ -79,7 +79,7 @@ Crystal_Structure read_poscar(std::string filename)
      return xtal_struct;
 
 }
-void print_sub_groups(SymGroup input_group, std::vector<SymGroup> list_of_subgroups)
+void print_sub_groups(SymGroup<SymOp, CartesianBinaryComparator_f> input_group, std::vector<SymGroup<SymOp, CartesianBinaryComparator_f>> list_of_subgroups)
 {//Pringing out the total group and list of subgroups.
     std::cout << "The total group has " << input_group.operations().size() << " operations: " << std::endl;
     for (SymOp operation : input_group.operations()) 
@@ -92,7 +92,7 @@ void print_sub_groups(SymGroup input_group, std::vector<SymGroup> list_of_subgro
     std::cout << "There are " << list_of_subgroups.size() << " subgroups in the total group: " << std::endl << std::endl;
     
     int subgroup_num = 1;
-    for (SymGroup subgroup : list_of_subgroups) 
+    for (SymGroup<SymOp, CartesianBinaryComparator_f> subgroup : list_of_subgroups) 
     {
         std::cout << "Subgroup " << subgroup_num << " has " << subgroup.operations().size() << " operations: " << std::endl << std::endl;
         for (SymOp operation : subgroup.operations()) 

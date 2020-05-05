@@ -20,8 +20,7 @@ int main()
 	//test the multiplication function
 	Eigen::Matrix3d rot_120=make_z_rotation_matrix(120);
 	SymOp With_Rotations_120= SymOp(rot_120);
-
-	EXPECT_TRUE(With_Rotations_120==With_Rotations_60*With_Rotations_60, "120 degrees is two 60 degree rotations");
-        	
-	
+	auto With_Rotations_60_product=With_Rotations_60*With_Rotations_60;
+	EXPECT_TRUE(With_Rotations_120.get_cart_matrix()==With_Rotations_60_product.get_cart_matrix(), "120 degrees is two 60 degree rotations");
+	return 0;
 }

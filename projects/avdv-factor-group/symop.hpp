@@ -18,6 +18,8 @@ private:
     Eigen::Vector3d m_translation;
 };
 
+SymOp operator*(const SymOp& lhs, const SymOp& rhs);
+
 //Change later
 struct SymOpCompare_f
 {

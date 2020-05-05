@@ -1,6 +1,6 @@
 #include "interstitials.hpp"
 #include "xtal_classes.hpp"
-#include "cmath"
+#include <cmath>
 
 // Tools we already have:
 // Structrue class
@@ -36,7 +36,7 @@ std::vector<Site> make_asymmetric_unit(const std::vector<Site>& complete_structu
         {
             Site transformedsite = Symmetry_operation * basis;
             //TODO: Which comparator should you use?
-            SiteCompare_f test_site(transformedsite, 1E-5);
+            SitePeriodicCompare_f test_site(transformedsite, 1E-5);
 
             if (find_if(asymmetric_unit.begin(), asymmetric_unit.end(), test_site) == asymmetric_unit.end())
             {
@@ -66,20 +66,18 @@ Eigen::Vector3d find_geometric_center(const Cluster& test_cluster)
 // args: Coordinate, radius, Structure
 std::vector<Site> find_sites_within_radius(Coordinate& middlepoint, int my_radius, Structure& my_struc)
 {
-	/* //use flooring function */
-	/* std::vector<Site> sites_within_radius; */
-	/* //Compute Distance between sites and floor coord */
-	/* for (const auto& site: my_struc.get_sites()) */ 
-	/* { */
-	/* 	auto within_coord=site.get_coordinate().bring_within(my_struc.get_lattice()); */
-	/* 	if (distance(middlepoint, within_coord)<my_radius) */
-	/* 	{ */
-	/* 		sites_within_radius.emplace_back(site); */
-	/* 	} */
-	/* } */
-     /* return sites_within_radius; */
+	 //use flooring function */
+	 std::vector<Site> sites_within_radius; 
+	 //Compute Distance between sites and floor coord */
+	 for (const auto& site: my_struc.get_sites())  
+	 { 
+	 	auto within_coord=site.get_coordinate(); //do I need to use bring_within here?
+	 	if (distance(middlepoint, within_coord)<my_radius) 
+	 	{ 
+	 		sites_within_radius.emplace_back(site); 
+	 	} 
+	 } 
 
-	std::vector<Site> sites_within_radius;
 
     //bring middlepoint within structure
 
@@ -90,6 +88,14 @@ std::vector<Site> find_sites_within_radius(Coordinate& middlepoint, int my_radiu
 
     return sites_within_radius;
 }
+
+
+double distance(Coordinate& middlepoint, Coordinate& compared_coord)
+{
+	//should I bring the middle point within?
+	double distance=sqrt(pow(middlepoint.get_coordinate()[0]-compared_coord.get_coordinate()[0],2)+pow(middlepoint.get_coordinate()[1]-compared_coord.get_coordinate()[1],2)+pow(middlepoint.get_coordinate()[2]-compared_coord.get_coordinate()[2],2));
+	return distance;
+}	
 
 std::vector<Coordinate> make_grid_points(int in_a, int in_b, int in_c, const Lattice& lattice)
 {

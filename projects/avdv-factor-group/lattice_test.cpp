@@ -12,4 +12,5 @@ EXPECT_TRUE(my_lattice.col_vector_matrix()==test_col_vector_lattice, "col lattic
 Eigen::Vector3d test_lattice_vector;
 test_lattice_vector<<1, 0, 0;
 EXPECT_TRUE(my_lattice.lattice_vector(0)==test_lattice_vector, "1st row vector test");
+return 0;
 }

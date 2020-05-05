@@ -2,6 +2,8 @@
 #define STRUCTURE_H 
 #include "site.hpp"
 #include "lattice.hpp"
+#include "coordinate.hpp"
+#include "symop.hpp"
 #include "../../submodules/eigen-git-mirror/Eigen/Core"
 #include "../../submodules/eigen-git-mirror/Eigen/Dense"
 #include <string>

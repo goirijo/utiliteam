@@ -55,6 +55,25 @@ Eigen::Matrix3d make_z_rotation_matrix(double degrees)
     return rotation_generator.matrix();
 }
 
+void EXPECT_EQ_vectorsD(std::vector<double> vector_1, std::vector<double> vector_2, std::string test_message)
+{
+    if(vector_1.size()!=vector_2.size()){
+        std::cout<<"FAILED: "<<test_message<<std::endl;
+        return;
+    }
+    for(int i=0; i<vector_1.size(); i++){
+        if (vector_1[i]!=vector_2[i]){
+        std::cout<<"FAILED: "<<test_message<<std::endl;
+        return;
+    }
+
+    std::cout<<"PASSED: "<<test_message<<std::endl;
+    return;
+
+    }
+}
+
+
 //int main()
 //{
 //    // Test for SymOp construction

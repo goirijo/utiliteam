@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <vector>
-#include "./symmetry.hpp"
+#include "./symop.hpp"
 #include "./symgroup.hpp"
 
 

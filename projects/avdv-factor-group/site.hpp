@@ -1,6 +1,7 @@
 #ifndef SITE_H
 #define SITE_H
 #include "coordinate.hpp"
+#include "lattice.hpp"
 #include "../../submodules/eigen-git-mirror/Eigen/Core"
 #include "../../submodules/eigen-git-mirror/Eigen/Dense"
 #include <string>

@@ -65,6 +65,20 @@ Useful links:
 - <https://www.geeksforgeeks.org/map-vs-unordered_map-c/>
 - <https://en.cppreference.com/w/cpp/container/map> 
 
+<<<<<<< HEAD
+***
+<h2>Classes</h2>
+
+
+<h3>11-Feb-2020, MS</h3>
+
+<h4>Classes (presented by Colleen)</h4>
+Classes are a type of data structure that contains data members and data functions <br> both of which can be public or private (and also protected)
+
+After declarations are done, any public data members and data functions may be called with using a dot after the member name <br>A constructor is called when any class is created though there is no requirement write out the empty consructor explicitly <br>One may create either parameterized or unparamterized constructors
+
+For more information please see [Colleen's Code](https://github.com/goirijo/utiliteam/blob/master/slides/200212_casmmeeting_classes.pdf)
+=======
 -------
 ## Classes
 ### 11-Feb-2020, MS
@@ -75,6 +89,7 @@ After declarations are done, any public data members and data functions may be c
 A constructor is called when any class is created though there is no requirement write out the empty consructor explicitly.
 One may create either parameterized or unparamterized constructors
 
+>>>>>>> upstream/covid_muna_meeting_edits
 
 Useful links:
 - <http://www.cplusplus.com/doc/tutorial/classes/>
@@ -82,6 +97,10 @@ Useful links:
 - <http://www.trytoprogram.com/cplusplus-programming/constructors/>
 
 
+<<<<<<< HEAD
+<h4>A breaking down code based exercise (presented by John)</h4>
+Potential functions for a factor group code were broken into a Methods and Data Structure column only to be broken down more <br>The exercise followed a "big picture" to smaller unit workflow where the goal was to determine all individual functions <br>necessary to find the factor group of a crystal.
+=======
 #### A breaking down code based exercise (presented by John)
 Potential functions for a factor group code were broken into a Methods and Data Structure column only to be broken down more.
 The exercise followed a "big picture" to smaller unit workflow where the goal was to determine all individual functions necessary to find the factor group of a crystal.
@@ -110,3 +129,4 @@ Useful links:
 - <https://www.fluentcpp.com/2018/02/06/understanding-lvalues-rvalues-and-their-references/>
 - <https://en.cppreference.com/w/cpp/language/reference>
 
+>>>>>>> upstream/covid_muna_meeting_edits

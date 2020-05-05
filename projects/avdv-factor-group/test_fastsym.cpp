@@ -6,7 +6,10 @@
 #include <algorithm>
 #include <iterator>
 #include <string>
-#include "./tests.cpp"
+#include "./tests.hpp"
+#include "./lattice.hpp"
+#include "./site.hpp"
+#include "./coordinate.hpp"
 
 #define PREC 1e-6
 
@@ -17,15 +20,18 @@ void EXPECT_EQUAL_INT(int lhs, int  rhs, std::string test_name)
 
 int main(int argc, char *argv[])
 {
+    std::cout<<"---- Runnning FastSymmetry Tests ----"<<std::endl;
+    std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
+    
     if(argc < 2)
     {
         std::cout<<"Need a poscar file"<<std::endl;
         return 1;
     }
-
+    
     //TODO: Use consistent style for naming classes (Youve been using CamelCase so far)
     Structure structure=read_poscar(argv[1]);
-    SymGroup<SymOp, SymOpCompare_f> pt_group = calc_point_group(structure.get_lattice().col_vector_matrix(), PREC);
+    SymGroup<SymOp, CartesianBinaryComparator_f> pt_group = calc_point_group(structure.get_lattice().col_vector_matrix(), PREC);
     const auto& pt_group_operations=pt_group.operations();
     MultTable multiplication_table = make_multiplication_table(pt_group_operations, PREC);
     int group_sz=pt_group.operations().size();
@@ -50,10 +56,10 @@ int main(int argc, char *argv[])
     EXPECT_TRUE(compare(abstract_op1), "Compared two identical abstract ops");
 
 //test transformation
-    std::vector<AbstractSymOp> abstract_pt_group = transform_representation(pt_group, PREC);
-    EXPECT_TRUE(pt_group.operations().size()== abstract_pt_group.size(), "Abstract Group and original group are same size");
-    EXPECT_EQUAL_INT(1, abstract_pt_group[1].get_id(), "Check abstract id is index");
-    EXPECT_TRUE(abstract_pt_group[1].mult_table_ptr()==abstract_pt_group[0].mult_table_ptr(), "check multiplication table ptrs are same in different group elements");
+    SymGroup<AbstractSymOp, BinaryAbstractComparator_f> abstract_pt_group = transform_representation(pt_group, PREC);
+    EXPECT_TRUE(pt_group.operations().size()== abstract_pt_group.operations().size(), "Abstract Group and original group are same size");
+    EXPECT_EQUAL_INT(1, abstract_pt_group.operations()[1].get_id(), "Check abstract id is index");
+    EXPECT_TRUE(abstract_pt_group.operations()[1].mult_table_ptr()==abstract_pt_group.operations()[0].mult_table_ptr(), "check multiplication table ptrs are same in different group elements");
 
     //TODO:
     //Run through every multiplication, and make sure the abstract multiplications are
@@ -67,7 +73,7 @@ int main(int argc, char *argv[])
             auto product_it=std::find_if(pt_group_operations.begin(), pt_group_operations.end(), matches_product);
             int product_ix=std::distance(pt_group_operations.begin(),product_it);
 
-            EXPECT_EQUAL_INT(product_ix,multiplication_table[i][j],"Table is inconsistent");
+            EXPECT_EQUAL_INT(product_ix,multiplication_table[i][j],"Check if multiplication table is consistent");
         }
     }
 

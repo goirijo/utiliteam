@@ -1,6 +1,7 @@
 #include "tests.hpp"
 #include "symop.hpp"
 #include "symgroup.hpp"
+#include <iostream>
 
 #define PREC 1e-6
 
@@ -73,6 +74,23 @@ void EXPECT_EQ_vectorsD(std::vector<double> vector_1, std::vector<double> vector
     }
 }
 
+void EXPECT_EQ_vectorsInt(std::vector<int> vector_1, std::vector<int> vector_2, std::string test_message)
+{
+    if(vector_1.size()!=vector_2.size()){
+        std::cout<<"FAILED: "<<test_message<<std::endl;
+        return;
+    }
+    for(int i=0; i<vector_1.size(); i++){
+        if (vector_1[i]!=vector_2[i]){
+        std::cout<<"FAILED: "<<test_message<<std::endl;
+        return;
+    }
+
+    std::cout<<"PASSED: "<<test_message<<std::endl;
+    return;
+
+    }
+}
 
 //int main()
 //{

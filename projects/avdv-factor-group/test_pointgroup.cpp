@@ -1,5 +1,6 @@
 #include "point_group.hpp"
 #include "tests.hpp"
+#include <iostream>
 
 int main()
 {
@@ -7,6 +8,9 @@ int main()
  //test make_grid_pts function
     //this should return vector<vectors<3 doubles>> for each coordinate, 5x5x5 points lenght of result should be 125. takes in Lattice which is an eigen matrix3d, can give it identity and should be every permutation of -2:2 by 3 numbers,
     //first coordinate should be -2, -2, -2, the last should be 2,2,2, and the middle (63?, 62 in zero base) should be 0,0,0i
+
+    std::cout<<"---- Running PointGroup Tests ----"<<std::endl;
+    std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 
     Eigen::Matrix3d simple_cube_lattice= Eigen::Matrix3d::Identity();
     std::vector<std::vector<double>> grid_pts_test=create_grid_pts(simple_cube_lattice);

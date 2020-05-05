@@ -9,7 +9,7 @@ class Coordinate
 {
 public:
     Coordinate(const Eigen::Vector3d& coord);
-    Eigen::Vector3d get_coordinate() const;
+    Eigen::Vector3d get_cart_coordinate() const;
     double get_x() const;
     double get_y() const;
     double get_z() const;

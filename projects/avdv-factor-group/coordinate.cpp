@@ -1,7 +1,7 @@
 #include "coordinate.hpp"
 // Coordinate defintions
 Coordinate::Coordinate(const Eigen::Vector3d& coord) : m_coord(coord) {}
-Eigen::Vector3d Coordinate::get_coordinate() const { return this->m_coord; }
+Eigen::Vector3d Coordinate::get_cart_coordinate() const { return this->m_coord; }
 double Coordinate::get_x() const { return this->m_coord(0); }
 double Coordinate::get_y() const { return this->m_coord(1); }
 double Coordinate::get_z() const { return this->m_coord(2); }

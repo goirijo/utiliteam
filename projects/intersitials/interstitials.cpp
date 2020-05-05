@@ -64,7 +64,7 @@ Eigen::Vector3d find_geometric_center(const Cluster& test_cluster)
 // Arithmetic center of mass -Muna
 // TODO: Find sites within a radius.
 // args: Coordinate, radius, Structure
-std::vector<Site> find_sites_within_radius(Coordinate middlepoint, int my_radius, Structure my_struc)
+std::vector<Site> find_sites_within_radius(Coordinate& middlepoint, int my_radius, Structure& my_struc)
 {
 	/* //use flooring function */
 	/* std::vector<Site> sites_within_radius; */
@@ -89,4 +89,29 @@ std::vector<Site> find_sites_within_radius(Coordinate middlepoint, int my_radius
     //if the distance is below the radius, push to list
 
     return sites_within_radius;
+}
+
+std::vector<Coordinate> make_grid_points(int in_a, int in_b, int in_c, const Lattice& lattice)
+{
+	//returns mxnxl grid of potential Li sites
+	//convert to fractional...maybe	
+	std::vector<Coordinate> grid;
+	Eigen::VectorXd Divisions_in_a=Eigen::VectorXd::LinSpaced(in_a, 0, 1); 
+	Eigen::VectorXd Divisions_in_b=Eigen::VectorXd::LinSpaced(in_b, 0, 1);
+	Eigen::VectorXd Divisions_in_c=Eigen::VectorXd::LinSpaced(in_c, 0, 1); 
+	//triple for loop to add in all the coordinate divisions
+	for (int i=0; i<in_a; i++)
+	{
+		for (int j=0; j<in_b; j++)
+		{
+			for (int k=0; k<in_c; k++)
+			{
+				Eigen::Vector3d temp_coord;
+				temp_coord<<Divisions_in_a(i), Divisions_in_b(j), Divisions_in_c(k);
+				auto temp_coord_cart=lattice.row_vector_matrix()*temp_coord;
+				grid.emplace_back(temp_coord_cart);
+			}
+		}
+	}
+	return grid;
 }

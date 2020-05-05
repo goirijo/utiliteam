@@ -68,7 +68,8 @@ Structure read_poscar(const std::string &poscar_path) {
     		raw_coordinate_values.push_back(coord);
   	}
   }
-  else if (m=='d')
+  //else if (m=='d')
+  if (m=='d')
   {
   	while (std::getline(file, line)) 
 	{
@@ -121,8 +122,6 @@ int main() {
 
   // First Read POSCAR and get Structure
   Structure my_structure = read_poscar("POSCAR");
-
-  /*
   // get_sites from structure
   std::vector<Site> my_sites = my_structure.get_sites();
   EXPECT_T(my_sites.size() == 5, "Wrong number of sites in structure");
@@ -139,7 +138,7 @@ int main() {
       0.0000000000000000, -1.9255631288431954, 3.3351731755587712,
       0.0000000000000000, 0.0000000000000000, 0.0000000000000000,
       6.1326753166606398;
-
+  /*
   // Stop using isApprox, build Coordinates/Sites manually,then use comparators
   EXPECT_T(my_lattice.row_vector_matrix().isApprox(raw_poscar_lattice, 1e-5),
            "Lattice matrix does not match POSCAR");
@@ -223,12 +222,13 @@ int main() {
      std::vector<Site> bad_test_maps_vector;   
   bad_test_maps_vector.push_back(Site("Li", Coordinate(transformed_basis_maps_test_basis_coord)));
      EXPECT_T(!basis_maps_onto_itself(basis_maps_vector, bad_test_maps_vector, my_structure.get_lattice()), "Basis does not map onto self");
-  // Test SymOp
+  */
+     // Test SymOp
   Eigen::Matrix3d cart_matrix_at_position;
   cart_matrix_at_position<<1.0, 0.0, 0.0,
 			   0.0, 1.0, 0.0,
 			   0.0, 0.0, 1.0;
-
+ 
 
 
   Lattice identity_lat(Eigen::Matrix3d::Identity());
@@ -267,7 +267,7 @@ int main() {
 
   //TestSymOp (or whateverr number it is after we figure it out)
   auto factorgroup=find_factor_group(my_structure);
-  EXPECT_T(factorgroup[0].get_cart_matrix().isApprox(cart_matrix_at_position, 1e-5), "wrong symOp");
+  //EXPECT_T(factorgroup[0].get_cart_matrix().isApprox(cart_matrix_at_position, 1e-5), "wrong symOp");
   //Test factor group	  
   EXPECT_T(factorgroup.size()==6, "Wrong number of factor Group Operations");
 
@@ -277,12 +277,13 @@ int main() {
   //Make a basis by applying symmetry group to asymmetric unit
   //call make_asymmetric_unit on basis
   //make sure you get the original asymmetric unit back
-
-  /* auto asym_units=make_asymmetric_unit(cluster_sites, factorgroup); */
-  /* EXPECT_T(asym_units.size()>=3, "Wrong number of asymmetric units"); */
-  /* auto geometric_center	=find_geometric_center(test_cluster); */
-  /* std::vector<Site> sites_within_radius; */
-//  Coordinate center_point= Coordinate(1.00000, 1.00000, 0.34956);
+ /*
+  auto asym_units=make_asymmetric_unit(cluster_sites, factorgroup);
+  EXPECT_T(asym_units.size()>=3, "Wrong number of asymmetric units");
+  auto geometric_center	=find_geometric_center(test_cluster);
+  std::vector<Site> sites_within_radius;
+*/
+  //  Coordinate center_point= Coordinate(1.00000, 1.00000, 0.34956);
 //  sites_within_radius.emplace_back("Li" ,Coordinate(1.00000,  1.00000,  0.34956)); 
 //  sites_within_radius.emplace_back("Se" ,Coordinate(1.00000,  1.00000,  0.75083)); 
 //  sites_within_radius.emplace_back("Se" ,Coordinate(1.33333,  1.66667,  0.24707)); 

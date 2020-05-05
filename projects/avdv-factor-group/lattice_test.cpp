@@ -1,8 +1,12 @@
 #include "tests.hpp"
 #include "lattice.hpp"
+#include <iostream>
 
 int main()
 {
+
+    std::cout<<"---- Running Lattice Tests ----"<<std::endl;
+    std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 Eigen::Matrix3d test_row_vector_lattice;
 test_row_vector_lattice<<1, 0, 0, 0, 2, 0, 0, 1, 3;
 Eigen::Matrix3d test_col_vector_lattice=test_row_vector_lattice.transpose();

@@ -1,8 +1,12 @@
 #include "site.hpp"
 #include "tests.hpp"
+#include <iostream>
+
 int main()
 {
-//test constructor 
+    std::cout<<"---- Running Site Tests ----"<<std::endl;
+    std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
+    //test constructor 
 Site my_site= Site("Na", Coordinate(Eigen::Vector3d(0.1, 0.1, 0.1)));
 
 //test get atom

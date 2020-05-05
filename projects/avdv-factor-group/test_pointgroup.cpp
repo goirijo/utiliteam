@@ -16,8 +16,8 @@ int main()
     std::vector<std::vector<double>> grid_pts_test=create_grid_pts(simple_cube_lattice);
     EXPECT_TRUE(125 ==grid_pts_test.size(),"expected length grid points equal to 125"); 
     EXPECT_EQ_vectorsD(std::vector<double>{-2,-2,-2}, grid_pts_test[0],"Exected first coordinate (-2,-2,-2)");
-    EXPECT_EQ_vectorsD(std::vector<double>{2,2,2}, grid_pts_test[124],"Exected first coordinate (2,2,2)");
-    EXPECT_EQ_vectorsD(std::vector<double>{0,0,0}, grid_pts_test[62],"Exected first coordinate (0,0,0)");
+    EXPECT_EQ_vectorsD(std::vector<double>{2,2,2}, grid_pts_test[124],"Exected last coordinate (2,2,2)");
+    EXPECT_EQ_vectorsD(std::vector<double>{0,0,0}, grid_pts_test[62],"Exected middle coordinate (0,0,0)");
 
  //test_calc_L_Primes function
     std::vector<Eigen::Matrix3d> L_prime_test =calc_L_primes(grid_pts_test);

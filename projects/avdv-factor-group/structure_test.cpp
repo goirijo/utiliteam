@@ -1,9 +1,13 @@
 #include "structure.hpp"
 #include "tests.hpp"
+#include <iostream>
 
 int main()
 {
-//test constructor
+
+    std::cout<<"---- Runnning Structure Tests ----"<<std::endl;
+    std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
+    //test constructor
 std::vector<Site> test_sites;
 Eigen::Matrix3d lattice_matrix;
 lattice_matrix<<1, 1, 0, 1, 0, 1, 0, 1,1;

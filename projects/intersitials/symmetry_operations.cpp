@@ -238,14 +238,5 @@ std::vector<SymOp> find_factor_group(Structure my_struc)
         //	}
     }
 
-    std::cout << '\n';
-    for (const auto& x : factor_group)
-    {
-        std::cout << x.get_cart_matrix() << std::endl;
-        std::cout << x.get_translation() << std::endl;
-        std::cout << "-----" << std::endl;
-    }
-
-    std::cout << factor_group.size() << std::endl;
     return factor_group;
 }

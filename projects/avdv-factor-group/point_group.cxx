@@ -70,9 +70,6 @@ std::vector<Eigen::Matrix3d> calc_L_primes(const std::vector<std::vector<double>
 
 SymGroup<SymOp, CartesianBinaryComparator_f> calc_point_group(const Eigen::Matrix3d L, double tol)
 {
-    // calculate all valid SymOps for the input Lattice
-    // returns vector of SymOp matrices
-    //
     std::vector<SymOp> pt_group_list;
     auto pts = create_grid_pts(L);
     auto L_primes = calc_L_primes(pts);

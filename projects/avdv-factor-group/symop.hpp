@@ -20,6 +20,8 @@ private:
 
 SymOp operator*(const SymOp& lhs, const SymOp& rhs);
 
+//TODO: Refactor. Just elimitate this, we only want the binary comparisons
+//If you want unary comparisons, make a fancy template
 //Change later
 struct SymOpCompare_f
 {
@@ -41,5 +43,7 @@ class CartesianBinaryComparator_f
     private:
             double tol;
 };
+
+struct SymOpPeriodicCompare_f;
 
 #endif

@@ -18,7 +18,8 @@
 //SymOpBinaryCompare_f how_to_compare(1e-5);
 //SymGroup<SymOp, SymOpBinaryCompare_f> group(my_ops, how_to_compare);
 
-template <typename SymOpType, typename BinaryCompareType>
+
+template <typename SymOpType, typename BinaryCompareType>//, typename MultiplyType>
 class SymGroup
 {
 public:
@@ -33,6 +34,7 @@ public:
 private:
     std::vector<SymOpType> group;
     BinaryCompareType binary_comparator;
+    //MultiplyType multiply_elements;
 };
 
 template <typename SymOpType,typename BinaryCompareType>

@@ -1,8 +1,8 @@
 #ifndef COORDINATE_H
 #define COORDINATE_H
-#include "lattice.hpp"
 #include "../../submodules/eigen-git-mirror/Eigen/Core"
 #include "../../submodules/eigen-git-mirror/Eigen/Dense"
+#include "lattice.hpp"
 #include <string>
 #include <vector>
 class Coordinate
@@ -19,4 +19,24 @@ public:
 private:
     Eigen::Vector3d m_coord;
 };
+
+struct CoordinateCompare_f
+{
+    CoordinateCompare_f(double tol);
+    bool operator()(const Coordinate& lhs, const Coordinate& rhs) const;
+
+private:
+    double tol;
+};
+
+struct CoordinatePeriodicCompare_f
+{
+    CoordinatePeriodicCompare_f(const Lattice& lat, double tol);
+    bool operator()(const Coordinate& lhs, const Coordinate& rhs) const;
+
+private:
+    double tol;
+    Lattice unit_cell;
+};
+
 #endif

@@ -1,8 +1,12 @@
 #include "site.hpp"
 #include "tests.hpp"
+#include <iostream>
+
 int main()
 {
-//test constructor 
+    std::cout<<"---- Running Site Tests ----"<<std::endl;
+    std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
+    //test constructor 
 Site my_site= Site("Na", Coordinate(Eigen::Vector3d(0.1, 0.1, 0.1)));
 
 //test get atom
@@ -31,5 +35,9 @@ Lattice my_lattice=Lattice(test_row_vector_lattice);
 SitePeriodicCompare_f my_site_periodic_compare(my_site, 0.0001, my_lattice);
 Site test_site_periodic= Site("Na", Coordinate(Eigen::Vector3d(0.1, 0.1, 0.1)));
 EXPECT_TRUE(my_site_periodic_compare(test_site_periodic), "test site compare");
+
+
+//operator*
+//TODO
 return 0;
 }

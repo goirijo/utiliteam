@@ -157,7 +157,9 @@ int main() {
       0.2470700086510149;
   
   Eigen::MatrixXd raw_cart_coord_rows=(my_lattice.col_vector_matrix()*raw_frac_coord_rows.transpose()).transpose();
+      */
 
+  /*
   for (int i = 0; i < my_sites.size(); ++i) {
     EXPECT_T(Eigen::Vector3d(raw_cart_coord_rows.row(i))
                  .isApprox(my_sites.at(i).get_eigen_coordinate()),
@@ -180,6 +182,7 @@ int main() {
            "Cluster Doesn't even recognize itself");
   EXPECT_T(!first_cluster(other_test_cluster),
            "Cluster incorrectly believes it is another site");
+  */
   ////////////////////////////////////
   // EXPECT_T(find_factor_group(Valid_symops, my_lattice), "Doesn't have factor
   // group over 0");

@@ -1,5 +1,8 @@
+#include "./test.hpp"
+#include "../../submodules/eigen-git-mirror/Eigen/Dense"
 #include "./symmetry.hpp"
 #include "./symgroup.hpp"
+#include <iostream>
 
 #define PREC 1e-6
 

@@ -1,10 +1,14 @@
 #include "tests.hpp"
 #include "coordinate.hpp"
-#include <ostream>
+#include <iostream>
 
 int main()
 {
-//test get_coordinate
+
+    std::cout<<"---- Running Site Tests ----"<<std::endl;
+    std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
+
+    //test get_coordinate
 Coordinate my_coordinate=Coordinate(Eigen::Vector3d(1.1, 0.1, 0.1));
 Eigen::Vector3d test_get_coord;
 test_get_coord<<1.1, 0.1, 0.1;

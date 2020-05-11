@@ -1,4 +1,5 @@
 #include "symop.hpp"
+#include "lattice.hpp"
 
 SymOp::SymOp(const Eigen::Matrix3d& cart_matrix, const Eigen::Vector3d& translation)
     : m_cart_matrix(cart_matrix), m_translation(translation)
@@ -29,4 +30,17 @@ bool CartesianBinaryComparator_f::operator()(const SymOp& lhs, const SymOp& rhs)
 {
     SymOpCompare_f compare(lhs, tol);
     return compare(rhs);
+}
+
+
+BinarySymOpPeriodicCompare_f::BinarySymOpPeriodicCompare_f(Lattice& lattice, double tol) : m_lattice(lattice), tol(tol) {}
+
+bool BinarySymOpPeriodicCompare_f::operator()(const SymOp& element1, const SymOp& element2) const
+{     
+	Eigen::Vector3d periodic_translation1=bring_within(m_lattice, tol, element1.get_translation());
+	Eigen::Vector3d periodic_translation2=bring_within(m_lattice, tol, element2.get_translation());	
+	SymOp symop1(element1.get_cart_matrix(), periodic_translation1);
+	SymOp symop2(element2.get_cart_matrix(), periodic_translation2);
+	CartesianBinaryComparator_f compare(tol);
+	return compare(symop1, symop2);
 }

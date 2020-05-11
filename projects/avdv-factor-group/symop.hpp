@@ -5,6 +5,7 @@
 #include "../../submodules/eigen-git-mirror/Eigen/Dense"
 #include <string>
 #include <vector>
+#include "lattice.hpp"
 
 class SymOp
 {
@@ -44,6 +45,13 @@ class CartesianBinaryComparator_f
             double tol;
 };
 
-struct SymOpPeriodicCompare_f;
-
+class BinarySymOpPeriodicCompare_f
+{
+	public:
+		BinarySymOpPeriodicCompare_f(Lattice& lattice, double tol);
+		bool operator()(const SymOp& element1, const SymOp& element2) const;
+	private:
+		double tol;
+		Lattice m_lattice;
+};
 #endif

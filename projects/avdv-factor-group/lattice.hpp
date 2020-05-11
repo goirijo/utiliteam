@@ -18,4 +18,9 @@ public:
 private:
     Eigen::Matrix3d m_lat;
 };
+
+
+Eigen::Vector3d convert_to_fractional(const Lattice& lattice, const Eigen::Vector3d& cart_coord);
+
+Eigen::Vector3d bring_within(const Lattice& lattice, double prec, const Eigen::Vector3d cart_coord);
 #endif

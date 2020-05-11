@@ -11,9 +11,9 @@ class Site
 {
 public:
     Site(const std::string atom_name, const Coordinate& init_coord);
-    const std::string& get_atom() const;
-    const Eigen::Vector3d& get_eigen_coordinate() const;
-    const Coordinate get_coordinate() const;
+    std::string get_atom() const;
+    Eigen::Vector3d get_eigen_coordinate() const;
+    Coordinate get_coordinate() const;
 
 private:
     std::string m_atom;

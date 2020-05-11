@@ -1,10 +1,10 @@
-#include <algorithm>
-#include <vector>
-#include "./symop.hpp"
-#include "./site.hpp"
-#include "./symgroup.hpp"
-#include "./structure.hpp"
-/* #include "./factor_group.hpp" */
+//#include <algorithm>
+//#include <vector>
+//#include "./symop.hpp"
+//#include "./site.hpp"
+//#include "./symgroup.hpp"
+//#include "./structure.hpp"
+#include "./factor_group.hpp" 
 
 std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& basis)
 {
@@ -54,7 +54,8 @@ std::vector<Eigen::Vector3d> generate_translations(const Site& original_basis_si
 
 SymGroup<SymOp, BinarySymOpPeriodicCompare_f> generate_factor_group(const Structure& struc, double tol)
 {
-    auto point_group=generate_point_group(struc.get_lattice());
+    SymGroup<SymOp, CartesianBinaryComparator_f>  point_group=generate_point_group(struc.get_lattice().row_vector_matrix(), tol);
+
     const auto& basis=struc.get_sites(); 
 
     //make empty sym group
@@ -71,7 +72,7 @@ SymGroup<SymOp, BinarySymOpPeriodicCompare_f> generate_factor_group(const Struct
             auto transformed_translated_basis=transform_basis(symop_translation,transformed_basis);
             if(basis_maps_onto_itself(basis,transformed_translated_basis,struc.get_lattice()),tol)
             {
-                factor_group.insert(???);
+                factor_group.insert(symop_translation);
             }
         }
     }

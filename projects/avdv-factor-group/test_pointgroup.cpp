@@ -27,7 +27,7 @@ int main()
 
  
  //test calc_point_group function
-    SymGroup<SymOp, CartesianBinaryComparator_f> point_group_test = calc_point_group(simple_cube_lattice, 1e-6);
+    SymGroup<SymOp, CartesianBinaryComparator_f> point_group_test = generate_point_group(simple_cube_lattice, 1e-6);
     EXPECT_TRUE(48==point_group_test.operations().size(), "check cubic point group size is 48");
 
     return 0;

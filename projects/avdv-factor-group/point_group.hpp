@@ -13,6 +13,6 @@
 
 std::vector<std::vector<double>> create_grid_pts(const Eigen::Matrix3d L);
 std::vector<Eigen::Matrix3d> calc_L_primes(const std::vector< std::vector<double>> grid);
-SymGroup<SymOp, CartesianBinaryComparator_f> calc_point_group(const Eigen::Matrix3d Li, double tol);
+SymGroup<SymOp, CartesianBinaryComparator_f> generate_point_group(const Eigen::Matrix3d Li, double tol);
 
 #endif

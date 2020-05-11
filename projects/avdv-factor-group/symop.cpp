@@ -36,7 +36,7 @@ bool CartesianBinaryComparator_f::operator()(const SymOp& lhs, const SymOp& rhs)
 BinarySymOpPeriodicCompare_f::BinarySymOpPeriodicCompare_f(Lattice& lattice, double tol) : m_lattice(lattice), tol(tol) {}
 
 bool BinarySymOpPeriodicCompare_f::operator()(const SymOp& element1, const SymOp& element2) const
-{     
+{    
 	Eigen::Vector3d periodic_translation1=bring_within(m_lattice, tol, element1.get_translation());
 	Eigen::Vector3d periodic_translation2=bring_within(m_lattice, tol, element2.get_translation());	
 	SymOp symop1(element1.get_cart_matrix(), periodic_translation1);

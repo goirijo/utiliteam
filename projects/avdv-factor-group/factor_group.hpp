@@ -6,6 +6,7 @@
 #include "./lattice.hpp"
 #include "./structure.hpp"
 #include "./symgroup.hpp"
+#include "./point_group.hpp"
 
 std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& basis);
 /* std::vector<Site> translate_basis(const Coordinate& translation, std::vector<Site>& basis); */

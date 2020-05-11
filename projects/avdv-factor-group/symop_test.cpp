@@ -28,4 +28,18 @@ int main()
 	auto With_Rotations_60_product=With_Rotations_60*With_Rotations_60;
 	EXPECT_TRUE(With_Rotations_120.get_cart_matrix().isApprox(With_Rotations_60_product.get_cart_matrix(), 1e-6), "120 degrees is two 60 degree rotations");
 	return 0;
+
+
+	//test Binary symop compare
+	Eigen::Matrix3d unit_matrix;
+	unit_matrix<<1,0,0,0,1,0,0,0,1;
+	Lattice unit_lattice=Lattice(unit_matrix);
+	Eigen::Vector3d periodic_translation;
+	periodic_translation<<1.5,0,0;
+	
+	BinarySymOpPeriodicCompare_f periodicity_comparison(unit_lattice, 0.0001);
+	Eigen::Vector3d brought_within_translation;
+	brought_within_translation<<0.5, 0, 0;
+	SymOp Brought_within_Symop=SymOp(test_matrix, brought_within_translation); 
+	EXPECT_TRUE(periodicity_comparison(SymOp(test_matrix, periodic_translation), Brought_within_Symop), "Binary BinarySymOpPeriodicCompare_f test at 1.5 translation in z axis");
 }

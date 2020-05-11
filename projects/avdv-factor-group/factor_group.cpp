@@ -2,6 +2,8 @@
 #include <vector>
 #include "./symop.hpp"
 #include "./site.hpp"
+#include "./symgroup.hpp"
+#include "./structure.hpp"
 /* #include "./factor_group.hpp" */
 
 std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& basis)
@@ -36,13 +38,27 @@ bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::
     return true;
 }
 
-SymGroup<SymOp,SymOpPeriodicCompare_f> generate_factor_group(const Structure& struc, double tol)
+
+std::vector<Eigen::Vector3d> generate_translations(const Site& original_basis_site, const std::vector<Site>& transformed_basis)
 {
-    auto point_group=generate_point_group(struc.lattice());
-    const auto& basis=struc.basis(); 
+	std::vector<Eigen::Vector3d> total_trans;
+	for (const Site& transformed_basis_site: transformed_basis)
+	{
+		Eigen::Vector3d trans= original_basis_site.get_eigen_coordinate()-transformed_basis_site.get_eigen_coordinate();
+		total_trans.push_back(trans);
+	}
+	return total_trans;
+}
+
+
+
+SymGroup<SymOp, BinarySymOpPeriodicCompare_f> generate_factor_group(const Structure& struc, double tol)
+{
+    auto point_group=generate_point_group(struc.get_lattice());
+    const auto& basis=struc.get_sites(); 
 
     //make empty sym group
-    SymGroup<???,???> factor_group;
+    SymGroup<SymOp, BinarySymOpPeriodicCompare_f> factor_group;
 
     for(const SymOp& point_op : point_group)
     {
@@ -51,8 +67,8 @@ SymGroup<SymOp,SymOpPeriodicCompare_f> generate_factor_group(const Structure& st
 
         for(const Eigen::Vector3d& translation : all_translations)
         {
-            SymOp translation(Eigen::Matrix3d::Identity(),translation);
-            auto transformed_translated_basis=transform_basis(translation,transformed_basis);
+            SymOp symop_translation(Eigen::Matrix3d::Identity(),translation);
+            auto transformed_translated_basis=transform_basis(symop_translation,transformed_basis);
             if(basis_maps_onto_itself(basis,transformed_translated_basis,struc.get_lattice()),tol)
             {
                 factor_group.insert(???);

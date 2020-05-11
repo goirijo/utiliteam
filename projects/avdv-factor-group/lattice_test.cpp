@@ -37,5 +37,18 @@ brought_within_translation<<0.5, 0, 0;
 EXPECT_TRUE(bring_within(unit_lattice, 0.0001, original_translation).isApprox(brought_within_translation, 0.0001), "test the bring within function");
 
 
+//test bring within near edge
+Eigen::Vector3d original_translation_near_edge;
+original_translation_near_edge<<-.001, 0, 0;
+Eigen::Vector3d brought_within_translation_near_edge;
+brought_within_translation_near_edge<<.999, 0, 0;
+EXPECT_TRUE(bring_within(unit_lattice, 0.0001, original_translation_near_edge).isApprox(brought_within_translation_near_edge, 0.0001), "test the bring within function near edge");
+
+//test bring within near corner
+Eigen::Vector3d original_translation_near_corner;
+original_translation_near_corner<<-.001, .999, 0;
+Eigen::Vector3d brought_within_translation_near_corner;
+brought_within_translation_near_corner<<.999, 0.999, 0;
+EXPECT_TRUE(bring_within(unit_lattice, 0.0001, original_translation_near_corner).isApprox(brought_within_translation_near_corner, 0.0001), "test the bring within function near corner");
 return 0;
 }

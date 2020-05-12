@@ -70,7 +70,7 @@ double distance(Coordinate& middlepoint, Coordinate& compared_coord)
 // Arithmetic center of mass -Muna
 // TODO: Find sites within a radius.
 // args: Coordinate, radius, Structure
-std::vector<Site> find_sites_within_radius(Coordinate middlepoint, int my_radius, Structure& my_struc)
+std::vector<Coordinate> find_sites_within_radius(Coordinate middlepoint, int my_radius, Structure& my_struc)
 {
 	 //use flooring function */
 	 std::vector<Site> sites_within_radius; 
@@ -97,7 +97,7 @@ std::vector<Site> find_sites_within_radius(Coordinate middlepoint, int my_radius
 
 
 
-std::vector<Site> discard_sites_within_radius(std::string anion_name, int my_radius, Structure& my_struc)
+std::vector<Coordinate> discard_sites_within_radius(std::string anion_name, int my_radius, Structure& my_struc)
 {
 	std::vector<Site> total_anion_sites;
 	std::vector<Site> anion_sites_to_keep;

@@ -1,7 +1,13 @@
 #ifndef INTERSTITIALS_H
 #define INTERSTITIALS_H
 
-#include "xtal_classes.hpp"
+#include "../avdv-factor-group/lattice.hpp"
+#include "../avdv-factor-group/coordinate.hpp"
+#include "../avdv-factor-group/site.hpp"
+#include "../avdv-factor-group/symop.hpp"
+#include "../avdv-factor-group/structure.hpp"
+#include "cluster.hpp"
+
 //Tools we already have:
 //Structrue class
 //Lattice class
@@ -27,7 +33,7 @@ class SymOp;
 
 ///TODO: Write out documentation here
 //Find asymmetric sites
-std::vector<Site> make_asymmetric_unit(const std::vector<Site>& complete_structure_basis, const std::vector<SymOp>& Sym_group);
+std::vector<Site> make_asymmetric_unit(const std::vector<Site>& complete_structure_basis, const std::vector<SymOp>& Sym_group, const Lattice& lattice, double tol);
 
 //Find geometric center for the cluster
 Eigen::Vector3d find_geometric_center(const Cluster& test_cluster);

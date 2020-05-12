@@ -1,5 +1,4 @@
 #include "interstitials.hpp"
-#include "xtal_classes.hpp"
 #include <cmath>
 
 // Tools we already have:
@@ -25,7 +24,7 @@ class Site;
 class SymOp;
 
 /// TODO: Write out documentation here
-std::vector<Site> make_asymmetric_unit(const std::vector<Site>& complete_structure_basis, const std::vector<SymOp>& Sym_group)
+std::vector<Site> make_asymmetric_unit(const std::vector<Site>& complete_structure_basis, const std::vector<SymOp>& Sym_group, const Lattice& lattice, double tol)
 {
     std::vector<Site> asymmetric_unit;
     // for each site on the basis
@@ -36,7 +35,7 @@ std::vector<Site> make_asymmetric_unit(const std::vector<Site>& complete_structu
         {
             Site transformedsite = Symmetry_operation * basis;
             //TODO: Which comparator should you use?
-            SitePeriodicCompare_f test_site(transformedsite, 1E-5);
+            SitePeriodicCompare_f test_site(transformedsite, tol, lattice);
 
             if (find_if(asymmetric_unit.begin(), asymmetric_unit.end(), test_site) == asymmetric_unit.end())
             {
@@ -61,10 +60,17 @@ Eigen::Vector3d find_geometric_center(const Cluster& test_cluster)
     }
     return added_coord / test_cluster.cluster_size();
 }
+
+double distance(Coordinate& middlepoint, Coordinate& compared_coord)
+{
+	//should I bring the middle point within?
+	double distance=sqrt(pow(middlepoint.get_cart_coordinate()[0]-compared_coord.get_cart_coordinate()[0],2)+pow(middlepoint.get_cart_coordinate()[1]-compared_coord.get_cart_coordinate()[1],2)+pow(middlepoint.get_cart_coordinate()[2]-compared_coord.get_cart_coordinate()[2],2));
+	return distance;
+}	
 // Arithmetic center of mass -Muna
 // TODO: Find sites within a radius.
 // args: Coordinate, radius, Structure
-std::vector<Site> find_sites_within_radius(Coordinate& middlepoint, int my_radius, Structure& my_struc)
+std::vector<Site> find_sites_within_radius(Coordinate middlepoint, int my_radius, Structure& my_struc)
 {
 	 //use flooring function */
 	 std::vector<Site> sites_within_radius; 
@@ -90,12 +96,30 @@ std::vector<Site> find_sites_within_radius(Coordinate& middlepoint, int my_radiu
 }
 
 
-double distance(Coordinate& middlepoint, Coordinate& compared_coord)
+
+std::vector<Site> discard_sites_within_radius(std::string anion_name, int my_radius, Structure& my_struc)
 {
-	//should I bring the middle point within?
-	double distance=sqrt(pow(middlepoint.get_coordinate()[0]-compared_coord.get_coordinate()[0],2)+pow(middlepoint.get_coordinate()[1]-compared_coord.get_coordinate()[1],2)+pow(middlepoint.get_coordinate()[2]-compared_coord.get_coordinate()[2],2));
-	return distance;
-}	
+	std::vector<Site> total_anion_sites;
+	std::vector<Site> anion_sites_to_keep;
+	//find number of the interstitial in the structure
+	for (const auto& site: my_struc.get_sites())
+	{
+		if (site.get_atom()==anion_name)
+		{
+			total_anion_sites.push_back(site);
+		}
+	}
+	for (auto anion_site: total_anion_sites)
+	{
+		std::vector<Site> sites_too_close_to_Li=find_sites_within_radius(anion_site.get_coordinate(), my_radius, my_struc);
+		if (sites_too_close_to_Li.size()<=1)
+		{
+			anion_sites_to_keep.push_back(anion_site);
+		}
+	}	
+	return anion_sites_to_keep;	
+}
+
 
 std::vector<Coordinate> make_grid_points(int in_a, int in_b, int in_c, const Lattice& lattice)
 {

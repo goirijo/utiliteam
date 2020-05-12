@@ -1,5 +1,5 @@
-//#include <algorithm>
-//#include <vector>
+#include <algorithm>
+#include <vector>
 //#include "./symop.hpp"
 //#include "./site.hpp"
 //#include "./symgroup.hpp"
@@ -59,9 +59,10 @@ SymGroup<SymOp, BinarySymOpPeriodicCompare_f> generate_factor_group(const Struct
     const auto& basis=struc.get_sites(); 
 
     //make empty sym group
-    SymGroup<SymOp, BinarySymOpPeriodicCompare_f> factor_group;
+    BinarySymOpPeriodicCompare_f comparison(struc.get_lattice(), tol);
+    SymGroup<SymOp, BinarySymOpPeriodicCompare_f> factor_group({},comparison);
 
-    for(const SymOp& point_op : point_group)
+    for(const SymOp& point_op : point_group.operations())
     {
         auto transformed_basis=transform_basis(point_op,basis);
         std::vector<Eigen::Vector3d> all_translations=generate_translations(basis[0],transformed_basis);
@@ -70,9 +71,10 @@ SymGroup<SymOp, BinarySymOpPeriodicCompare_f> generate_factor_group(const Struct
         {
             SymOp symop_translation(Eigen::Matrix3d::Identity(),translation);
             auto transformed_translated_basis=transform_basis(symop_translation,transformed_basis);
-            if(basis_maps_onto_itself(basis,transformed_translated_basis,struc.get_lattice()),tol)
+            if(basis_maps_onto_itself(basis,transformed_translated_basis,struc.get_lattice(),tol))
             {
-                factor_group.insert(symop_translation);
+		SymOp factor_group_symop(point_op.get_cart_matrix(), translation);
+                factor_group.insert(factor_group_symop);
             }
         }
     }

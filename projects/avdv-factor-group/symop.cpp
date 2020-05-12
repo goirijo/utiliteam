@@ -33,7 +33,7 @@ bool CartesianBinaryComparator_f::operator()(const SymOp& lhs, const SymOp& rhs)
 }
 
 
-BinarySymOpPeriodicCompare_f::BinarySymOpPeriodicCompare_f(Lattice& lattice, double tol) : m_lattice(lattice), tol(tol) {}
+BinarySymOpPeriodicCompare_f::BinarySymOpPeriodicCompare_f(const Lattice& lattice, double tol) : m_lattice(lattice), tol(tol) {}
 
 bool BinarySymOpPeriodicCompare_f::operator()(const SymOp& element1, const SymOp& element2) const
 {    

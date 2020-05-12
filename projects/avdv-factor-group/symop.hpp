@@ -48,7 +48,7 @@ class CartesianBinaryComparator_f
 class BinarySymOpPeriodicCompare_f
 {
 	public:
-		BinarySymOpPeriodicCompare_f(Lattice& lattice, double tol);
+		BinarySymOpPeriodicCompare_f(const Lattice& lattice, double tol);
 		bool operator()(const SymOp& element1, const SymOp& element2) const;
 	private:
 		double tol;

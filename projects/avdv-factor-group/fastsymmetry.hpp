@@ -16,8 +16,6 @@ public:
     int get_id() const;
     const std::shared_ptr<MultTable>& mult_table_ptr() const;
 
-    AbstractSymOp operator*(const AbstractSymOp& rhs);
-
 private:
     /// ID of this particular symmetry operation, represented as integer
     int id;
@@ -27,6 +25,8 @@ private:
     /// multiplication[A][B]=C
     std::shared_ptr<MultTable> multiplication_table_ptr;
 };
+
+AbstractSymOp operator*(const AbstractSymOp& lhs, const AbstractSymOp& rhs);
 
 struct AbstractSymOpCompare_f
 {

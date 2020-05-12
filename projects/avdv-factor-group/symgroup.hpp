@@ -23,7 +23,6 @@ class SymGroup
 {
 public:
     SymGroup(std::vector<SymOpType> generating_elements, const BinaryCompareType& binary_comparator, const MultiplyType& multiply_elements); 
-    //SymGroup(std::vector<SymOpType> generating_elements, const BinaryCompareType& binary_comparator);
     template<typename ...Args>
     SymGroup(std::vector<SymOpType> generating_elements, Args... args);
     static void close_group(std::vector<SymOpType>* operations_ptr, const BinaryCompareType& binary_comparator, MultiplyType multiply_elements);
@@ -118,7 +117,7 @@ bool SymGroup<SymOpType, BinaryCompareType, MultiplyType>::insert(SymOpType& new
 
 template <typename SymOpType, typename BinaryCompareType, typename MultiplyType>
 template<typename ...Args>
-SymGroup<SymOpType, BinaryCompareType, MultiplyType>::SymGroup(std::vector<SymOpType> generating_elements, Args... args): SymGroup<SymOpType,BinaryCompareType, MultiplyType>(generating_elements,BinaryCompareType(args...), multiply_elements){}
+SymGroup<SymOpType, BinaryCompareType, MultiplyType>::SymGroup(std::vector<SymOpType> generating_elements, Args... args): SymGroup<SymOpType,BinaryCompareType, MultiplyType>(generating_elements,BinaryCompareType(args...), MultiplyType()){}
 
 template <typename SymOpType, typename BinaryCompareType, typename MultiplyType>
 SymGroup<SymOpType, BinaryCompareType, MultiplyType>::SymGroup(std::vector<SymOpType> generating_elements, const BinaryCompareType& binary_comparator, const MultiplyType& multiply_elements): binary_comparator(binary_comparator), multiply_elements(multiply_elements)

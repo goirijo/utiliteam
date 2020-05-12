@@ -46,11 +46,10 @@ int main()
     {
         for (int i = 0; i < test_group1_vector.size(); i++) 
         {
-            /*auto compare_lambda = [test_group1_vector[i], symop_compare](const SymOp& op){
+            auto compare_lambda = [i, test_group1_vector, symop_compare](const SymOp& op){
                 return symop_compare(test_group1_vector[i], op);
-            };*/
-            SymOpCompare_f compare_ops(test_group1_vector[i]);
-            EXPECT_TRUE(!(std::find_if(group1.operations().begin(), group1.operations().end(), compare_ops) == group1.operations().end()), "SymGroup construction test");
+            };
+            EXPECT_TRUE(!(std::find_if(group1.operations().begin(), group1.operations().end(), compare_lambda) == group1.operations().end()), "SymGroup construction test");
         }
     }
     EXPECT_TRUE(group1.operations().size()>test_group1_vector.size(), "Closed group has more operations than generating elements");

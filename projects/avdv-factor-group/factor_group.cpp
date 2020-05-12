@@ -64,6 +64,7 @@ SymGroup<SymOp, BinarySymOpPeriodicCompare_f, BinarySymOpPeriodicMultiplier_f> g
     //make empty sym group
     BinarySymOpPeriodicCompare_f comparison(struc.get_lattice(), tol);
     BinarySymOpPeriodicMultiplier_f mult_op(struc.get_lattice(), tol);
+    /* SymOp identity(Eigen::Matrix3d::Identity(),Eigen::Vector3d::Zero()); */
     SymGroup<SymOp, BinarySymOpPeriodicCompare_f, BinarySymOpPeriodicMultiplier_f> factor_group({},comparison, mult_op);
 
     for(const SymOp& point_op : point_group.operations())

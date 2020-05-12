@@ -46,7 +46,7 @@ bool basis_maps_onto_itself_test(double tol)
     std::vector<Site> basis{na1,na2,li1};
     std::vector<Site> basis_shuffle{li1,na2,na1};
 
-    return basis_maps_onto_itself(basis,basis,lat, tol)&&
+    return basis_maps_onto_itself(basis,basis,lat, tol) &&
     basis_maps_onto_itself(basis,basis_shuffle,lat, tol);
     
 }
@@ -114,7 +114,7 @@ int main()
     EXPECT_TRUE(basis_maps_onto_itself_periodically(tol), "Basis maps periodic");
     EXPECT_TRUE(basis_doesnt_map_onto_itself(tol), "Basis shouldnt map");
 
-    EXPECT_TRUE(test_fcc_factor_group(tol), "FCC factor group has 48");
-
+    EXPECT_TRUE(test_fcc_factor_group(tol), "FCC factor group has 48 operations");
+    EXPECT_TRUE(test_fcc_factor_group(tol), "pnb9o25 factor group has 4 operations");
     return 0;
 }

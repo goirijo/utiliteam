@@ -5,7 +5,7 @@
 int main()
 {
 
-    std::cout<<"---- Running Site Tests ----"<<std::endl;
+    std::cout<<"---- Running Coordinate Tests ----"<<std::endl;
     std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 
     //test get_coordinate

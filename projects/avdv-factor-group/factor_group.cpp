@@ -11,6 +11,7 @@ std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& b
     std::vector<Site> transformed_basis;
     for(const Site& s : basis)
     {
+        //transformed_basis.emplace_back(symop*s);
         transformed_basis.emplace_back(symop*s);
     }
     return transformed_basis;
@@ -21,16 +22,18 @@ bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::
 {
     if(original_basis.size()!=transformed_basis.size())
     {
-        return false;
+	 return false;
+	
     }
 
     for(const Site& transformed_s : transformed_basis)
     {
         SitePeriodicCompare_f compare_to_transformed(transformed_s,tol,lattice);
-        auto find_it=std::find_if(original_basis.begin(),original_basis.end(),compare_to_transformed);
-        if(find_it==original_basis.end())
+        
+	if(std::find_if(original_basis.begin(),original_basis.end(),compare_to_transformed)==original_basis.end())
         {
-            return false;
+	return false;
+	    
         }
 
     }

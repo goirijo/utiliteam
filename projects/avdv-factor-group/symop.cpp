@@ -26,10 +26,12 @@ bool SymOpCompare_f::operator()(const SymOp& element2) const
 
 CartesianBinaryComparator_f::CartesianBinaryComparator_f(double tol) : tol(tol) {}
 
-bool CartesianBinaryComparator_f::operator()(const SymOp& lhs, const SymOp& rhs) const
+bool CartesianBinaryComparator_f::operator()(const SymOp& element1, const SymOp& element2) const
 {
-    SymOpCompare_f compare(lhs, tol);
-    return compare(rhs);
+/*   return (element1.get_cart_matrix().isApprox(element2.get_cart_matrix(), tol) &&
+            (element1.get_translation().isApprox(element2.get_translation(), tol)));*/
+    SymOpCompare_f compare(element1, tol);
+    return compare(element2);
 }
 
 
@@ -43,4 +45,14 @@ bool BinarySymOpPeriodicCompare_f::operator()(const SymOp& element1, const SymOp
 	SymOp symop2(element2.get_cart_matrix(), periodic_translation2);
 	CartesianBinaryComparator_f compare(tol);
 	return compare(symop1, symop2);
+}
+
+BinarySymOpPeriodicMultiplier_f::BinarySymOpPeriodicMultiplier_f(const Lattice& lattice, double tol) : m_lattice(lattice), tol(tol) {}
+
+SymOp BinarySymOpPeriodicMultiplier_f::operator()(const SymOp& operation1, const SymOp& operation2) const 
+{
+    SymOp full_operation_product = operation1 * operation2;
+    Eigen::Vector3d op_product_periodic_tranlation = bring_within(m_lattice, tol, full_operation_product.get_translation());
+    SymOp final_product(full_operation_product.get_cart_matrix(), op_product_periodic_tranlation);
+    return final_product;
 }

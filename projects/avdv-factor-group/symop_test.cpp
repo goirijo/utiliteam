@@ -41,5 +41,6 @@ int main()
 	Eigen::Vector3d brought_within_translation;
 	brought_within_translation<<0.5, 0, 0;
 	SymOp Brought_within_Symop=SymOp(test_matrix, brought_within_translation); 
+	EXPECT_TRUE(periodicity_comparison(Brought_within_Symop, Brought_within_Symop), "Check identical symops are the same");
 	EXPECT_TRUE(periodicity_comparison(SymOp(test_matrix, periodic_translation), Brought_within_Symop), "Binary BinarySymOpPeriodicCompare_f test at 1.5 translation in z axis");
 }

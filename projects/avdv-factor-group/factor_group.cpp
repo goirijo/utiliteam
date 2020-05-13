@@ -61,7 +61,7 @@ SymGroup<SymOp, BinarySymOpPeriodicCompare_f> generate_factor_group(const Struct
     //make empty sym group
     SymGroup<SymOp, BinarySymOpPeriodicCompare_f> factor_group;
 
-    for(const SymOp& point_op : point_group)
+    for(const SymOp& point_op : point_group.operations())
     {
         auto transformed_basis=transform_basis(point_op,basis);
         std::vector<Eigen::Vector3d> all_translations=generate_translations(basis[0],transformed_basis);

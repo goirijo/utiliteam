@@ -37,7 +37,7 @@ bool test_transform_basis_size()
     return same_basis.size() == basis.size();
 }
 
-bool basis_maps_onto_itself()
+bool basis_maps_onto_itself_test(double tol)
 {
     Lattice lat(Eigen::Matrix3d::Identity());
     Site na1("Na",Coordinate(Eigen::Vector3d::Zero()));
@@ -46,12 +46,12 @@ bool basis_maps_onto_itself()
     std::vector<Site> basis{na1,na2,li1};
     std::vector<Site> basis_shuffle{li1,na2,na1};
 
-    return basis_maps_onto_itself(basis,basis,lat)&&
-    basis_maps_onto_itself(basis,basis_shuffle,lat);
+    return basis_maps_onto_itself(basis,basis,lat, tol) &&
+    basis_maps_onto_itself(basis,basis_shuffle,lat, tol);
     
 }
 
-bool basis_maps_onto_itself_periodically()
+bool basis_maps_onto_itself_periodically(double tol)
 {
     Lattice lat(Eigen::Matrix3d::Identity());
     Site na1("Na",Coordinate(Eigen::Vector3d::Zero()));
@@ -62,10 +62,10 @@ bool basis_maps_onto_itself_periodically()
     Site periodic_na2("Na",Coordinate(1.5*Eigen::Vector3d::Ones()));
     std::vector<Site> basis_periodic{na1,periodic_na2,li1};
 
-    return basis_maps_onto_itself(basis,basis_periodic,lat);
+    return basis_maps_onto_itself(basis,basis_periodic,lat, tol);
 }
 
-bool basis_doesnt_map_onto_itself()
+bool basis_doesnt_map_onto_itself(double tol)
 {
     Lattice lat(Eigen::Matrix3d::Identity());
     Site na1("Na",Coordinate(Eigen::Vector3d::Zero()));
@@ -73,10 +73,10 @@ bool basis_doesnt_map_onto_itself()
     Site li1("Li",Coordinate(-0.25*Eigen::Vector3d::Ones()));
     Site na3("Na",Coordinate(-0.25*Eigen::Vector3d::Ones()));
 
-    return !basis_maps_onto_itself({na1,na2,li1},{na1,na2,na3},lat);
+    return !basis_maps_onto_itself({na1,na2,li1},{na1,na2,na3},lat, tol);
 }
 
-bool basis_doesnt_map_onto_itself_size_mismatch()
+bool basis_doesnt_map_onto_itself_size_mismatch(double tol)
 {
     Lattice lat(Eigen::Matrix3d::Identity());
     Site na1("Na",Coordinate(Eigen::Vector3d::Zero()));
@@ -84,34 +84,48 @@ bool basis_doesnt_map_onto_itself_size_mismatch()
     Site li1("Li",Coordinate(-0.25*Eigen::Vector3d::Ones()));
     Site na3("Na",Coordinate(-0.25*Eigen::Vector3d::Ones()));
 
-    return !basis_maps_onto_itself({na1,na2,li1},{na1},lat) && !basis_maps_onto_itself({na1},{na1,na2,li1},lat);
+    return !basis_maps_onto_itself({na1,na2,li1},{na1},lat, PREC) && !basis_maps_onto_itself({na1},{na1,na2,li1},lat, tol);
 }
 
-bool test_fcc_factor_group()
+bool test_fcc_factor_group(double tol)
 {
     Structure fcc=read_poscar("./test_files/fcc.vasp");
-    auto fg=generate_factor_group(fcc);
+    auto fg=generate_factor_group(fcc, tol);
+    
     return fg.operations().size()==48;
 }
 
-bool test_pnb9o25_factor_group()
+bool test_pnb9o25_factor_group(double tol)
 {
     Structure pnb9o25=read_poscar("./test_files/pnb9o25.vasp");
-    auto fg=generate_factor_group(pnb9o25);
+    auto fg=generate_factor_group(pnb9o25, tol);
+    std::cout<<"DEBUGGING: pnb9o25 fg.size() is "<<fg.operations().size()<<std::endl;
+    std::cout<<"Hellooooooooooo\n";
+
+    //TODO: Make SymGroup work for range based loops (you'll have to forward begin/end iterators)
+    for(const SymOp& op : fg.operations())
+    {
+        std::cout<<op.get_cart_matrix()<<"\n\n";
+        std::cout<<op.get_translation().transpose()<<"\n\n";
+    }
+
     return fg.operations().size()==4;
 }
 
 int main()
 {
+    std::cout<<"---- Running Factor Group Tests ----"<<std::endl;
+    std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
+    double tol= 0.0001;
     EXPECT_TRUE(test_transform_basis_inversion(), "Transform basis inversion");
     EXPECT_TRUE(test_transform_basis_glide(), "Transform basis glide");
     EXPECT_TRUE(test_transform_basis_size(), "Transform basis size");
 
-    EXPECT_TRUE(basis_maps_onto_itself(), "Basis maps");
-    EXPECT_TRUE(basis_maps_onto_itself_periodically(), "Basis maps periodic");
-    EXPECT_TRUE(basis_doesnt_map_onto_itself(), "Basis shouldnt map");
+    EXPECT_TRUE(basis_maps_onto_itself_test(tol), "Basis maps");
+    EXPECT_TRUE(basis_maps_onto_itself_periodically(tol), "Basis maps periodic");
+    EXPECT_TRUE(basis_doesnt_map_onto_itself(tol), "Basis shouldnt map");
 
-    EXPECT_TRUE(test_fcc_factor_group(), "FCC factor group has 48");
-
+    EXPECT_TRUE(test_fcc_factor_group(tol), "FCC factor group has 48 operations");
+    EXPECT_TRUE(test_pnb9o25_factor_group(tol), "pnb9o25 factor group has 4 operations");
     return 0;
 }

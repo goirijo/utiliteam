@@ -5,4 +5,4 @@
 ./test_symop
 ./test_pointgroup
 ./test_fastsymmetry ./input_lattices/POSCAR.hexagonal
-
+./test_factorgroup

@@ -23,39 +23,20 @@ bool SiteCompare_f::operator()(const Site& other) const
 
 
 //Site compare taking into account perioduc boundary conditions
-SitePeriodicCompare_f::SitePeriodicCompare_f(const Site& site, double prec, const Lattice& unit_cell) : m_site(site), m_precision(prec), m_lattice(unit_cell){} 
-bool SitePeriodicCompare_f::operator()(const Site& other) const
-{
-	//auto other_coord=other.get_eigen_coordinate();
-	//move_the_atom_inside_the_crystal(&other_coord, m_lattice.col_vector_matrix());
-	auto other_coord=m_site.get_coordinate();
-	other_coord.bring_within(m_lattice, m_precision);
+SitePeriodicCompare_f::SitePeriodicCompare_f(Site site, double prec, const Lattice& unit_cell) : m_site(site), m_precision(prec), m_lattice(unit_cell){
+m_site.m_coord.bring_within(m_lattice, m_precision);
+} 
+bool SitePeriodicCompare_f::operator()(Site other) 
+{	
+	other.m_coord.bring_within(m_lattice, m_precision);
 	Eigen::Vector3d precision_vec;
-        precision_vec<<m_precision, m_precision, m_precision;
-	if (m_site.get_eigen_coordinate().isApprox(other_coord.get_cart_coordinate()))
-//	int j=0;
-//	for (int i=0; i<3; i++)
-//	{
-//		double diff=m_site.get_eigen_coordinate()[i]-other_coord.get_coordinate()[i];
-//		if (abs(diff)>m_precision)
-//		{
-//			j=j+1;
-//		}
-//	}
-//	if (j==0)
-	   {	
-			if (m_site.get_atom()==other.get_atom())
-			{
-				return true;
-			}
-	   }
-	return false;
-	//may need to redefine new operator function?
+	SiteCompare_f compare(m_site, m_precision);
+	return compare(other);
 }
 
 Site operator*(const SymOp& transformation, const Site& site)
 {
-    Eigen::Vector3d transformed = (transformation.get_cart_matrix()) * (site.get_eigen_coordinate());
+    Eigen::Vector3d transformed = (transformation.get_cart_matrix()) * (site.get_eigen_coordinate())+transformation.get_translation();
     Coordinate transformedcoord(transformed);
     return Site(site.get_atom(), transformedcoord);
 }

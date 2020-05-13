@@ -14,10 +14,10 @@ public:
     std::string get_atom() const;
     Eigen::Vector3d get_eigen_coordinate() const;
     Coordinate get_coordinate() const;
-
+    Coordinate m_coord;
 private:
     std::string m_atom;
-    Coordinate m_coord;
+   // Coordinate m_coord;
 };
 
 
@@ -37,8 +37,8 @@ private:
 /// the coordinates are the same after applying unit cell tranlsations
 struct SitePeriodicCompare_f
 {
-    SitePeriodicCompare_f(const Site& site, double prec, const Lattice& unit_cell);
-    bool operator()(const Site& other) const;
+    SitePeriodicCompare_f(Site site, double prec, const Lattice& unit_cell);
+    bool operator()(Site other);
 private:
     Site m_site;
     double m_precision;

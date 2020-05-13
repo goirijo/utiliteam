@@ -15,15 +15,15 @@ class ModuloInt
         }
 };
 
-class ModuloIntCompare
-{
-    public:
-        template<typename ModType>
-        bool operator()(const ModType& lhs, const ModType& rhs) const
-        {
-            return lhs.value==rhs.value;
-        }
-};
+/* class ModuloIntCompare */
+/* { */
+/*     public: */
+/*         template<typename ModType> */
+/*         bool operator()(const ModType& lhs, const ModType& rhs) const */
+/*         { */
+/*             return lhs.value==rhs.value; */
+/*         } */
+/* }; */
 
 int main()
 {

@@ -6,18 +6,18 @@ int AbstractSymOp::get_id() const { return this->id; }
 const std::shared_ptr<MultTable>& AbstractSymOp::mult_table_ptr() const { return this->multiplication_table_ptr; }
 
 
-AbstractSymOp AbstractSymOp::operator*(const AbstractSymOp& rhs)
+AbstractSymOp operator*(const AbstractSymOp& lhs, const AbstractSymOp& rhs)
 {
-    if(this->multiplication_table_ptr!=rhs.mult_table_ptr())
+    if(lhs.mult_table_ptr()!=rhs.mult_table_ptr())
     {
         throw std::runtime_error("Your multiplication tables are different!!");
     }
 
-    int lhs_id=this->id;
+    int lhs_id=lhs.get_id();
     int rhs_id=rhs.get_id();
 
-    int product_id=(*multiplication_table_ptr)[lhs_id][rhs_id];
-    return AbstractSymOp(product_id,multiplication_table_ptr);
+    int product_id=(*lhs.mult_table_ptr())[lhs_id][rhs_id];
+    return AbstractSymOp(product_id,lhs.mult_table_ptr());
 }
 
 

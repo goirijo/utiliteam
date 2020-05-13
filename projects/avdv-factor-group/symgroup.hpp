@@ -5,69 +5,64 @@
 #include <algorithm>
 #include <tuple>
 #include <vector>
-//#define PREC 1e-6
-//
 
-//What we want:
-//User specify the type of operations, and how to compare the operations
-//The user gives the vector of operations at construction, as well
-//as whatever is needed to compare two operations.
-//
-//For example:
-//std::vector<SymOp> my_ops;
-//SymOpBinaryCompare_f how_to_compare(1e-5);
-//SymGroup<SymOp, SymOpBinaryCompare_f> group(my_ops, how_to_compare);
+template <typename Element>
+struct DefaultCompare
+{
+    bool operator()(const Element& lhs, const Element& rhs) const { return lhs == rhs; }
+};
 
+template <typename Element>
+struct DefaultMultiply
+{
+    Element operator()(const Element& lhs, const Element& rhs) const { return lhs * rhs; }
+};
 
-template <typename SymOpType, typename BinaryCompareType>//, typename MultiplyType>
+template <typename SymOpType, typename BinaryCompareType, typename MultiplyType=DefaultMultiply<SymOpType>>
 class SymGroup
 {
 public:
- 
-    SymGroup(std::vector<SymOpType> generating_elements, const BinaryCompareType& binary_comparator);
+    SymGroup(std::vector<SymOpType> generating_elements, const BinaryCompareType& binary_comparator, const MultiplyType& multiply_elements); 
     template<typename ...Args>
     SymGroup(std::vector<SymOpType> generating_elements, Args... args);
-    static void close_group(std::vector<SymOpType>* operations_ptr, const BinaryCompareType& binary_comparator);
+    static void close_group(std::vector<SymOpType>* operations_ptr, const BinaryCompareType& binary_comparator, MultiplyType multiply_elements);
     bool insert(SymOpType& new_operation);
     const std::vector<SymOpType>& operations() const { return group; }
-    const BinaryCompareType get_comparator() const {return binary_comparator;}
+    const BinaryCompareType get_comparator() const { return binary_comparator; }
+    const MultiplyType get_multiplier() const { return multiply_elements; }
 private:
     std::vector<SymOpType> group;
     BinaryCompareType binary_comparator;
-    //MultiplyType multiply_elements;
+    MultiplyType multiply_elements;
 };
 
-template <typename SymOpType,typename BinaryCompareType>
-SymGroup<SymOpType, BinaryCompareType> operator*(SymGroup<SymOpType, BinaryCompareType> lhs, const SymGroup<SymOpType, BinaryCompareType>& rhs);
+template <typename SymOpType,typename BinaryCompareType, typename MultiplyType = DefaultMultiply<SymOpType>>
+SymGroup<SymOpType, BinaryCompareType, MultiplyType> operator*(SymGroup<SymOpType, BinaryCompareType, MultiplyType> lhs, const SymGroup<SymOpType, BinaryCompareType, MultiplyType>& rhs);
 
-template <typename SymOpType,typename BinaryCompareType>
+template <typename SymOpType,typename BinaryCompareType, typename MultiplyType = DefaultMultiply<SymOpType>>
 struct SymGroupCompare_f
 {
-    SymGroupCompare_f(const SymGroup<SymOpType,BinaryCompareType>& input1);
+    SymGroupCompare_f(const SymGroup<SymOpType, BinaryCompareType, MultiplyType>& input1);
 
-    bool operator()(const SymGroup<SymOpType,BinaryCompareType>& group2) const;
+    bool operator()(const SymGroup<SymOpType, BinaryCompareType, MultiplyType>& group2) const;
 
 private:
-    const SymGroup<SymOpType,BinaryCompareType> group1;
+    const SymGroup<SymOpType, BinaryCompareType, MultiplyType> group1;
     double tol;
 };
 
-template <typename SymOpType, typename BinaryCompareType>
-std::vector<SymGroup<SymOpType, BinaryCompareType>> find_subgroups(SymGroup<SymOpType, BinaryCompareType> input_group);
+template <typename SymOpType, typename BinaryCompareType, typename MultiplyType = DefaultMultiply<SymOpType>>
+std::vector<SymGroup<SymOpType, BinaryCompareType, MultiplyType>> find_subgroups(SymGroup<SymOpType, BinaryCompareType, MultiplyType> input_group);
 
 //*********************************************************************//
 
-template <typename SymOpType, typename BinaryCompareType>
-void SymGroup<SymOpType, BinaryCompareType>::close_group(std::vector<SymOpType>* operations_ptr, const BinaryCompareType& binary_comparator)
+template <typename SymOpType, typename BinaryCompareType, typename MultiplyType>
+void SymGroup<SymOpType, BinaryCompareType, MultiplyType>::close_group(std::vector<SymOpType>* operations_ptr, const BinaryCompareType& binary_comparator, MultiplyType multiply_elements)
 {
     int push_limit = 200;
     int push_count = 0;
 
     std::vector<SymOpType>& operations = *operations_ptr;
-    // take first element, mulptiply with everything
-    // if the product isn't there, then add it to group
-    // continue to next element
-    // stop when no new elements are added
 
     bool is_closed = false;
     while (!is_closed)
@@ -79,7 +74,7 @@ void SymGroup<SymOpType, BinaryCompareType>::close_group(std::vector<SymOpType>*
             for (int j = 0; j < last_size; ++j)
             {
                 //TODO: Think of a way of not repeating this
-                SymOpType candidate_operation = operations[i] * operations[j];
+                SymOpType candidate_operation =multiply_elements(operations[i], operations[j]);
                 auto compare_lambda=[candidate_operation, binary_comparator](const SymOpType& other){
                     return binary_comparator(other, candidate_operation);
                     };
@@ -101,8 +96,8 @@ void SymGroup<SymOpType, BinaryCompareType>::close_group(std::vector<SymOpType>*
 
 }
 
-template <typename SymOpType, typename BinaryCompareType>
-bool SymGroup<SymOpType, BinaryCompareType>::insert(SymOpType& new_operation)
+template <typename SymOpType, typename BinaryCompareType, typename MultiplyType>
+bool SymGroup<SymOpType, BinaryCompareType, MultiplyType>::insert(SymOpType& new_operation)
 {
                 //TODO: Think of a way of not repeating this
     auto compare_lambda=[this, new_operation](const SymOpType& other){
@@ -112,7 +107,7 @@ bool SymGroup<SymOpType, BinaryCompareType>::insert(SymOpType& new_operation)
     if (std::find_if(this->group.begin(), this->group.end(), compare_lambda) == this->group.end())
     {
         this->group.push_back(new_operation);
-        close_group(&this->group, this->binary_comparator);
+        close_group(&this->group, this->binary_comparator, this->multiply_elements);
         return true;
     }
 
@@ -120,12 +115,12 @@ bool SymGroup<SymOpType, BinaryCompareType>::insert(SymOpType& new_operation)
 }
 
 
-template <typename SymOpType, typename BinaryCompareType>
+template <typename SymOpType, typename BinaryCompareType, typename MultiplyType>
 template<typename ...Args>
-SymGroup<SymOpType, BinaryCompareType>::SymGroup(std::vector<SymOpType> generating_elements, Args... args): SymGroup<SymOpType,BinaryCompareType>(generating_elements,BinaryCompareType(args...)){}
+SymGroup<SymOpType, BinaryCompareType, MultiplyType>::SymGroup(std::vector<SymOpType> generating_elements, Args... args): SymGroup<SymOpType,BinaryCompareType, MultiplyType>(generating_elements,BinaryCompareType(args...), MultiplyType()){}
 
-template <typename SymOpType, typename BinaryCompareType>
-SymGroup<SymOpType, BinaryCompareType>::SymGroup(std::vector<SymOpType> generating_elements, const BinaryCompareType& binary_comparator): binary_comparator(binary_comparator)
+template <typename SymOpType, typename BinaryCompareType, typename MultiplyType>
+SymGroup<SymOpType, BinaryCompareType, MultiplyType>::SymGroup(std::vector<SymOpType> generating_elements, const BinaryCompareType& binary_comparator, const MultiplyType& multiply_elements): binary_comparator(binary_comparator), multiply_elements(multiply_elements)
 {
     for (SymOpType element : generating_elements)
     {
@@ -133,8 +128,8 @@ SymGroup<SymOpType, BinaryCompareType>::SymGroup(std::vector<SymOpType> generati
     }
 }
 
-template <typename SymOpType, typename BinaryCompareType>
-SymGroup<SymOpType, BinaryCompareType> operator*(SymGroup<SymOpType, BinaryCompareType> lhs, const SymGroup<SymOpType, BinaryCompareType>& rhs)
+template <typename SymOpType, typename BinaryCompareType, typename MultiplyType>
+SymGroup<SymOpType, BinaryCompareType, MultiplyType> operator*(SymGroup<SymOpType, BinaryCompareType, MultiplyType> lhs, const SymGroup<SymOpType, BinaryCompareType, MultiplyType>& rhs)
 {
     // combines all operations of the two groups and closes the result
     // combines groups in total group.
@@ -146,11 +141,11 @@ SymGroup<SymOpType, BinaryCompareType> operator*(SymGroup<SymOpType, BinaryCompa
     return lhs;
 }
 
-template <typename SymOpType, typename BinaryCompareType>
-SymGroupCompare_f<SymOpType, BinaryCompareType>::SymGroupCompare_f(const SymGroup<SymOpType, BinaryCompareType>& input1) : group1(input1){}
+template <typename SymOpType, typename BinaryCompareType, typename MultiplyType>
+SymGroupCompare_f<SymOpType, BinaryCompareType, MultiplyType>::SymGroupCompare_f(const SymGroup<SymOpType, BinaryCompareType, MultiplyType>& input1) : group1(input1){}
 
-template <typename SymOpType,typename BinaryCompareType>
-bool SymGroupCompare_f<SymOpType, BinaryCompareType>::operator()(const SymGroup<SymOpType, BinaryCompareType>& group2) const
+template <typename SymOpType,typename BinaryCompareType, typename MultiplyType>
+bool SymGroupCompare_f<SymOpType, BinaryCompareType, MultiplyType>::operator()(const SymGroup<SymOpType, BinaryCompareType, MultiplyType>& group2) const
 {
     if (group1.operations().size() != group2.operations().size())
     {
@@ -173,23 +168,24 @@ bool SymGroupCompare_f<SymOpType, BinaryCompareType>::operator()(const SymGroup<
     }
 }
 
-template <typename SymOpType, typename BinaryCompareType>
-std::vector<SymGroup<SymOpType, BinaryCompareType>> find_subgroups(SymGroup<SymOpType, BinaryCompareType> input_group)
+template <typename SymOpType, typename BinaryCompareType, typename MultiplyType>
+std::vector<SymGroup<SymOpType, BinaryCompareType, MultiplyType>> find_subgroups(SymGroup<SymOpType, BinaryCompareType, MultiplyType> input_group)
 {
-    std::vector<SymGroup<SymOpType, BinaryCompareType>> list_of_subgroups;
+    std::vector<SymGroup<SymOpType, BinaryCompareType, MultiplyType>> list_of_subgroups;
     
     //Initializing a subgroup with each  element of the total group.
     for (const SymOpType& operation : input_group.operations()) 
     {
         BinaryCompareType compare = input_group.get_comparator();
-        SymGroup<SymOpType, BinaryCompareType> pot_subgroup(std::vector<SymOpType> {operation}, compare);
+        MultiplyType multiplier = input_group.get_multiplier();
+        SymGroup<SymOpType, BinaryCompareType, MultiplyType> pot_subgroup(std::vector<SymOpType> {operation}, compare, multiplier);
         if (pot_subgroup.operations().size() == input_group.operations().size()) 
         {
             continue;
         }
 //check that the group compare makes sense
         
-        SymGroupCompare_f<SymOpType, BinaryCompareType> compare_symgroups(pot_subgroup);
+        SymGroupCompare_f<SymOpType, BinaryCompareType, MultiplyType> compare_symgroups(pot_subgroup);
         auto compare_groups=[compare_symgroups, pot_subgroup](const SymGroup<SymOpType, BinaryCompareType>& other){
             return compare_symgroups(other);};
 
@@ -209,7 +205,7 @@ std::vector<SymGroup<SymOpType, BinaryCompareType>> find_subgroups(SymGroup<SymO
         {
             for (int j = 0; j < last_size; j++) 
             {
-                SymGroup<SymOpType, BinaryCompareType> pot_larger_subgroup = list_of_subgroups[a] * list_of_subgroups[j];
+                SymGroup<SymOpType, BinaryCompareType, MultiplyType> pot_larger_subgroup = list_of_subgroups[a] * list_of_subgroups[j];
 
                 if (pot_larger_subgroup.operations().size() == input_group.operations().size()) 
                 {

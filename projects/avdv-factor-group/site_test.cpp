@@ -33,8 +33,8 @@ Eigen::Matrix3d test_row_vector_lattice;
 test_row_vector_lattice<<1, 0, 0, 0, 2, 0, 0, 1, 3;
 Lattice my_lattice=Lattice(test_row_vector_lattice);
 SitePeriodicCompare_f my_site_periodic_compare(my_site, 0.0001, my_lattice);
-Site test_site_periodic= Site("Na", Coordinate(Eigen::Vector3d(0.1, 0.1, 0.1)));
-EXPECT_TRUE(my_site_periodic_compare(test_site_periodic), "test site compare");
+Site test_site_periodic= Site("Na", Coordinate(Eigen::Vector3d(1.1, 0.1, 0.1)));
+EXPECT_TRUE(my_site_periodic_compare(test_site_periodic), "test site periodic compare");
 
 
 //operator*

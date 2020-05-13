@@ -1,5 +1,5 @@
-//#include <algorithm>
-//#include <vector>
+#include <algorithm>
+#include <vector>
 //#include "./symop.hpp"
 //#include "./site.hpp"
 //#include "./symgroup.hpp"
@@ -11,6 +11,7 @@ std::vector<Site> transform_basis(const SymOp& symop, const std::vector<Site>& b
     std::vector<Site> transformed_basis;
     for(const Site& s : basis)
     {
+        //transformed_basis.emplace_back(symop*s);
         transformed_basis.emplace_back(symop*s);
     }
     return transformed_basis;
@@ -21,16 +22,18 @@ bool basis_maps_onto_itself(const std::vector<Site>& original_basis, const std::
 {
     if(original_basis.size()!=transformed_basis.size())
     {
-        return false;
+	 return false;
+	
     }
 
     for(const Site& transformed_s : transformed_basis)
     {
         SitePeriodicCompare_f compare_to_transformed(transformed_s,tol,lattice);
-        auto find_it=std::find_if(original_basis.begin(),original_basis.end(),compare_to_transformed);
-        if(find_it==original_basis.end())
+        
+	if(std::find_if(original_basis.begin(),original_basis.end(),compare_to_transformed)==original_basis.end())
         {
-            return false;
+	return false;
+	    
         }
 
     }
@@ -52,14 +55,17 @@ std::vector<Eigen::Vector3d> generate_translations(const Site& original_basis_si
 
 
 
-SymGroup<SymOp, BinarySymOpPeriodicCompare_f> generate_factor_group(const Structure& struc, double tol)
+SymGroup<SymOp, BinarySymOpPeriodicCompare_f, BinarySymOpPeriodicMultiplier_f> generate_factor_group(const Structure& struc, double tol)
 {
     SymGroup<SymOp, CartesianBinaryComparator_f>  point_group=generate_point_group(struc.get_lattice().row_vector_matrix(), tol);
 
     const auto& basis=struc.get_sites(); 
 
     //make empty sym group
-    SymGroup<SymOp, BinarySymOpPeriodicCompare_f> factor_group;
+    BinarySymOpPeriodicCompare_f comparison(struc.get_lattice(), tol);
+    BinarySymOpPeriodicMultiplier_f mult_op(struc.get_lattice(), tol);
+    /* SymOp identity(Eigen::Matrix3d::Identity(),Eigen::Vector3d::Zero()); */
+    SymGroup<SymOp, BinarySymOpPeriodicCompare_f, BinarySymOpPeriodicMultiplier_f> factor_group({},comparison, mult_op);
 
     for(const SymOp& point_op : point_group.operations())
     {
@@ -70,9 +76,10 @@ SymGroup<SymOp, BinarySymOpPeriodicCompare_f> generate_factor_group(const Struct
         {
             SymOp symop_translation(Eigen::Matrix3d::Identity(),translation);
             auto transformed_translated_basis=transform_basis(symop_translation,transformed_basis);
-            if(basis_maps_onto_itself(basis,transformed_translated_basis,struc.get_lattice()),tol)
+            if(basis_maps_onto_itself(basis,transformed_translated_basis,struc.get_lattice(),tol))
             {
-                factor_group.insert(symop_translation);
+		SymOp factor_group_symop(point_op.get_cart_matrix(), translation);
+                factor_group.insert(factor_group_symop);
             }
         }
     }

@@ -5,3 +5,5 @@ g++ --std=c++17 symop.cpp lattice.cpp coordinate.cpp site.cpp tests.cpp structur
 g++ --std=c++17 tests.cpp symop.cpp symop_test.cpp -o test_symop
 g++ --std=c++17 symop.cpp tests.cpp point_group.cxx test_pointgroup.cpp -o test_pointgroup
 g++ --std=c++17 lattice.cpp site.cpp coordinate.cpp structure.cpp symop.cpp tests.cpp point_group.cxx fastsymmetry.cpp test_fastsym.cpp -o test_fastsymmetry
+g++ --std=c++17 lattice.cpp site.cpp coordinate.cpp structure.cpp symop.cpp tests.cpp point_group.cxx fastsymmetry.cpp factor_group.cpp factor_group_test.cpp -o test_factorgroup
+g++ --std=c++17 lattice.cpp symop.cpp tests.cpp symgroup_test.cpp symgroup.hpp -o symgroup_test

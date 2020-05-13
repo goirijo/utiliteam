@@ -40,7 +40,7 @@ class CartesianBinaryComparator_f
 {
     public:
             CartesianBinaryComparator_f(double tol);
-            bool operator()(const SymOp& lhs, const SymOp& rhs) const;
+            bool operator()(const SymOp& element1, const SymOp& element2) const;
     private:
             double tol;
 };
@@ -48,10 +48,20 @@ class CartesianBinaryComparator_f
 class BinarySymOpPeriodicCompare_f
 {
 	public:
-		BinarySymOpPeriodicCompare_f(Lattice& lattice, double tol);
+		BinarySymOpPeriodicCompare_f(const Lattice& lattice, double tol);
 		bool operator()(const SymOp& element1, const SymOp& element2) const;
 	private:
 		double tol;
 		Lattice m_lattice;
+};
+
+class BinarySymOpPeriodicMultiplier_f
+{
+    public:
+        BinarySymOpPeriodicMultiplier_f(const Lattice& lattice, double tol);
+        SymOp operator()(const SymOp& operation1, const SymOp& operation2) const;
+    private:
+        Lattice m_lattice;
+        double tol;
 };
 #endif

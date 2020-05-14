@@ -87,12 +87,75 @@ bool basis_doesnt_map_onto_itself_size_mismatch(double tol)
     return !basis_maps_onto_itself({na1,na2,li1},{na1},lat, PREC) && !basis_maps_onto_itself({na1},{na1,na2,li1},lat, tol);
 }
 
+bool generate_translations_works(double tol)
+{
+	Site original_basis("Na", Coordinate(Eigen::Vector3d(0.0, 0.0, 0.0)));
+	Eigen::Vector3d expected_translations1(Eigen::Vector3d(0.2, 0.2, 0.2));
+	Eigen::Vector3d expected_translations2(Eigen::Vector3d(0.4, 0.2, 0.2));
+	Eigen::Vector3d expected_translations3(Eigen::Vector3d(0.6, 0.2, 0.2));
+        Site transformed_basis_site1("Na", expected_translations1);
+        Site transformed_basis_site2("Na", expected_translations2);
+        Site transformed_basis_site3("Na", expected_translations3);
+	std::vector<Site> total_transformed{transformed_basis_site1, transformed_basis_site2, transformed_basis_site3};
+	std::vector<Eigen::Vector3d> my_translations=generate_translations(original_basis, total_transformed);
+	std::vector<Eigen::Vector3d> vector_expected_translations{expected_translations1*-1, expected_translations2*-1, expected_translations3*-1};
+	if (my_translations.size()!=3)
+	{
+		std::cout<<"wrong size"<<std::endl;
+		std::cout<<my_translations.size()<<std::endl;
+		return false;
+	}
+	std::cout<<"my_translations";
+	for(const auto& translation: my_translations)
+	{
+	
+		std::cout<<translation<<std::endl;
+	}
+	std::cout<<"expected_translation";
+
+	for(const auto& translation: vector_expected_translations)
+	{
+	
+		std::cout<<translation<<std::endl;
+	}
+
+	for(const auto& translation: my_translations)
+	{
+		auto compare_translations=[translation, tol](Eigen::Vector3d expected_translation)	
+		{
+			return translation.isApprox(expected_translation, tol);
+		};
+		 if (find_if(vector_expected_translations.begin(), vector_expected_translations.end(), compare_translations)==vector_expected_translations.end())
+			{	
+		 	std::cout<<"generated translations not within expected_translations";
+			std::cout<<translation<<std::endl;
+			return false;
+			}
+	}
+
+	return true;
+}
+
 bool test_fcc_factor_group(double tol)
 {
     Structure fcc=read_poscar("./test_files/fcc.vasp");
     auto fg=generate_factor_group(fcc, tol);
     
     return fg.operations().size()==48;
+}
+
+bool test_FeLi2Se2_factor_group(double tol)
+{
+    Structure fcc=read_poscar("./test_files/FeLi2Se2.vasp");
+    auto fg=generate_factor_group(fcc, tol); 
+    std::cout<<"DEBUGGING: feli2se2 fg.size() is "<<fg.operations().size()<<std::endl;
+    std::cout<<"Hellooooooooooo\n";
+    for(const SymOp& op : fg.operations())
+    {
+        std::cout<<op.get_cart_matrix()<<"\n\n";
+        std::cout<<op.get_translation().transpose()<<"\n\n";
+    }
+    return fg.operations().size()==6;
 }
 
 bool test_pnb9o25_factor_group(double tol)
@@ -116,7 +179,7 @@ int main()
 {
     std::cout<<"---- Running Factor Group Tests ----"<<std::endl;
     std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
-    double tol= 0.0001;
+    double tol= 0.001;
     EXPECT_TRUE(test_transform_basis_inversion(), "Transform basis inversion");
     EXPECT_TRUE(test_transform_basis_glide(), "Transform basis glide");
     EXPECT_TRUE(test_transform_basis_size(), "Transform basis size");
@@ -124,8 +187,9 @@ int main()
     EXPECT_TRUE(basis_maps_onto_itself_test(tol), "Basis maps");
     EXPECT_TRUE(basis_maps_onto_itself_periodically(tol), "Basis maps periodic");
     EXPECT_TRUE(basis_doesnt_map_onto_itself(tol), "Basis shouldnt map");
-
+    EXPECT_TRUE(generate_translations_works(tol), "Generate translations should generate translations");
     EXPECT_TRUE(test_fcc_factor_group(tol), "FCC factor group has 48 operations");
     EXPECT_TRUE(test_pnb9o25_factor_group(tol), "pnb9o25 factor group has 4 operations");
+    EXPECT_TRUE(test_FeLi2Se2_factor_group(tol), "FCC factor group has 48 operations");
     return 0;
 }

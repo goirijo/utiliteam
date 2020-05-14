@@ -61,7 +61,7 @@ Eigen::Vector3d find_geometric_center(const Cluster& test_cluster)
     return added_coord / test_cluster.cluster_size();
 }
 
-double distance(Coordinate& middlepoint, Coordinate& compared_coord)
+double distance(Coordinate middlepoint, Coordinate compared_coord)
 {
 	//should I bring the middle point within?
 	double distance=sqrt(pow(middlepoint.get_cart_coordinate()[0]-compared_coord.get_cart_coordinate()[0],2)+pow(middlepoint.get_cart_coordinate()[1]-compared_coord.get_cart_coordinate()[1],2)+pow(middlepoint.get_cart_coordinate()[2]-compared_coord.get_cart_coordinate()[2],2));
@@ -70,17 +70,25 @@ double distance(Coordinate& middlepoint, Coordinate& compared_coord)
 // Arithmetic center of mass -Muna
 // TODO: Find sites within a radius.
 // args: Coordinate, radius, Structure
-std::vector<Site> find_sites_within_radius(Coordinate middlepoint, int my_radius, Structure& my_struc)
+std::vector<Coordinate> find_sites_within_radius(Coordinate potential_anion_coord, double my_radius, Structure& my_struc)
 {
+	  //need a way to ensure that our input will end up being cartesian!!! 
+
 	 //use flooring function */
-	 std::vector<Site> sites_within_radius; 
+	 std::vector<Coordinate> coords_within_radius; 
 	 //Compute Distance between sites and floor coord */
-	 for (const auto& site: my_struc.get_sites())  
+	 std::vector<Coordinate> cartesian_structure_coord;
+	 for (int i=0; i<my_struc.get_sites().size(); i++)
+	 {
+	 	Coordinate cart_coord(convert_to_cartesian(my_struc.get_lattice(), my_struc.get_sites().at(i).get_eigen_coordinate()));
+	 	cartesian_structure_coord.emplace_back(cart_coord);
+	 }
+	 for (const auto& structure_coord: cartesian_structure_coord)  
 	 { 
-	 	auto within_coord=site.get_coordinate(); //do I need to use bring_within here?
-	 	if (distance(middlepoint, within_coord)<my_radius) 
+		//for (const auto& anion_coord: potential_anion_coords)
+	 	if (distance(structure_coord, potential_anion_coord)<my_radius) 
 	 	{ 
-	 		sites_within_radius.emplace_back(site); 
+	 		coords_within_radius.emplace_back(structure_coord); 
 	 	} 
 	 } 
 
@@ -92,26 +100,26 @@ std::vector<Site> find_sites_within_radius(Coordinate middlepoint, int my_radius
     //for each Site, calculate the distace to middlepoint
     //if the distance is below the radius, push to list
 
-    return sites_within_radius;
+    return coords_within_radius;
 }
 
 
 
-std::vector<Site> discard_sites_within_radius(std::string anion_name, int my_radius, Structure& my_struc)
+std::vector<Site> discard_sites_within_radius(std::vector<Coordinate> anion_coordinates, int my_radius, Structure& my_struc)
 {
 	std::vector<Site> total_anion_sites;
 	std::vector<Site> anion_sites_to_keep;
 	//find number of the interstitial in the structure
-	for (const auto& site: my_struc.get_sites())
+//	for (const auto& site: my_struc.get_sites())
+//	{
+//		if (site.get_atom()==anion_name)
+//		{
+//			total_anion_sites.push_back(site);
+//		}
+//	}
+	for (auto anion_coord: anion_coordinates)
 	{
-		if (site.get_atom()==anion_name)
-		{
-			total_anion_sites.push_back(site);
-		}
-	}
-	for (auto anion_site: total_anion_sites)
-	{
-		std::vector<Site> sites_too_close_to_Li=find_sites_within_radius(anion_site.get_coordinate(), my_radius, my_struc);
+		std::vector<Coordinate> sites_too_close_to_Li=find_sites_within_radius(anion_coord, my_radius, my_struc);
 		if (sites_too_close_to_Li.size()<=1)
 		{
 			anion_sites_to_keep.push_back(anion_site);
@@ -143,5 +151,6 @@ std::vector<Coordinate> make_grid_points(int in_a, int in_b, int in_c, const Lat
 			}
 		}
 	}
+	//make sure this comes out as cartesian
 	return grid;
 }

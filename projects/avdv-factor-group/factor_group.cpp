@@ -49,6 +49,7 @@ std::vector<Eigen::Vector3d> generate_translations(const Site& original_basis_si
 	{
 		Eigen::Vector3d trans= original_basis_site.get_eigen_coordinate()-transformed_basis_site.get_eigen_coordinate();
 		total_trans.push_back(trans);
+	        std::cout<<"all the potential translations are:"<<trans<<std::endl<<std::endl;
 	}
 	return total_trans;
 }
@@ -59,6 +60,7 @@ SymGroup<SymOp, BinarySymOpPeriodicCompare_f, BinarySymOpPeriodicMultiplier_f> g
 {
     SymGroup<SymOp, CartesianBinaryComparator_f>  point_group=generate_point_group(struc.get_lattice().row_vector_matrix(), tol);
 
+    std::cout<<"I'm here! point group passed";
     const auto& basis=struc.get_sites(); 
 
     //make empty sym group
@@ -66,9 +68,9 @@ SymGroup<SymOp, BinarySymOpPeriodicCompare_f, BinarySymOpPeriodicMultiplier_f> g
     BinarySymOpPeriodicMultiplier_f mult_op(struc.get_lattice(), tol);
     /* SymOp identity(Eigen::Matrix3d::Identity(),Eigen::Vector3d::Zero()); */
     SymGroup<SymOp, BinarySymOpPeriodicCompare_f, BinarySymOpPeriodicMultiplier_f> factor_group({},comparison, mult_op);
-
+    std::cout<<"I'm here! factor group initialized";
     for(const SymOp& point_op : point_group.operations())
-    {
+   {	
         auto transformed_basis=transform_basis(point_op,basis);
         std::vector<Eigen::Vector3d> all_translations=generate_translations(basis[0],transformed_basis);
 
@@ -76,8 +78,11 @@ SymGroup<SymOp, BinarySymOpPeriodicCompare_f, BinarySymOpPeriodicMultiplier_f> g
         {
             SymOp symop_translation(Eigen::Matrix3d::Identity(),translation);
             auto transformed_translated_basis=transform_basis(symop_translation,transformed_basis);
-            if(basis_maps_onto_itself(basis,transformed_translated_basis,struc.get_lattice(),tol))
+            if(basis_maps_onto_itself(basis,transformed_translated_basis,struc.get_lattice(),0.01))
             {
+		std::cout<<"testing symop in basis maps onto itself function:"<<std::endl;
+		std::cout<<point_op.get_cart_matrix()<<std::endl;
+		std::cout<<translation<<std::endl;
 		SymOp factor_group_symop(point_op.get_cart_matrix(), translation);
                 factor_group.insert(factor_group_symop);
             }

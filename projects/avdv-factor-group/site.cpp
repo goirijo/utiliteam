@@ -38,7 +38,7 @@ bool SitePeriodicCompare_f::operator()(Site other)
         distance_vector(i)=distance_vector(i)-std::round(distance_vector(i));
     }
     Eigen::Vector3d cartesian_distance_vector = convert_to_cartesian(m_lattice, distance_vector);
-    return (std::abs(cartesian_distance_vector.norm())<m_precision);
+    return m_site.get_atom()==other.get_atom() && (std::abs(cartesian_distance_vector.norm())<m_precision);
 }
 
 Site operator*(const SymOp& transformation, const Site& site)

@@ -82,7 +82,7 @@ void SymGroup<SymOpType, BinaryCompareType, MultiplyType>::close_group(std::vect
 
                 if (std::find_if(operations.begin(), operations.end(), compare_lambda) == operations.end())
                 {
-                    std::cout<<"Added Operation:\n"<<"SymOp Matrix: \n"<<candidate_operation.get_cart_matrix()<<"translation: \n"<<candidate_operation.get_translation()<<std::endl;
+                   // std::cout<<"Added Operation:\n"<<"SymOp Matrix: \n"<<candidate_operation.get_cart_matrix()<<"translation: \n"<<candidate_operation.get_translation()<<std::endl;
                     operations.push_back(candidate_operation);
                     is_closed = false;
                     ++push_count;
@@ -108,7 +108,7 @@ bool SymGroup<SymOpType, BinaryCompareType, MultiplyType>::insert(SymOpType& new
 
     if (std::find_if(this->group.begin(), this->group.end(), compare_lambda) == this->group.end())
     {
-        std::cout<<"Added Operation:\n"<<"SymOp Matrix: \n"<<new_operation.get_cart_matrix()<<"translation: \n"<<new_operation.get_translation()<<std::endl;
+      //  std::cout<<"Added Operation:\n"<<"SymOp Matrix: \n"<<new_operation.get_cart_matrix()<<"translation: \n"<<new_operation.get_translation()<<std::endl;
         this->group.push_back(new_operation);
         close_group(&this->group, this->binary_comparator, this->multiply_elements);
         return true;

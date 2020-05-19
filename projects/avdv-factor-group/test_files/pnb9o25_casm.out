@@ -1,0 +1,25 @@
+
+#################################
+
+CASM status:
+
+-- Construct: CASM Project -- 
+from: "/home/colleen/casm_dev_work/utiliteam/projects/avdv-factor-group/temp_proj_pnbo"
+
+-- Load project data -- 
+
+1) Project initialized: TRUE
+
+- Project name: pb9o25_test
+- Project location: /home/colleen/casm_dev_work/utiliteam/projects/avdv-factor-group/temp_proj_pnbo
+- Lattice point group size: 16
+- Lattice point group is D4h
+- Factor group size: 4
+- Crystal point group is: S4
+
+
+2) Composition axes 
+- Composition axes selected: FALSE
+
+For next steps, run 'casm status -n'
+

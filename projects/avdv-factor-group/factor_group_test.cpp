@@ -105,18 +105,18 @@ bool generate_translations_works(double tol)
 		std::cout<<my_translations.size()<<std::endl;
 		return false;
 	}
-	std::cout<<"my_translations";
+/*	std::cout<<"my_translations";
 	for(const auto& translation: my_translations)
 	{
 	
 		std::cout<<translation<<std::endl;
 	}
-	std::cout<<"expected_translation";
+	std::cout<<"expected_translation";*/
 
 	for(const auto& translation: vector_expected_translations)
 	{
 	
-		std::cout<<translation<<std::endl;
+//		std::cout<<translation<<std::endl;
 	}
 
 	for(const auto& translation: my_translations)
@@ -149,7 +149,7 @@ bool test_FeLi2Se2_factor_group(double tol)
     Structure fcc=read_poscar("./test_files/FeLi2Se2.vasp");
     auto fg=generate_factor_group(fcc, tol); 
     std::cout<<"DEBUGGING: feli2se2 fg.size() is "<<fg.operations().size()<<std::endl;
-    std::cout<<"Hellooooooooooo\n";
+  //std::cout<<"Hellooooooooooo\n";
     for(const SymOp& op : fg.operations())
     {
         std::cout<<op.get_cart_matrix()<<"\n\n";
@@ -158,57 +158,24 @@ bool test_FeLi2Se2_factor_group(double tol)
     return fg.operations().size()==6;
 }
 
-bool test_zr12_factor_group(double tol)
-{
-    Structure fcc=read_poscar("./temp_proj/POSCAR.allzr");
-    auto fg=generate_factor_group(fcc, tol); 
-    std::cout<<"DEBUGGING: Zr12 fg.size() is "<<fg.operations().size()<<std::endl;
-  /*  for(const SymOp& op : fg.operations())
-    {
-        std::cout<<op.get_cart_matrix()<<"\n\n";
-        std::cout<<op.get_translation().transpose()<<"\n\n";
-    }*/
-    return fg.operations().size()==4;
-}
-
 bool test_zro2_factor_group(double tol)
 {
     Structure zro2=read_poscar("./test_files/POSCAR.ZrO2");
-    SymGroup<SymOp, CartesianBinaryComparator_f>  point_group=generate_point_group(zro2.get_lattice().row_vector_matrix(), tol);
-   // for(const SymOp& point : point_group.operations())
-  //  { std::cout<< "Next SymOp Cart Matrix:\n"<<point.get_cart_matrix()<<std::endl;}
- //   Eigen::Matrix3d test_matrix= Eigen::Matrix3d::Identity()*-1;
-    Eigen::Vector3d test_translation({ 5.15327, 5.26846, 4.50473});
-//    test_translation<< 5.15327, 5.26846, 4.50473;
-    const Eigen::Vector3d& refernce_translation = test_translation;
-    std::cout<<"Translations:\n"<< test_translation<<std::endl;
-    BinarySymOpPeriodicCompare_f comparison(zro2.get_lattice(), tol);
-    BinarySymOpPeriodicMultiplier_f mult_op(zro2.get_lattice(), tol);
-
-    SymGroup<SymOp, BinarySymOpPeriodicCompare_f, BinarySymOpPeriodicMultiplier_f> test_group({}, comparison, mult_op);
-    Eigen::Matrix3d test_matrix;
-     for (int i =0; i<3; i++){
-         for (int j=0;j<3; j++){
-             test_matrix(i,j)= point_group.operations()[0].get_cart_matrix()(i,j);
-         }
-     }
-    SymOp test_op=SymOp(test_matrix,refernce_translation);
-    test_group.insert(test_op);
-//    auto fg=generate_factor_group(zro2, tol); 
-//    std::cout<<"DEBUGGING: ZrO2 fg.size() is "<<fg.operations().size()<<std::endl;
-/*    for(const SymOp& op : fg.operations())
+    auto fg=generate_factor_group(zro2, tol); 
+    std::cout<<"DEBUGGING: ZrO2 fg.size() is "<<fg.operations().size()<<std::endl;
+    for(const SymOp& op : fg.operations())
     {
         std::cout<<op.get_cart_matrix()<<"\n\n";
         std::cout<<op.get_translation().transpose()<<"\n\n";
-    }*/
-    return true;//fg.operations().size()==4;
+    }
+    return fg.operations().size()==4;
 }
 bool test_pnb9o25_factor_group(double tol)
 {
     Structure pnb9o25=read_poscar("./test_files/pnb9o25.vasp");
     auto fg=generate_factor_group(pnb9o25, tol);
     std::cout<<"DEBUGGING: pnb9o25 fg.size() is "<<fg.operations().size()<<std::endl;
-    std::cout<<"Hellooooooooooo\n";
+//    std::cout<<"Hellooooooooooo\n";
 
     //TODO: Make SymGroup work for range based loops (you'll have to forward begin/end iterators)
     for(const SymOp& op : fg.operations())
@@ -225,18 +192,17 @@ int main()
     std::cout<<"---- Running Factor Group Tests ----"<<std::endl;
     std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
     double tol= 1e-6;
-//    EXPECT_TRUE(test_transform_basis_inversion(), "Transform basis inversion");
-//    EXPECT_TRUE(test_transform_basis_glide(), "Transform basis glide");
-//    EXPECT_TRUE(test_transform_basis_size(), "Transform basis size");
+    EXPECT_TRUE(test_transform_basis_inversion(), "Transform basis inversion");
+    EXPECT_TRUE(test_transform_basis_glide(), "Transform basis glide");
+    EXPECT_TRUE(test_transform_basis_size(), "Transform basis size");
 
-//    EXPECT_TRUE(basis_maps_onto_itself_test(tol), "Basis maps");
-//    EXPECT_TRUE(basis_maps_onto_itself_periodically(tol), "Basis maps periodic");
-//    EXPECT_TRUE(basis_doesnt_map_onto_itself(tol), "Basis shouldnt map");
-//    EXPECT_TRUE(generate_translations_works(tol), "Generate translations should generate translations");
-//    EXPECT_TRUE(test_fcc_factor_group(tol), "FCC factor group has 48 operations");
+    EXPECT_TRUE(basis_maps_onto_itself_test(tol), "Basis maps");
+    EXPECT_TRUE(basis_maps_onto_itself_periodically(tol), "Basis maps periodic");
+    EXPECT_TRUE(basis_doesnt_map_onto_itself(tol), "Basis shouldnt map, has different atom types");
+    EXPECT_TRUE(generate_translations_works(tol), "Generate translations should generate translations");
+    EXPECT_TRUE(test_fcc_factor_group(tol), "FCC factor group has 48 operations");
     EXPECT_TRUE(test_pnb9o25_factor_group(tol), "pnb9o25 factor group has 4 operations");
-//    EXPECT_TRUE(test_FeLi2Se2_factor_group(tol), "FCC factor group has 48 operations");
-//    EXPECT_TRUE(test_zr12_factor_group(tol), "ZrO2 factor group has 4 operations with all Zr");
+//    EXPECT_TRUE(test_FeLi2Se2_factor_group(tol), "FeLi2Se2 factor group has 48 operations");
     EXPECT_TRUE(test_zro2_factor_group(tol), "ZrO2 factor group has 4 operations");
     return 0;
 }

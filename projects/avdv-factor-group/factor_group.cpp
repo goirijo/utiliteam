@@ -62,8 +62,8 @@ SymGroup<SymOp, BinarySymOpPeriodicCompare_f, BinarySymOpPeriodicMultiplier_f> g
 
     std::cout<<"I'm here! point group passed"<<std::endl;
     std::cout<<"Point Group Size is :"<< point_group.operations().size()<<std::endl;
-    std::cout<<" This is the input lattice for comparisons"<<std::endl;
-    std::cout<< struc.get_lattice().row_vector_matrix()<<std::endl;
+/*    std::cout<<" This is the input lattice for comparisons"<<std::endl;
+    std::cout<< struc.get_lattice().row_vector_matrix()<<std::endl;*/
     const auto& basis=struc.get_sites(); 
 
     //make empty sym group
@@ -83,12 +83,12 @@ SymGroup<SymOp, BinarySymOpPeriodicCompare_f, BinarySymOpPeriodicMultiplier_f> g
             auto transformed_translated_basis=transform_basis(symop_translation,transformed_basis);
             if(basis_maps_onto_itself(basis,transformed_translated_basis,struc.get_lattice(),tol))
             {
-	        	std::cout<<"testing symop in basis maps onto itself function:"<<std::endl;
+/*	        	std::cout<<"testing symop in basis maps onto itself function:"<<std::endl;
 	        	std::cout<<point_op.get_cart_matrix()<<std::endl;
-    	    	std::cout<<translation<<std::endl;
+    	    	std::cout<<translation<<std::endl;*/
 	        	SymOp factor_group_symop(point_op.get_cart_matrix(), translation);
                 factor_group.insert(factor_group_symop);
-                std::cout<<"I inserted the symop and closed the group"<<std::endl;
+//                std::cout<<"I inserted the symop and closed the group"<<std::endl;
             }
         }
     }

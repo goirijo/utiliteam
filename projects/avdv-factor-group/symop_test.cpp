@@ -32,7 +32,7 @@ int main()
 	//test Binary symop compare
 	Eigen::Matrix3d unit_matrix;
 	unit_matrix<<1,0,0,0,1,0,0,0,1;
-	Lattice unit_lattice=Lattice(unit_matrix);
+	Lattice unit_lattice=Lattice(unit_matrix.col(0),unit_matrix.col(1),unit_matrix.col(2));
 	Eigen::Vector3d periodic_translation;
 	periodic_translation<<1.5,0,0;
 	

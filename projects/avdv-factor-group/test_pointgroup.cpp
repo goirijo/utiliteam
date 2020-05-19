@@ -12,8 +12,9 @@ int main()
     std::cout<<"---- Running PointGroup Tests ----"<<std::endl;
     std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 
-    Eigen::Matrix3d simple_cube_lattice= Eigen::Matrix3d::Identity();
-    std::vector<std::vector<double>> grid_pts_test=create_grid_pts(simple_cube_lattice);
+    Eigen::Matrix3d simple_cube_lattice_matrix= Eigen::Matrix3d::Identity();
+    Lattice simple_cube_lattice(simple_cube_lattice_matrix.col(0),simple_cube_lattice_matrix.col(1),simple_cube_lattice_matrix.col(2));
+    std::vector<std::vector<double>> grid_pts_test=create_grid_pts(simple_cube_lattice_matrix);
     EXPECT_TRUE(125 ==grid_pts_test.size(),"expected length grid points equal to 125"); 
     EXPECT_EQ_vectorsD(std::vector<double>{-2,-2,-2}, grid_pts_test[0],"Exected first coordinate (-2,-2,-2)");
     EXPECT_EQ_vectorsD(std::vector<double>{2,2,2}, grid_pts_test[124],"Exected last coordinate (2,2,2)");

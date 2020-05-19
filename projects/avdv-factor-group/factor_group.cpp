@@ -58,7 +58,7 @@ std::vector<Eigen::Vector3d> generate_translations(const Site& original_basis_si
 
 SymGroup<SymOp, BinarySymOpPeriodicCompare_f, BinarySymOpPeriodicMultiplier_f> generate_factor_group(const Structure& struc, double tol)
 {
-    SymGroup<SymOp, CartesianBinaryComparator_f>  point_group=generate_point_group(struc.get_lattice().row_vector_matrix(), tol);
+    SymGroup<SymOp, CartesianBinaryComparator_f>  point_group=generate_point_group(struc.get_lattice(), tol);
 
     std::cout<<"I'm here! point group passed"<<std::endl;
     std::cout<<"Point Group Size is :"<< point_group.operations().size()<<std::endl;

@@ -11,6 +11,7 @@
 
 using namespace std;
 
+
 std::vector<std::vector<double>> create_grid_pts(const Eigen::Matrix3d L)
 {
     // generate a grid of coordinates of points with radius n.
@@ -87,5 +88,11 @@ SymGroup<SymOp, CartesianBinaryComparator_f> generate_point_group(const Eigen::M
     CartesianBinaryComparator_f compare(tol);
     SymGroup<SymOp, CartesianBinaryComparator_f> pt_group(pt_group_list,compare);
     return pt_group;
+}
+
+SymGroup<SymOp, CartesianBinaryComparator_f> generate_point_group(const Lattice& lat, double tol)
+{
+    const Eigen::Matrix3d& column_matrix=lat.col_vector_matrix();
+    return generate_point_group(column_matrix,tol);
 }
 

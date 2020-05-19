@@ -82,7 +82,7 @@ Structure read_poscar(const std::string &poscar_path) {
   
 
   // make Lattice
-  Lattice latt(lat_row_matrix);
+  Lattice latt(lat_row_matrix.row(0),lat_row_matrix.row(1),lat_row_matrix.row(2));
   // making the sites, creating one site per atom
   std::vector<Site> Sites;
   int t = 0;

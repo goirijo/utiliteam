@@ -14,12 +14,14 @@ public:
     Eigen::Vector3d get_translation() const;
     Eigen::Matrix3d get_cart_matrix() const;
 
-private:
     Eigen::Matrix3d m_cart_matrix;
+private:
+
     Eigen::Vector3d m_translation;
 };
 
 SymOp operator*(const SymOp& lhs, const SymOp& rhs);
+
 
 //TODO: Refactor. Just elimitate this, we only want the binary comparisons
 //If you want unary comparisons, make a fancy template
@@ -64,4 +66,7 @@ class BinarySymOpPeriodicMultiplier_f
         Lattice m_lattice;
         double tol;
 };
+
+bool operator==(const SymOp& lhs, const SymOp& rhs);
+
 #endif

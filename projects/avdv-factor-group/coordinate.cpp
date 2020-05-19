@@ -10,17 +10,19 @@ Eigen::Vector3d Coordinate::get_frac_coordinate(const Lattice& lattice) const{
     return convert_to_fractional(lattice, m_coord);
 } 
 
-void Coordinate::bring_within(const Lattice& lattice, double prec)
+void Coordinate::coord_bring_within(const Lattice& lattice, double prec)
 {
-    Eigen::Vector3d frac_coords;
-    frac_coords = this->get_frac_coordinate(lattice);
+    
+//    Eigen::Vector3d frac_coords;
+    Eigen::Vector3d cart_coords = this->get_cart_coordinate();
+    this->m_coord = bring_within(lattice, prec, cart_coords);
     //frac_coords = lattice.col_vector_matrix().inverse() * get_cart_coordinate(lattice);
-    for (int i = 0; i < 3; ++i)
+/*    for (int i = 0; i < 3; ++i)
     {
         if (frac_coords(i) < -prec || frac_coords(i) >= 1-prec)		
         {
             frac_coords(i) = frac_coords(i) - floor(frac_coords(i)+prec);
         }
     }
-    this->m_coord = lattice.col_vector_matrix() * frac_coords;
+    this->m_coord = lattice.col_vector_matrix() * frac_coords;*/
 }

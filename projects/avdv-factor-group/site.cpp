@@ -1,5 +1,6 @@
 #include "site.hpp"
 #include "symop.hpp"
+#include <cmath>
 
 // Defines position and type of atom in a crystal
 Site::Site(const std::string atom_name, const Coordinate& init_coord) : m_coord(init_coord), m_atom(atom_name) {}
@@ -24,14 +25,20 @@ bool SiteCompare_f::operator()(const Site& other) const
 
 //Site compare taking into account perioduc boundary conditions
 SitePeriodicCompare_f::SitePeriodicCompare_f(Site site, double prec, const Lattice& unit_cell) : m_site(site), m_precision(prec), m_lattice(unit_cell){
-m_site.m_coord.bring_within(m_lattice, m_precision);
 } 
 bool SitePeriodicCompare_f::operator()(Site other) 
 {	
-	other.m_coord.bring_within(m_lattice, m_precision);
-	Eigen::Vector3d precision_vec;
-	SiteCompare_f compare(m_site, m_precision);
-	return compare(other);
+	Eigen::Vector3d vector1=m_site.get_eigen_coordinate();
+    vector1 = convert_to_fractional(m_lattice, vector1);
+    Eigen::Vector3d vector2=other.get_eigen_coordinate();
+    vector2 = convert_to_fractional(m_lattice, vector2);
+    Eigen::Vector3d distance_vector=vector1-vector2;
+    
+    for (int i=0; i<distance_vector.size();i++){
+        distance_vector(i)=distance_vector(i)-std::round(distance_vector(i));
+    }
+    Eigen::Vector3d cartesian_distance_vector = convert_to_cartesian(m_lattice, distance_vector);
+    return (std::abs(cartesian_distance_vector.norm())<m_precision);
 }
 
 Site operator*(const SymOp& transformation, const Site& site)

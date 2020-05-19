@@ -27,7 +27,6 @@ int main()
 	SymOp With_Rotations_120= SymOp(rot_120);
 	auto With_Rotations_60_product=With_Rotations_60*With_Rotations_60;
 	EXPECT_TRUE(With_Rotations_120.get_cart_matrix().isApprox(With_Rotations_60_product.get_cart_matrix(), 1e-6), "120 degrees is two 60 degree rotations");
-	return 0;
 
 
 	//test Binary symop compare
@@ -43,4 +42,21 @@ int main()
 	SymOp Brought_within_Symop=SymOp(test_matrix, brought_within_translation); 
 	EXPECT_TRUE(periodicity_comparison(Brought_within_Symop, Brought_within_Symop), "Check identical symops are the same");
 	EXPECT_TRUE(periodicity_comparison(SymOp(test_matrix, periodic_translation), Brought_within_Symop), "Binary BinarySymOpPeriodicCompare_f test at 1.5 translation in z axis");
+
+    //binary comparison for translations near boundary
+    Eigen::Vector3d translation1;
+    Eigen::Vector3d translation2;
+    Eigen::Vector3d translation3;
+    translation1<<.9999999,.999999,.999999;
+    translation2<<-0.000001, -0.000001, -0.000001;
+    translation3<< 0.0000001, 0.000001, 0.000001;
+
+    SymOp body_diagonal(unit_matrix,translation1);
+    SymOp negative_origin(unit_matrix, translation2);
+    SymOp positive_origin(unit_matrix, translation3);
+	EXPECT_TRUE(periodicity_comparison(body_diagonal, negative_origin), "Check identical symops are the same");
+	EXPECT_TRUE(periodicity_comparison(body_diagonal, positive_origin), "Check symops with near boundary tranlations both positive are the same");
+
+
+return 0;
 }

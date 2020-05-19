@@ -32,6 +32,11 @@ EXPECT_TRUE(my_coordinate.get_frac_coordinate(my_lattice)==my_coordinate.get_car
 //testing bring_within
 Coordinate brought_within_coord= Coordinate(Eigen::Vector3d(0.1, 0.1, 0.1)); 
 my_coordinate.bring_within(my_lattice, 0.0001);
+Coordinate brought_within_neg_coord= Coordinate(Eigen::Vector3d(-0.1, -0.1, -0.1)); 
+brought_within_neg_coord.bring_within(my_lattice, 0.0001);
 EXPECT_TRUE(my_coordinate.get_frac_coordinate(my_lattice).isApprox(brought_within_coord.get_frac_coordinate(my_lattice)), "test bring within");
+Coordinate expected_coord= Coordinate(Eigen::Vector3d(0.9, 0.9, 0.9)); 
+EXPECT_TRUE(expected_coord.get_frac_coordinate(my_lattice).isApprox(brought_within_neg_coord.get_frac_coordinate(my_lattice)), "test bring within");
+EXPECT_TRUE(expected_coord.get_cart_coordinate().isApprox(brought_within_neg_coord.get_cart_coordinate()), "test bring within");
 return 0;
 }

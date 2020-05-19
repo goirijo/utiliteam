@@ -37,6 +37,13 @@ SitePeriodicCompare_f my_site_periodic_compare(my_site, 0.0001, my_lattice);
 Site test_site_periodic= Site("Na", Coordinate(Eigen::Vector3d(1.1, 0.1, 0.1)));
 EXPECT_TRUE(my_site_periodic_compare(test_site_periodic), "test site periodic compare");
 
+//test periosic compare near boundaries
+Lattice identity_lattice=Lattice(Eigen::Matrix3d::Identity());
+Site test_site_close_to_1= Site("Na", Coordinate(Eigen::Vector3d(0.9999999,0.9999999, 0.9999999)));
+Site test_site_close_to_0= Site("Na", Coordinate(Eigen::Vector3d(0.0000001, 0.0000001, 0.0000001)));
+SitePeriodicCompare_f periodic_compare_close_to_zero(test_site_close_to_0, 0.0001, identity_lattice);
+EXPECT_TRUE(periodic_compare_close_to_zero(test_site_close_to_1), "test site periodic compare close to boundaries");
+
 //site periodic compare with negaitve value
 Eigen::Matrix3d test_row_vector_lattice_neg;
 test_row_vector_lattice_neg<<1, 0, 0, 0, 2, 0, 0, 1, 3;

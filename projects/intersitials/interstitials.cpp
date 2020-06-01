@@ -23,6 +23,9 @@
 class Site;
 class SymOp;
 
+
+std::vector<std::vector<Coordinate>> 
+
 /// TODO: Write out documentation here
 std::vector<Site> make_asymmetric_unit(const std::vector<Site>& complete_structure_basis, const std::vector<SymOp>& Sym_group, const Lattice& lattice, double tol)
 {
@@ -105,35 +108,54 @@ std::vector<Coordinate> find_sites_within_radius(Coordinate potential_anion_coor
 
 
 
-std::vector<Site> discard_sites_within_radius(std::vector<Coordinate> anion_coordinates, int my_radius, Structure& my_struc)
+
+
+std::vector<Eigen::Vector3d> find_interstitials_within_radius(std::vector<Eigen::Vector3d> interstitial_coordinates, const Eigen::Vector3d& sphere_origin, double radius, const Lattice& lattice)
 {
-	std::vector<Site> total_anion_sites;
-	std::vector<Site> anion_sites_to_keep;
-	//find number of the interstitial in the structure
-//	for (const auto& site: my_struc.get_sites())
-//	{
-//		if (site.get_atom()==anion_name)
-//		{
-//			total_anion_sites.push_back(site);
-//		}
-//	}
-	for (auto anion_coord: anion_coordinates)
+        
+	//subtract sphere origin and then do distance algorithim (ie use peridic compare)
+	//use radius as the tolerarnace????
+	std::vector<Eigen::Vector3d> interstitials_within_radius;							
+	for (const auto& interstitial_coord: interstitial_coordinates) 
 	{
-		std::vector<Coordinate> sites_too_close_to_Li=find_sites_within_radius(anion_coord, my_radius, my_struc);
-		if (sites_too_close_to_Li.size()<=1)
-		{
-			anion_sites_to_keep.push_back(anion_site);
-		}
+		//can probably do this without normalization
+		Eigen::Vector3d normalized_interstitial_coord=interstital_coord-sphere_origin;
+		SitePeriodicCompare_f(Eigen::Vector3d(0,0,0), radius, lattice);
+			if (SitePeriodicCompare_f(normalized_interstitial_coord)==true)
+			{
+				interstitials_within_radius.emplace_back(interstital_coord);
+			}
+
 	}	
-	return anion_sites_to_keep;	
+	return interestitials_within_radius;
+
+//	std::vector<Site> total_anion_sites;
+//	std::vector<Site> anion_sites_to_keep;
+//	//find number of the interstitial in the structure
+////	for (const auto& site: my_struc.get_sites())
+////	{
+////		if (site.get_atom()==anion_name)
+////		{
+////			total_anion_sites.push_back(site);
+////		}
+////	}
+//	for (auto anion_coord: anion_coordinates)
+//	{
+//		std::vector<Coordinate> sites_too_close_to_Li=find_sites_within_radius(anion_coord, my_radius, my_struc);
+//		if (sites_too_close_to_Li.size()<=1)
+//		{
+//			anion_sites_to_keep.push_back(anion_site);
+//		}
+//	}	
+//	return anion_sites_to_keep;	
 }
 
-
-std::vector<Coordinate> make_grid_points(int in_a, int in_b, int in_c, const Lattice& lattice)
+//remove Coordinate and change to Eigen::Vector3d everywhere
+std::vector<Eigen::Vector3d> make_grid_points(int in_a, int in_b, int in_c, const Lattice& lattice)
 {
 	//returns mxnxl grid of potential Li sites
 	//convert to fractional...maybe	
-	std::vector<Coordinate> grid;
+	std::vector<Eigen::Vector3d> grid;
 	Eigen::VectorXd Divisions_in_a=Eigen::VectorXd::LinSpaced(in_a, 0, 1); 
 	Eigen::VectorXd Divisions_in_b=Eigen::VectorXd::LinSpaced(in_b, 0, 1);
 	Eigen::VectorXd Divisions_in_c=Eigen::VectorXd::LinSpaced(in_c, 0, 1); 
@@ -146,7 +168,7 @@ std::vector<Coordinate> make_grid_points(int in_a, int in_b, int in_c, const Lat
 			{
 				Eigen::Vector3d temp_coord;
 				temp_coord<<Divisions_in_a(i), Divisions_in_b(j), Divisions_in_c(k);
-				auto temp_coord_cart=lattice.row_vector_matrix()*temp_coord;
+				Eigen::Vector3d temp_coord_cart=convert_to_cartesian(lattice, temp_coord);
 				grid.emplace_back(temp_coord_cart);
 			}
 		}

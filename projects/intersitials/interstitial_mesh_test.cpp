@@ -31,13 +31,36 @@ bool does_find_sites_within_radius_work_for_pnb9o25()
         Structure pnb9o25=read_poscar("../avdv-factor-group/test_files/pnb9o25.vasp");
 	//need to decide whether to do this based on cartesian coordinates or not? I'm assuming yes?
 	
-	Eigen::Vector3d within_radius(Eigen::Vector3d(0.74, 0.51, 0.51));
-	Eigen::Vector3d outside_radius(Eigen::Vector3d(-0.24, 0.5, -0.5));
-	std::vector<Eigen::Vector3d> all_interstitial_sites{within_radius, outside_radius};
+	Eigen::Vector3d within_radius_1(Eigen::Vector3d(0.74, 0.51, 0.51));
+	Eigen::Vector3d within_radius_2(Eigen::Vector3d(-0.24, 0.5, -0.5));
+	std::vector<Eigen::Vector3d> all_interstitial_sites{within_radius_1, within_radius_2};
 	////change this!!!!!
+
 	return find_interstitials_within_radius(all_interstitial_sites, Eigen::Vector3d(-0.25, 0.5, 0.5), 1.75, pnb9o25.get_lattice()).size()==2; 
 }
 
+bool does_find_sites_within_radius_work_for_pnb9o25_exact_coordinates()
+{
+        Structure pnb9o25=read_poscar("../avdv-factor-group/test_files/pnb9o25.vasp");
+	double radius = 1.75;
+	std::vector<Eigen::Vector3d> coords_within_radius;
+	Eigen::Vector3d within_radius_1(Eigen::Vector3d(0.74, 0.51, 0.51));
+	Eigen::Vector3d within_radius_2(Eigen::Vector3d(-0.24, 0.5, -0.5));
+	std::vector<Eigen::Vector3d> all_interstitial_sites{within_radius_1, within_radius_2};
+	Eigen::Vector3d sphere_origin(Eigen::Vector3d(-0.25, 0.5, 0.5));
+	int i=0;
+	for (int i=0; i<all_interstitial_sites.size(); i++)
+	{		
+		VectorCompare_f test_coord(find_interstitials_within_radius(all_interstitial_sites,sphere_origin, radius, pnb9o25.get_lattice()).at(i), 0.001); 
+		if (find_if(all_interstitial_sites.begin(), all_interstitial_sites.end(), test_coord)!= all_interstitial_sites.end())
+				{
+				i=i+1;
+				}
+		std::cout<<i<< std::endl;
+		std::cout<<find_interstitials_within_radius(all_interstitial_sites,sphere_origin, radius, pnb9o25.get_lattice()).at(i)<<std::endl;
+	}
+	return i==2;		
+}
 
 //bool does_keep_reasonable_interstitial_gridpoints_work(double tol)
 //{
@@ -70,6 +93,7 @@ int main()
 	EXPECT_TRUE(does_find_sites_within_radius_work_two_sites(), "find interstitials sites within radius (should be 1)");
 	EXPECT_TRUE(does_find_sites_within_radius_work_for_exact_coordinates_general(), "I get the correct coordinate that is within the radius");
 	EXPECT_TRUE(does_find_sites_within_radius_work_for_pnb9o25(), "find interstitials sites within radius of site in pnb9o25 lattice (should be 2)");
+	EXPECT_TRUE(does_find_sites_within_radius_work_for_pnb9o25_exact_coordinates(), "should have both correct coordinates in there");
 	EXPECT_TRUE(does_make_grid_points_work(), "Check that I can appropriately make grid points");
 
 }

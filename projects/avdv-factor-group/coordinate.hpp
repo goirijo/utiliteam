@@ -39,11 +39,19 @@ private:
 //    double tol;
 //    Lattice unit_cell;
 //};
+struct VectorCompare_f
+{
+	VectorCompare_f(const Eigen::Vector3d& vector, double prec);
+	bool operator()(const Eigen::Vector3d& other) const;
+	private:
+	Eigen::Vector3d m_vector;
+	double m_precision;
+};
 
 struct VectorPeriodicCompare_f
 {
-    VectorPeriodicCompare_f(Eigen::Vector3d vector, double prec, const Lattice& unit_cell);
-    bool operator()(Eigen::Vector3d other);
+    VectorPeriodicCompare_f(const Eigen::Vector3d& vector, double prec, const Lattice& unit_cell);
+    bool operator()(const Eigen::Vector3d& other) const;
 private:
     Eigen::Vector3d m_vector;
     double m_precision;

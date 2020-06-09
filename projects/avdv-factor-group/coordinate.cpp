@@ -27,9 +27,23 @@ void Coordinate::coord_bring_within(const Lattice& lattice, double prec)
     this->m_coord = lattice.col_vector_matrix() * frac_coords;*/
 }
 //Is this an altright location for this? I can't really think of another.
-VectorPeriodicCompare_f::VectorPeriodicCompare_f(Eigen::Vector3d vector, double prec, const Lattice& unit_cell) : m_vector(vector), m_precision(prec), m_lattice(unit_cell){
+
+
+// Vector Compare functor
+VectorCompare_f::VectorCompare_f(const Eigen::Vector3d& vector, double prec) : m_vector(vector), m_precision(prec) {}
+bool VectorCompare_f::operator()(const Eigen::Vector3d& other) const
+{
+    if (m_vector.isApprox(other, m_precision))
+    {
+            return true;
+    }
+    return false;
+}
+
+
+VectorPeriodicCompare_f::VectorPeriodicCompare_f(const Eigen::Vector3d& vector, double prec, const Lattice& unit_cell) : m_vector(vector), m_precision(prec), m_lattice(unit_cell){
 } 
-bool VectorPeriodicCompare_f::operator()(Eigen::Vector3d other) 
+bool VectorPeriodicCompare_f::operator()(const Eigen::Vector3d& other) const 
 {	
     Eigen::Vector3d vector1 = convert_to_fractional(m_lattice, m_vector);
     Eigen::Vector3d vector2 = convert_to_fractional(m_lattice, other);

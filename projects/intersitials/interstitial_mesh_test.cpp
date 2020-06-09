@@ -74,6 +74,30 @@ bool does_find_sites_within_radius_work_for_pnb9o25_exact_coordinates()
 //	//return keep_reasonable_interstitial_gridpoints(total_interstitials, within_radius, tol, Lattice(Eigen::Vector3d(1,0,0), Eigen::Vector3d(0,1,0), Eigen::Vector3d(0,0,1))).size()==2;	
 //	return 0;
 //}
+//
+
+
+bool does_make_orbits_work_for_orbit_size_unit_lattice(double tol)
+{	
+	Lattice unit_lattice(Eigen::Vector3d(1,0,0), Eigen::Vector3d(0,1,0), Eigen::Vector3d(0,0,1));
+	Eigen::Vector3d base_coordinate(Eigen::Vector3d(0.51, 0.51, 0.75));
+	Eigen::Vector3d symmetrically_ineqivalent(Eigen::Vector3d(0.9, 0.9, 0.9));
+	SymOp mirror(Eigen::Matrix3d(1,0,0,0,1,0,0,0,-1));
+    	BinarySymOpPeriodicCompare_f comparison(unit_lattice, tol);
+    	//BinarySymOpPeriodicMultiplier_f mult_op(unit_lattice, tol);
+    	SymGroup<SymOp, BinarySymOpPeriodicCompare_f, BinarySymOpPeriodicMultiplier_f> factor_group({},comparison);
+	factor_group.insert(mirror);
+	Eigen::Vector3d symmetrically_equivalent(Eigen::Vector3d(0.51, 0.51, -0.75));
+	std::vector<Eigen::Vector3d> all_interstitial_coordinates{base_coordinate, symmetrically_ineqivalent, symmetrically_equivalent};
+
+	return make_orbits(all_interstitial_coordinates, factor_group, unit_lattice, tol).size()==2;
+}
+
+bool does_make_orbits_work_for_containing_coordinates()
+{
+	return 0;
+}
+
 bool does_make_grid_points_work()
 {
 	int a1=5;

@@ -3,22 +3,22 @@
 
 
 /// TODO: Write out documentation here
-std::vector<Site> make_asymmetric_unit(const std::vector<Site>& complete_structure_basis, const std::vector<SymOp>& Sym_group, const Lattice& lattice, double tol)
+std::vector<Eigen::Vector3d> make_asymmetric_unit(const std::vector<Eigen::Vector3d>& complete_structure_basis, const std::vector<SymOp>& Sym_group, const Lattice& lattice, double tol)
 {
-    std::vector<Site> asymmetric_unit;
+    std::vector<Eigen::Vector3d> asymmetric_unit;
     // for each site on the basis
     // apply allsymmetry operations
     for (const auto& basis : complete_structure_basis)
     {
         for (const auto& Symmetry_operation : Sym_group)
         {
-            Site transformedsite = Symmetry_operation * basis;
+            Eigen::Vector3d transformedcoord = Symmetry_operation * basis;
             //TODO: Which comparator should you use?
-            SitePeriodicCompare_f test_site(transformedsite, tol, lattice);
+            VectorPeriodicCompare_f test_coord(transformedcoord, tol, lattice);
 
-            if (find_if(asymmetric_unit.begin(), asymmetric_unit.end(), test_site) == asymmetric_unit.end())
+            if (find_if(asymmetric_unit.begin(), asymmetric_unit.end(), test_coord) == asymmetric_unit.end())
             {
-                asymmetric_unit.push_back(transformedsite);
+                asymmetric_unit.push_back(transformedcoord);
             }
         }
     }
@@ -36,8 +36,8 @@ std::vector<Eigen::Vector3d> find_interstitials_within_radius(std::vector<Eigen:
 	{
 		//can probably do this without normalization
 		Eigen::Vector3d normalized_interstitial_coord=interstitial_coord-sphere_origin;
-		SitePeriodicCompare_f   compare_interstitials_relative_to_single_site(Site("temp", Coordinate(Eigen::Vector3d(0,0,0))), radius, lattice);
-			if (compare_interstitials_relative_to_single_site(Site("temp", Coordinate(normalized_interstitial_coord)))==true)
+		VectorPeriodicCompare_f   compare_interstitials_relative_to_single_site(Eigen::Vector3d(0,0,0), radius, lattice);
+			if (compare_interstitials_relative_to_single_site(normalized_interstitial_coord)==true)
 			{
 				interstitials_within_radius.emplace_back(interstitial_coord);
 			}

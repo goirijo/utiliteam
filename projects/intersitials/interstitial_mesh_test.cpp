@@ -7,8 +7,9 @@
 
 
 
-bool does_find_sites_within_radius_work_two_sites(double radius)
+bool does_find_sites_within_radius_work_two_sites()
 {
+	double radius=0.1;
 	Eigen::Vector3d within_radius(Eigen::Vector3d(0.55, 0.55, 0.55));
 	Eigen::Vector3d outside_radius(Eigen::Vector3d(0.9, 0.9, 0.9));
 	std::vector<Eigen::Vector3d> all_interstitial_sites{within_radius, outside_radius};
@@ -16,6 +17,15 @@ bool does_find_sites_within_radius_work_two_sites(double radius)
 	return find_interstitials_within_radius(all_interstitial_sites, Eigen::Vector3d(0.5, 0.5, 0.5), radius, Lattice(Eigen::Vector3d(1,0,0), Eigen::Vector3d(0,1,0), Eigen::Vector3d(0,0,1))).size()==1; 
 }
 
+bool does_find_sites_within_radius_work_for_exact_coordinates_general()
+{
+	double radius=0.1;
+	Eigen::Vector3d within_radius(Eigen::Vector3d(0.55, 0.55, 0.55));
+	Eigen::Vector3d outside_radius(Eigen::Vector3d(0.9, 0.9, 0.9));
+	std::vector<Eigen::Vector3d> all_interstitial_sites{within_radius, outside_radius};
+	Eigen::Vector3d sphere_origin(Eigen::Vector3d(0.5, 0.5, 0.5));
+	return find_interstitials_within_radius(all_interstitial_sites, sphere_origin, radius, Lattice(Eigen::Vector3d(1,0,0), Eigen::Vector3d(0,1,0), Eigen::Vector3d(0,0,1))).at(0).isApprox(within_radius);
+}
 bool does_find_sites_within_radius_work_for_pnb9o25()
 {
         Structure pnb9o25=read_poscar("../avdv-factor-group/test_files/pnb9o25.vasp");
@@ -57,7 +67,8 @@ int main()
 {
         double tol=1e-6;
 	double radius=0.1;
-	EXPECT_TRUE(does_find_sites_within_radius_work_two_sites(radius), "find interstitials sites within radius (should be 1)");
+	EXPECT_TRUE(does_find_sites_within_radius_work_two_sites(), "find interstitials sites within radius (should be 1)");
+	EXPECT_TRUE(does_find_sites_within_radius_work_for_exact_coordinates_general(), "I get the correct coordinate that is within the radius");
 	EXPECT_TRUE(does_find_sites_within_radius_work_for_pnb9o25(), "find interstitials sites within radius of site in pnb9o25 lattice (should be 2)");
 	EXPECT_TRUE(does_make_grid_points_work(), "Check that I can appropriately make grid points");
 

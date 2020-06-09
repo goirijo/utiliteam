@@ -1,5 +1,6 @@
 #include "site.hpp"
 #include "symop.hpp"
+#include "coordinate.hpp"
 #include <cmath>
 
 // Defines position and type of atom in a crystal
@@ -23,21 +24,6 @@ bool SiteCompare_f::operator()(const Site& other) const
 }
 
 
-//Is this an altright location for this? I can't really think of another.
-VectorPeriodicCompare_f::VectorPeriodicCompare_f(Eigen::Vector3d vector, double prec, const Lattice& unit_cell) : m_vector(vector), m_precision(prec), m_lattice(unit_cell){
-} 
-bool VectorPeriodicCompare_f::operator()(Eigen::Vector3d other) 
-{	
-    Eigen::Vector3d vector1 = convert_to_fractional(m_lattice, m_vector);
-    Eigen::Vector3d vector2 = convert_to_fractional(m_lattice, other);
-    Eigen::Vector3d distance_vector=vector1-vector2;
-    
-    for (int i=0; i<distance_vector.size();i++){
-        distance_vector(i)=distance_vector(i)-std::round(distance_vector(i));
-    }
-    Eigen::Vector3d cartesian_distance_vector = convert_to_cartesian(m_lattice, distance_vector);
-    return std::abs(cartesian_distance_vector.norm())<m_precision;
-}
 
 //Site compare taking into account perioduc boundary conditions
 SitePeriodicCompare_f::SitePeriodicCompare_f(Site site, double prec, const Lattice& unit_cell) : m_site(site), m_precision(prec), m_lattice(unit_cell){
@@ -47,6 +33,7 @@ bool SitePeriodicCompare_f::operator()(Site other)
     VectorPeriodicCompare_f compare(m_site.get_eigen_coordinate(), m_precision, m_lattice);	
     return m_site.get_atom()==other.get_atom() && compare(other.get_eigen_coordinate());
 }
+
 
 Site operator*(const SymOp& transformation, const Site& site)
 {

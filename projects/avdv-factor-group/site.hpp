@@ -35,15 +35,6 @@ private:
 
 /// Compares two sites and returns true if the types match and
 /// the coordinates are the same after applying unit cell tranlsations
-struct VectorPeriodicCompare_f
-{
-    VectorPeriodicCompare_f(Eigen::Vector3d vector, double prec, const Lattice& unit_cell);
-    bool operator()(Eigen::Vector3d other);
-private:
-    Eigen::Vector3d m_vector;
-    double m_precision;
-    Lattice m_lattice;
-};
 
 struct SitePeriodicCompare_f
 {

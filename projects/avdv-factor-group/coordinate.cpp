@@ -26,3 +26,23 @@ void Coordinate::coord_bring_within(const Lattice& lattice, double prec)
     }
     this->m_coord = lattice.col_vector_matrix() * frac_coords;*/
 }
+//Is this an altright location for this? I can't really think of another.
+VectorPeriodicCompare_f::VectorPeriodicCompare_f(Eigen::Vector3d vector, double prec, const Lattice& unit_cell) : m_vector(vector), m_precision(prec), m_lattice(unit_cell){
+} 
+bool VectorPeriodicCompare_f::operator()(Eigen::Vector3d other) 
+{	
+    Eigen::Vector3d vector1 = convert_to_fractional(m_lattice, m_vector);
+    Eigen::Vector3d vector2 = convert_to_fractional(m_lattice, other);
+    Eigen::Vector3d distance_vector=vector1-vector2;
+    
+    for (int i=0; i<distance_vector.size();i++){
+        distance_vector(i)=distance_vector(i)-std::round(distance_vector(i));
+    }
+    Eigen::Vector3d cartesian_distance_vector = convert_to_cartesian(m_lattice, distance_vector);
+    return std::abs(cartesian_distance_vector.norm())<m_precision;
+}
+Eigen::Vector3d operator*(const SymOp& transformation, const Eigen::Vector3d& vector)
+{
+    Eigen::Vector3d transformed = (transformation.get_cart_matrix()) * (vector)+transformation.get_translation();
+    return transformed;
+}

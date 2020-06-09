@@ -5,6 +5,7 @@
 #include "lattice.hpp"
 #include <string>
 #include <vector>
+#include "symop.hpp"
 class Coordinate
 {
 public:
@@ -20,23 +21,34 @@ private:
     Eigen::Vector3d m_coord;
 };
 
-struct CoordinateCompare_f
-{
-    CoordinateCompare_f(double tol);
-    bool operator()(const Coordinate& lhs, const Coordinate& rhs) const;
+//struct CoordinateCompare_f
+//{
+//    CoordinateCompare_f(double tol);
+//    bool operator()(const Coordinate& lhs, const Coordinate& rhs) const;
+//
+//private:
+//    double tol;
+//};
+//
+//struct CoordinatePeriodicCompare_f
+//{
+//    CoordinatePeriodicCompare_f(const Lattice& lat, double tol);
+//    bool operator()(const Coordinate& lhs, const Coordinate& rhs) const;
+//
+//private:
+//    double tol;
+//    Lattice unit_cell;
+//};
 
+struct VectorPeriodicCompare_f
+{
+    VectorPeriodicCompare_f(Eigen::Vector3d vector, double prec, const Lattice& unit_cell);
+    bool operator()(Eigen::Vector3d other);
 private:
-    double tol;
+    Eigen::Vector3d m_vector;
+    double m_precision;
+    Lattice m_lattice;
 };
 
-struct CoordinatePeriodicCompare_f
-{
-    CoordinatePeriodicCompare_f(const Lattice& lat, double tol);
-    bool operator()(const Coordinate& lhs, const Coordinate& rhs) const;
-
-private:
-    double tol;
-    Lattice unit_cell;
-};
-
+Eigen::Vector3d operator*(const SymOp& transformation, const Eigen::Vector3d& vector);
 #endif

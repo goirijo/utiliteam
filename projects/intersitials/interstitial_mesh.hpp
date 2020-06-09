@@ -14,7 +14,7 @@
 
 class Site;
 class SymOp;
-std::vector<Site> make_asymmetric_unit(const std::vector<Site>& complete_structure_basis, const std::vector<SymOp>& Sym_group, const Lattice& lattice, double tol);
+std::vector<Eigen::Vector3d> make_asymmetric_unit(const std::vector<Eigen::Vector3d>& complete_structure_basis, const std::vector<SymOp>& Sym_group, const Lattice& lattice, double tol);
 //double distance(Coordinate& middlepoint, Coordinate& compared_coord);
 //std::vector<Coordinate> find_sites_within_radius(Coordinate middlepoint, double my_radius, Structure& my_struc, Coordinate potential_anion_coord);
 std::vector<Eigen::Vector3d> find_interstitials_within_radius(std::vector<Eigen::Vector3d>& interstitial_coordinates, const Eigen::Vector3d& sphere_origin, double radius, const Lattice& lattice);
